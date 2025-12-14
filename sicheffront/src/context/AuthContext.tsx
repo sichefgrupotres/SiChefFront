@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-type Role = "CREATOR" | "USER";
-type Genero = "masculino" | "femenino" | "no_binario"| "no_responder"
+export type Role = "CREATOR" | "USER";
+export type Genero = "masculino" | "femenino" | "no_binario"| "no_responder"
 
 export interface RegisterFormData {
   nombre: string;

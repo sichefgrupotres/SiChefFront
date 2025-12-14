@@ -1,380 +1,183 @@
 "use client";
-
-import { useFormik } from "formik";
-import { RegisterSchema } from "@/validators/RegisterSchema";
-import { useAuth } from "@/context/AuthContext";
 import { RegisterFormData } from "@/context/AuthContext";
+import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
-import { uploadAvatar } from "@/services/uploadAvatar";
 
-export default function RegisterForm() {
-  const { register } = useAuth();
+const initialValues: RegisterFormData = {
+  nombre: "",
+  apellido: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  cumpleaños: "",
+  genero: "no_responder",
+  nacionalidad: "",
+  ciudad: "",
+  paisDeResidencia: "",
+  avatarUrl: "",
+  role: "USER",
+};
+
+const RegisterForm = () => {
   const router = useRouter();
 
   const formik = useFormik<RegisterFormData>({
-    initialValues: {
-      nombre: "",
-      apellido: "",
-      cumpleaños: "",
-      genero: "no_responder",
-      nacionalidad: "",
-      ciudad: "",
-      paisDeResidencia: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      avatarUrl: "",
-      role: "USER",
-    },
-    validationSchema: RegisterSchema,
+    initialValues,
     onSubmit: async (values) => {
-      await register(values);
-      router.push("/");
+      try {
+        console.log("usuario registrado", values);
+        router.push("/login");
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-
-    const file = e.target.files[0];
-    const url = await uploadAvatar(file);
-    formik.setFieldValue("avatarUrl", url);
-  };
-
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-start overflow-x-hidden p-4 bg-[#3D2B1F]">
+    <div className="relative flex min-h-screen w-full flex-col items-center bg-[#3D2B1F] p-4">
       <div className="w-full max-w-md space-y-8 py-10">
+
         {/* Header */}
         <div className="text-center">
-          <span className="material-symbols-outlined text-[#F57C00] `!text-5xl`">
-            skillet
-          </span>
-          <h1 className="text-white text-[32px] font-bold leading-tight pt-4">
-            Bienvenido a Si Chef!
+           <span className="material-symbols-outlined text-[#F57C00] text-5xl!">Si Chef! skillet</span>
+          <h1 className="text-white text-[32px] font-bold pt-4">
+            Sumate a nuestra comunidad
           </h1>
-          <p className="text-white text-base pt-1">Registrate</p>
+          <p className="text-white text-base pt-1">
+            Completa los datos para registrarte
+          </p>
         </div>
-      </div>
-      {/* FORM */}
-      <form onSubmit={formik.handleSubmit} className="w-full space-y-4">
-        {/* Nombre */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Nombre</p>
 
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">lock</span>
-            </div>
+        {/* FORM */}
+        <form onSubmit={formik.handleSubmit} className="space-y-4">
 
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Introduce tu nombre"
-              value={formik.values.nombre}
+          {/* Nombre */}
+          <Input label="Nombre" name="nombre" placeholder="Introduce tu nombre" icon="person" formik={formik} />
+
+          {/* Apellido */}
+          <Input label="Apellido" name="apellido" placeholder="Introduce tu apellido" icon="person" formik={formik} />
+
+          {/* Email */}
+          <Input label="Email" name="email" placeholder="Introduce tu email" type="email" icon="mail" formik={formik} />
+
+          {/* Password */}
+          <Input label="Contraseña" name="password" placeholder="Introduce una contraseña" type="password" icon="lock" formik={formik} />
+
+          {/* Confirm Password */}
+          <Input label="Confirmar contraseña" name="confirmPassword" placeholder="Repite la contraseña" type="password" icon="lock" formik={formik} />
+
+          {/* Cumpleaños */}
+          <Input label="Cumpleaños" name="cumpleaños" placeholder="Introduce tu Fecha de Nacimiento" type="date" icon="cake" formik={formik} />
+
+          {/* Género */}
+          <label className="flex flex-col">
+            <p className="text-white pb-2">Género</p>
+            <select
+              name="genero"
+              value={formik.values.genero}
               onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
+              className="h-14 rounded-lg bg-[#543C2A] text-white px-4 focus:outline-none"
+            >
+              <option value="">Seleccionar</option>
+              <option value="masculino">Masculino</option>
+              <option value="femenino">Femenino</option>
+              <option value="no_binario">No Binario</option>
+              <option value="no_responder">Elijo no responder</option>
+            </select>
+          </label>
 
-          {formik.errors.nombre && (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.nombre}</p>
-          )}
-        </label>
+          {/* Nacionalidad */}
+          <Input label="Nacionalidad" name="nacionalidad" placeholder="Introduce tu pais de nacimiento" icon="flag" formik={formik} />
 
-        {/*Apellido*/}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Apellido</p>
+          {/* Ciudad */}
+          <Input label="Ciudad" name="ciudad" placeholder="Introduce tu ciudad de residencia" icon="location_city" formik={formik} />
 
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">lock</span>
-            </div>
+          {/* País de residencia */}
+          <Input label="País de residencia" name="paisDeResidencia" placeholder="Introduce tu pais de residencia" icon="public" formik={formik} />
 
-            <input
-              type="text"
-              name="apellido"
-              placeholder="Introduce tu apellido"
-              value={formik.values.apellido}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
+          {/* Avatar */}
+          <Input label="Avatar URL" name="avatarUrl" placeholder="Introduce el enlace de tu foto" icon="image" formik={formik} />
 
-          {formik.errors.apellido && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.apellido}
-            </p>
-          )}
-        </label>
-
-        {/*Fecha de nacimiento*/}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">
-            Fecha de Nacimiento
-          </p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">lock</span>
-            </div>
-
-            <input
-              type="date"
-              name="cumpleaños"
-              placeholder="Introduce tu fecha de nacimiento"
-              value={formik.values.cumpleaños}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.cumpleaños && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.cumpleaños}
-            </p>
-          )}
-        </label>
-
-        {/* Nacionalidad */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Nacionalidad</p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">mail</span>
-            </div>
-
-            <input
-              type="text"
-              name="nacionalidad"
-              placeholder="Introduce tu nacionalidad"
-              value={formik.values.nacionalidad}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.nacionalidad && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.nacionalidad}
-            </p>
-          )}
-        </label>
-
-        {/* Ciudad */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Ciudad</p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">mail</span>
-            </div>
-
-            <input
-              type="text"
-              name="ciudad"
-              placeholder="Introduce tu ciudad de residencia"
-              value={formik.values.ciudad}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.ciudad && (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.ciudad}</p>
-          )}
-        </label>
-
-        {/* Pais de Residencia */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">
-            Pais de Residencia
-          </p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">mail</span>
-            </div>
-
-            <input
-              type="text"
-              name="paisDeResidencia"
-              placeholder="Introduce tu pais de residencia"
-              value={formik.values.paisDeResidencia}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.paisDeResidencia && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.paisDeResidencia}
-            </p>
-          )}
-        </label>
-
-        {/* EMAIL */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Email</p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">mail</span>
-            </div>
-
-            <input
-              type="email"
-              name="email"
-              placeholder="Introduce tu email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.email && (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.email}</p>
-          )}
-        </label>
-
-        {/* PASSWORD */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Contraseña</p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">lock</span>
-            </div>
-
-            <input
-              type="password"
-              name="password"
-              placeholder="Introduce tu contraseña"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.password}
-            </p>
-          )}
-        </label>
-
-        {/* Confirm PASSWORD */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">
-            Confirmar contraseña
-          </p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">lock</span>
-            </div>
-
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirma la contraseña"
-              value={formik.values.confirmPassword}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.confirmPassword}
-            </p>
-          )}
-        </label>
-
-        {/* Avatr Url */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">
-            Carga tu foto de Perfil
-          </p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">mail</span>
-            </div>
-
-            <input
-              type="url"
-              name="avatarUrl"
-              placeholder="Introduce el enlace de tu foto de perfil"
-              value={formik.values.avatarUrl}
-              onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
-
-          {formik.errors.avatarUrl && (
-            <p className="text-red-500 text-sm mt-1">
-              {formik.errors.avatarUrl}
-            </p>
-          )}
-        </label>
-
-        {/* Rol */}
-        <label className="flex flex-col w-full">
-          <p className="text-white text-base font-medium pb-2">Rol</p>
-
-          <div className="bg-[#543C2A] flex items-center rounded-lg">
-            <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
-              <span className="material-symbols-outlined">person</span>
-            </div>
-
-            <input
-              type="text"
+          {/* Role */}
+          <label className="flex flex-col">
+            <p className="text-white pb-2">Rol</p>
+            <select
               name="role"
-              placeholder="Define tu Role"
               value={formik.values.role}
               onChange={formik.handleChange}
-              className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
-            />
-          </div>
+              className="h-14 rounded-lg bg-[#543C2A] text-white px-4 focus:outline-none"
+            >
+              <option value="USER">Usuario</option>
+              <option value="CREADOR">Creador</option>
+            </select>
+          </label>
 
-          {formik.errors.role && (
-            <p className="text-red-500 text-sm mt-1">{formik.errors.role}</p>
-          )}
-        </label>
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full h-14 rounded-lg bg-[#F57C00] text-white text-lg font-bold transition-transform hover:scale-105"
+          >
+            Registrarse
+          </button>
+        </form>
 
+       {/* Divider Google */}
+      <div className="relative flex items-center py-4">
+        <div className="flex-grow border-t border-gray-600"></div>
+        <span className="flex-shrink mx-4 text-[#D2B48C] text-sm">
+          O continuar con
+        </span>
+        <div className="grow border-t border-gray-600"></div>
+      </div>
+
+      {/* Google */}
+      <div className="flex items-center justify-center">
         <button
-          type="submit"
-          className="mt-2 rounded-lg bg-primary py-3 text-white font-bold"
+          type="button"
+          className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full hover:scale-110"
         >
-          Registrarse
+          {/* SVG */}
         </button>
+      </div>
 
-        {/* SUBMIT */}
-       <button
-                        type="submit"
-                        disabled={formik.isSubmitting}
-                        className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200
-                                ${formik.isSubmitting ? "bg-orange-300 cursor-not-allowed" : "bg-[#F57C00] hover:scale-105"}`}
-                    >
-                        {formik.isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
-                    </button>
-                </form>
+      {/* Footer */}
+      <div className="text-center text-xs text-gray-400 pt-6">
+        <p>
+          Al continuar, aceptas nuestros{" "}
+          <a className="underline">Términos</a> y{" "}
+          <a className="underline">Privacidad</a>.
+        </p>
+      </div>
 
-                {/* Divider */}
-                <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-gray-600"></div>
-                    <span className="mx-4 text-[#D2B48C] text-sm">
-                        ¿Eres nuevo? Regístrate
-                    </span>
-                    <div className="flex-grow border-t border-gray-600"></div>
-                </div>
+    </div>
+  </div>
+);
+}
+export default RegisterForm;
 
-                <button
-                    type="button"
-                    className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
-                    onClick={() => router.push("/register")}>
-                    Registrarse
-                </button>
-            </div>
-  )}
+/* ---------- Reusable Input ---------- */
+const Input = ({
+  label,
+  name,
+  placeholder,
+  icon,
+  type = "text",
+  formik,
+}: any) => (
+  <label className="flex flex-col">
+    <p className="text-white pb-2">{label}</p>
+    <div className="bg-[#543C2A] flex items-center rounded-lg">
+      <span className="material-symbols-outlined pl-4 text-[#D2B48C]">
+        {icon}
+      </span>
+      <input
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        value={formik.values[name]}
+        onChange={formik.handleChange}
+        className="w-full h-14 bg-transparent text-white px-4 focus:outline-none"
+      />
+    </div>
+  </label>
+)
