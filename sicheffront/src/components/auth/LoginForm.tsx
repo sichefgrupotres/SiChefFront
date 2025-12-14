@@ -42,7 +42,7 @@ const LoginForm = () => {
 
                 {/* Header */}
                 <div className="text-center">
-                    <span className="material-symbols-outlined text-[#F57C00] !text-5xl">skillet</span>
+                    <span className="material-symbols-outlined text-[#F57C00] text-5xl!">skillet</span>
                     <h1 className="text-white text-[32px] font-bold leading-tight pt-4">
                         Bienvenido
                     </h1>
@@ -126,11 +126,11 @@ const LoginForm = () => {
 
                 {/* Divider */}
                 <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-gray-600"></div>
+                    <div className="grow border-t border-gray-600"></div>
                     <span className="mx-4 text-[#D2B48C] text-sm">
                         ¿Eres nuevo? Regístrate
                     </span>
-                    <div className="flex-grow border-t border-gray-600"></div>
+                    <div className="grow border-t border-gray-600"></div>
                 </div>
 
                 <button
@@ -143,11 +143,11 @@ const LoginForm = () => {
 
             {/* Divider Google */}
             <div className="relative flex items-center py-4">
-                <div className="flex-grow border-t border-gray-600"></div>
-                <span className="flex-shrink mx-4 text-[#D2B48C] text-sm">
+                <div className="grow border-t border-gray-600"></div>
+                <span className="shrink mx-4 text-[#D2B48C] text-sm">
                     O continuar con
                 </span>
-                <div className="flex-grow border-t border-gray-600"></div>
+                <div className="grow border-t border-gray-600"></div>
             </div>
 
             {/* Google */}
