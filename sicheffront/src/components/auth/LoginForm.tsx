@@ -1,7 +1,7 @@
 "use client";
 import { useFormik } from "formik";
 import { initialValuesLogin, LoginFormValuesInterface, LoginSchema } from "@/validators/LoginSchema";
-import { loginUserService } from "@/services/auth/LoginUserservice";
+import { loginUserService } from "@/services/auth/LoginUserService";
 import { useRouter } from "next/navigation";
 
 
