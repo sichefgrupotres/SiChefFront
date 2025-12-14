@@ -1,0 +1,9 @@
+
+body {
+  min-height: max(884px, 100dvh);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}
