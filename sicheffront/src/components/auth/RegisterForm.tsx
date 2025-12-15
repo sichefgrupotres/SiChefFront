@@ -120,7 +120,13 @@ const RegisterForm = () => {
             Registrarse
           </button>
         </form>
-
+<div className="relative flex items-center py-4">
+                    <div className="grow border-t border-gray-600"></div>
+                    <span className="mx-4 text-[#D2B48C] text-sm">
+                        ¿Ya tienes cuenta? Inicia Sesion
+                    </span>
+                    <div className="grow border-t border-gray-600"></div>
+                </div>
        {/* Divider Google */}
       <div className="relative flex items-center py-4">
         <div className="grow border-t border-gray-600"></div>
