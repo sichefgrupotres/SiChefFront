@@ -1,0 +1,209 @@
+"use client";
+
+import { RecipeFormValuesInterface, initialValuesRecipe, RecipeSchema } from "@/validators/RecipeSchema";
+import { useFormik } from "formik"
+import { useState } from "react";
+
+export default function NewRecipePage() {
+    const formik = useFormik<RecipeFormValuesInterface>({
+        initialValues: initialValuesRecipe,
+        validationSchema: RecipeSchema,
+        onSubmit: (values) => {
+            console.log("RECETA:", values);
+        },
+    });
+
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.currentTarget.files?.[0];
+
+        if (!file) return;
+
+        formik.setFieldValue("image", file);
+
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreview(previewUrl);
+    };
+
+    return (
+        <div className="p-4 max-w-xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6 text-center">
+                Crear nueva receta
+            </h1>
+
+            <form
+                onSubmit={formik.handleSubmit}
+                className="flex flex-col gap-4"
+            >
+                {/* Título */}
+                <div>
+                    <label className="text-sm font-semibold">
+                        Título de la receta
+                    </label>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="ej. Lasaña clásica"
+                        value={formik.values.title}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        className="w-full mt-1 rounded-lg bg-[#2A2622] border border-white/10 p-3 outline-none focus:border-primary"
+                    />
+                    {formik.touched.title && formik.errors.title && (
+                        <p className="text-red-400 text-sm">{formik.errors.title}</p>
+                    )}
+                </div>
+
+                {/* Foto Principal */}
+                <div>
+                    <label className="text-sm font-semibold">Foto Principal</label>
+
+                    <div className="mt-2 flex items-center gap-4">
+                        {/* Preview */}
+                        <div className="w-64 h-64 rounded-lg bg-[#2A2622] border border-white/10 flex items-center justify-center overflow-hidden">
+                            {imagePreview ? (
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="material-symbols-outlined text-gray-400 text-3xl">
+                                    image
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Botón */}
+                        <label className="cursor-pointer">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+                            <span className="px-4 py-2 rounded-lg bg-[#3a2e24] border border-white/10 text-sm hover:bg-[#46372c] transition">
+                                Subir imagen
+                            </span>
+                        </label>
+                    </div>
+
+                    {formik.touched.image && formik.errors.image && (
+                        <p className="text-red-400 text-sm mt-1">
+                            {formik.errors.image}
+                        </p>
+                    )}
+                </div>
+
+
+                {/* Ingredientes */}
+                <div>
+                    <label className="text-sm font-semibold">
+                        Ingredientes
+                    </label>
+                    <textarea
+                        name="ingredients"
+                        rows={4}
+                        placeholder="Ingredientes que contiene la receta"
+                        value={formik.values.ingredients}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        className="w-full mt-1 rounded-lg bg-[#2A2622] border border-white/10 p-3 outline-none focus:border-primary resize-none"
+                    />
+                    {formik.touched.ingredients && formik.errors.ingredients && (
+                        <p className="text-red-400 text-sm">{formik.errors.ingredients}</p>
+                    )}
+                </div>
+
+                {/* Pasos de preparación */}
+                <div>
+                    <label className="text-sm font-semibold">
+                        Pasos de preparación
+                    </label>
+                    <textarea
+                        name="description"
+                        rows={4}
+                        placeholder={`Ej:
+1. Calentamos una cazuela grande de agua...
+2. Introducimos las láminas de lasaña...`}
+                        value={formik.values.description}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        className="w-full mt-1 rounded-lg bg-[#2A2622] border border-white/10 p-3 outline-none focus:border-primary resize-none"
+                    />
+                    {formik.touched.description && formik.errors.description && (
+                        <p className="text-red-400 text-sm">{formik.errors.description}</p>
+                    )}
+                </div>
+
+                {/* Dificultad */}
+                <div>
+                    <label className="text-sm font-semibold">
+                        Dificultad
+                    </label>
+                    <select
+                        name="difficulty"
+                        value={formik.values.difficulty}
+                        onChange={formik.handleChange}
+                        className="w-full mt-1 rounded-lg bg-[#2A2622] border border-white/10 p-3"
+                    >
+                        <option value="facil">Fácil</option>
+                        <option value="medio">Medio</option>
+                        <option value="dificil">Difícil</option>
+                    </select>
+                </div>
+
+                {/* PREMIUM */}
+                <div className="flex items-center justify-between p-4 rounded-xl bg-[#2A2622] border border-white/10 p-3">
+                    <div>
+                        <p className="text-white font-semibold">Marcar como Premium</p>
+                        <p className="text-sm text-text-secondary-dark">
+                            Solo los suscriptores podrán acceder.
+                        </p>
+                    </div>
+
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            name="isPremium"
+                            checked={formik.values.isPremium}
+                            onChange={formik.handleChange}
+                            className="sr-only peer"
+                        />
+
+                        {/* Fondo */}
+                        <div className="
+                            w-11 h-6 
+                            rounded-full 
+                            bg-gray-500
+                            peer-checked:bg-green-500
+                            transition-colors
+                            duration-300
+                            " />
+
+                        {/* Botón */}
+                        <div className="
+                            absolute left-1 top-1
+                            w-4 h-4
+                            bg-white
+                            rounded-full
+                            transition-transform
+                            duration-300
+                            peer-checked:translate-x-5
+                            " />
+                    </label>
+                </div>
+
+                {/* Submit */}
+                <button
+                    type="submit"
+                    className=" cursor-pointer mt-4 h-12 rounded-lg bg-[#F57C00] font-bold hover:bg-orange-500 transition"
+                >
+                    Publicar receta
+                </button>
+            </form>
+        </div>
+    );
+
+}
