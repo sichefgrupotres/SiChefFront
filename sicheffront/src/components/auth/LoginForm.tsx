@@ -42,7 +42,7 @@ const LoginForm = () => {
 
                 {/* Header */}
                 <div className="text-center">
-                    <span className="material-symbols-outlined text-[#F57C00] text-5xl!">skillet</span>
+                    <span className="material-symbols-outlined text-[#F57C00] text-5xl!">Si Chef! skillet</span>
                     <h1 className="text-white text-[32px] font-bold leading-tight pt-4">
                         Bienvenido
                     </h1>
