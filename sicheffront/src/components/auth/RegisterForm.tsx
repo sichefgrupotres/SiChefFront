@@ -1,6 +1,7 @@
 "use client";
 import { RegisterFormData } from "@/context/AuthContext";
 import { useFormik } from "formik";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const initialValues: RegisterFormData = {
@@ -138,6 +139,10 @@ const RegisterForm = () => {
         >
           {/* SVG */}
         </button>
+      </div>
+
+      <div>
+        <p className="text-[#D2B48C] text-sm"> ¿Ya tienes una cuenta? </p> <Link href="/login"> <p> Inicia Sesion</p> </Link>
       </div>
 
       {/* Footer */}
