@@ -1,7 +1,7 @@
 "use client";
 import { useFormik } from "formik";
 import { initialValuesLogin, LoginFormValuesInterface, LoginSchema } from "@/validators/LoginSchema";
-import { loginUserService } from "@/services/auth/LoginUserService";
+import { loginUserService } from "@/services/aut.services";
 import { useRouter } from "next/navigation";
 
 
@@ -57,7 +57,6 @@ const LoginForm = () => {
                     {/* EMAIL */}
                     <label className="flex flex-col w-full">
                         <p className="text-white text-base font-medium pb-2">Email</p>
-
                         <div className="bg-[#543C2A] flex items-center rounded-lg">
                             <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
                                 <span className="material-symbols-outlined">mail</span>
