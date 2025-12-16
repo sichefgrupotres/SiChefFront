@@ -18,7 +18,7 @@ const RegisterForm = () => {
       try {
         const response = await registerUserService(values);
         console.log("formulario enviado", response);
-        router.push("/creator");
+        router.push("/login");
         resetForm();
       } catch (error) {
         console.error(error);
