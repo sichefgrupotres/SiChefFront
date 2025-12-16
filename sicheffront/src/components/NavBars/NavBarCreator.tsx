@@ -7,8 +7,8 @@ export default function CreatorNavbar() {
     const pathname = usePathname();
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#2A2622] border-t border-white/10">
-            <ul className="flex justify-around py-3 text-sm">
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#3D2B1F] border-t border-white/10">
+            <ul className="flex justify-around py-3 text-sm ">
                 {creatorNavItems.map((item) => {
                     const active = pathname === item.href;
 
