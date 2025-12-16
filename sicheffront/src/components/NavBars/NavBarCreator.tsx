@@ -7,8 +7,8 @@ export default function CreatorNavbar() {
     const pathname = usePathname();
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#3D2B1F] border-t border-white/10">
-            <ul className="flex justify-around py-3 text-sm ">
+        <nav className="w-64 min-h-screen bg-[#3D2B1F] border-r border-white/10">
+            <ul className="flex flex-col gap-2 p-4 text-sm">
                 {creatorNavItems.map((item) => {
                     const active = pathname === item.href;
 
@@ -16,13 +16,18 @@ export default function CreatorNavbar() {
                         <li key={item.href}>
                             <Link
                                 href={item.href}
-                                className={`flex flex-col items-center gap-1 ${active ? "text-orange-500" : "opacity-70"
+                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition
+                                    ${active
+                                        ? "bg-orange-500/20 text-orange-500"
+                                        : "opacity-70 hover:bg-white/5"
                                     }`}
                             >
-                                <span className="material-symbols-outlined">
+                                <span className="material-symbols-outlined text-lg">
                                     {item.icon}
                                 </span>
-                                <span>{item.label}</span>
+                                <span className="font-medium">
+                                    {item.label}
+                                </span>
                             </Link>
                         </li>
                     );

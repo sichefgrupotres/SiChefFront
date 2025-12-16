@@ -63,7 +63,7 @@ const RegisterForm = () => {
 
                     <input
                       type="text"
-                      name="nombre"
+                      name="name"
                       placeholder="Tu nombre"
                       value={formik.values.nombre}
                       onChange={formik.handleChange}
@@ -192,11 +192,10 @@ const RegisterForm = () => {
                 type="submit"
                 disabled={formik.isSubmitting}
                 className={`w-full h-14 rounded-lg text-white font-bold transition-all cursor-pointer
-            ${
-              formik.isSubmitting
-                ? "bg-[#F57C00]/50 cursor-not-allowed"
-                : "bg-[#F57C00] hover:scale-105"
-            }
+            ${formik.isSubmitting
+                    ? "bg-[#F57C00]/50 cursor-not-allowed"
+                    : "bg-[#F57C00] hover:scale-105"
+                  }
           `}
               >
                 {formik.isSubmitting ? "Registrando..." : "Registrarse"}
@@ -212,8 +211,7 @@ const RegisterForm = () => {
               <Link
                 href={PATHROUTES.LOGIN}
                 className="mx-2 text-sm text-[#FFF3E0] underline"
-              >
-                Inicia Sesión
+              >Inicia Sesión
               </Link>
 
               <div className="grow border-t border-gray-600"></div>
