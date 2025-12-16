@@ -1,4 +1,5 @@
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
+import { RecipeFormValuesInterface } from "@/validators/RecipeSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
 
 export const loginUserService = async (userData: LoginFormValuesInterface) => {
@@ -46,3 +47,25 @@ export const registerUserService = async (
     throw error;
   }
 };
+
+export const recipeFormValue = async (recipeData: RecipeFormValuesInterface) => {
+  try {
+    const response = await fetch(`http://localhost:3001/posts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(recipeData),
+    });
+
+     if (response.ok) {
+      alert("Creacion de receta exitoso ✔️");
+      const data = await response.json().catch(() => null);
+      return data;
+    }
+  } catch (error) {
+    console.error("Error al crear receta", error);
+    throw error;
+  }
+};
+
