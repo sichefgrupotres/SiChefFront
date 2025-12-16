@@ -207,11 +207,10 @@ const RegisterForm = () => {
                 type="submit"
                 disabled={formik.isSubmitting}
                 className={`w-full h-14 rounded-lg text-white font-bold transition-all cursor-pointer
-            ${
-              formik.isSubmitting
-                ? "bg-[#F57C00]/50 cursor-not-allowed"
-                : "bg-[#F57C00] hover:scale-105"
-            }
+            ${formik.isSubmitting
+                    ? "bg-[#F57C00]/50 cursor-not-allowed"
+                    : "bg-[#F57C00] hover:scale-105"
+                  }
           `}
               >
                 {formik.isSubmitting ? "Registrando..." : "Registrarse"}
