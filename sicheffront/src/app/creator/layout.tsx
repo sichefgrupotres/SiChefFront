@@ -33,8 +33,12 @@ export default function CreatorLayout({
       </header>
 
       {/* Page content */}
-      <main className="flex-1 p-4 pb-28 ">{children}</main>
-      <NavBarCreator />
+      <div className="flex min-h-screen">
+        <NavBarCreator />
+        <main className="flex-1 p-4 pb-28 ">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

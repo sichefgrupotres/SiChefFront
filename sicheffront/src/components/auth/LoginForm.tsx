@@ -46,8 +46,8 @@ const LoginForm = () => {
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
             <div className="text-center">
-              <span className="material-symbols-outlined text-[#F57C00] text-5xl">
-                skillet
+              <span className="material-symbols-outlined text-[#F57C00] text-5xl!">
+                Si Chef! skillet
               </span>
               <h1 className="text-white text-[32px] font-bold pt-4">
                 Bienvenido
@@ -124,11 +124,10 @@ const LoginForm = () => {
                 type="submit"
                 disabled={formik.isSubmitting}
                 className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 cursor-pointer
-                                ${
-                                  formik.isSubmitting
-                                    ? "bg-orange-300 cursor-not-allowed"
-                                    : "bg-[#F57C00] hover:scale-105"
-                                }`}
+                                ${formik.isSubmitting
+                    ? "bg-orange-300 cursor-not-allowed"
+                    : "bg-[#F57C00] hover:scale-105"
+                  }`}
               >
                 {formik.isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
               </button>
@@ -150,8 +149,17 @@ const LoginForm = () => {
               </div>
               <div className="grow border-t border-gray-600"></div>
             </div>
+            {/* Footer */}
+            <div className=" items'center text-center text-xs text-gray-400 pt-2">
+              <p>
+                Al continuar, aceptas nuestros{" "}
+                <span className="underline cursor-pointer">Términos</span> y{" "}
+                <span className="underline cursor-pointer">Privacidad</span>.
+              </p>
+            </div>
           </div>
         </div>
+
 
         <div className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0">
           <div className="relative w-80 h-56 md:w-105 md:h-75 rounded-xl overflow-hidden shadow-xl">
