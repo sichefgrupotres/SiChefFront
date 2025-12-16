@@ -5,7 +5,7 @@ export const creatorNavItems = [
         icon: "home",
     },
     {
-        label: "Recipes",
+        label: "Recetas",
         href: "/creator/recipes",
         icon: "menu_book",
     },
@@ -15,7 +15,7 @@ export const creatorNavItems = [
         icon: "chat",
     },
     {
-        label: "Profile",
+        label: "Perfil",
         href: "/creator/profile",
         icon: "person",
     },
