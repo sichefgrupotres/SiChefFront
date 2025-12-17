@@ -2,15 +2,17 @@ import { LoginFormValuesInterface } from "@/validators/LoginSchema";
 import { RecipeFormValuesInterface } from "@/validators/RecipeSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
 
-export const loginUserService = async (userData: LoginFormValuesInterface) => {
+export const loginUserService = async (Data: LoginFormValuesInterface) => {
   try {
-    const response = await fetch(`http://localhost:3001/auth`, {
+    const response = await fetch(`http://localhost:3001/auth/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify(Data),
     });
+    console.log(Data);
+    
 
     if (response.ok) {
       alert("Inicio de sesión exitoso ✔️");
@@ -28,7 +30,7 @@ export const registerUserService = async (
   userData: RegisterFormValuesInterface
 ) => {
   try {
-    const response = await fetch(`http://localhost:3001/users`, {
+    const response = await fetch(`http://localhost:3001/users/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +41,7 @@ export const registerUserService = async (
 
     if (response.ok) {
       alert("Registro exitoso ✔️");
-      const data = await response.json().catch(() => null);
+      const data = await response.json()
       return data;
     }
   } catch (error) {

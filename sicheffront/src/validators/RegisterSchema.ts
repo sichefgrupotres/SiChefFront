@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-export type Role = "CREATOR" | "USER";
+export type Role = "CREATOR" | "USER" ;
 export type Genero = "masculino" | "femenino" | "no_binario" | "no_responder"
 export type RoleForm = Role | "";
 export type GeneroForm = Genero | "";
@@ -11,7 +11,7 @@ export interface RegisterFormValuesInterface {
   email: string;
   password: string;
   confirmPassword: string;
-  roleId: RoleForm;
+  roleId?: RoleForm;
 }
 
 

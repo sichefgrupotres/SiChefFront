@@ -15,6 +15,13 @@ const RegisterForm = () => {
     initialValues: initialValuesRegister,
     validationSchema: RegisterSchema,
     onSubmit: async (values, { resetForm }) => {
+      const payload = {...values}
+      if(!payload.roleId) {
+        delete payload.roleId;
+      }
+      console.log('payload final', payload);
+      registerUserService(payload);
+      
       try {
         const response = await registerUserService(values);
         console.log("formulario enviado", response);
