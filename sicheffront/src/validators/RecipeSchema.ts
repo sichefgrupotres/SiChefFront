@@ -5,7 +5,7 @@ export interface RecipeFormValuesInterface {
     title: string;
     description: string;
     ingredients: string;
-    image: File | null;
+    imageUrl: File | null;
     isPremium: boolean;
     difficulty: string;
 }
@@ -14,7 +14,7 @@ export const initialValuesRecipe: RecipeFormValuesInterface = {
     title: "",
     description: "",
     ingredients: "",
-    image: null,
+    imageUrl: null,
     isPremium: false,
     difficulty: "facil",
 }

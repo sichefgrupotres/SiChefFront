@@ -88,8 +88,8 @@ export default function NewRecipePage() {
             </label>
           </div>
 
-          {formik.touched.image && formik.errors.image && (
-            <p className="text-red-400 text-sm mt-1">{formik.errors.image}</p>
+          {formik.touched.imageUrl && formik.errors.imageUrl && (
+            <p className="text-red-400 text-sm mt-1">{formik.errors.imageUrl}</p>
           )}
         </div>
 
