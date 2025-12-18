@@ -15,16 +15,18 @@ const RegisterForm = () => {
     initialValues: initialValuesRegister,
     validationSchema: RegisterSchema,
     onSubmit: async (values, { resetForm }) => {
-      const payload = {...values}
-      if(!payload.roleId) {
-        delete payload.roleId;
-      }
-      console.log('payload final', payload);
-      registerUserService(payload);
-      
       try {
-        const response = await registerUserService(values);
+        const payload = { ...values };
+
+        if (!payload.roleId) {
+          delete payload.roleId;
+        }
+
+        const response = await registerUserService(payload);
+
         console.log("formulario enviado", response);
+        console.log(payload);
+
         router.push("/login");
         resetForm();
       } catch (error) {
@@ -53,8 +55,7 @@ const RegisterForm = () => {
             {/* FORM */}
             <form
               onSubmit={formik.handleSubmit}
-              className="space-y-4 text-black"
-            >
+              className="space-y-4 text-black">
               {/* Nombre + Apellido */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Nombre */}
@@ -198,8 +199,7 @@ const RegisterForm = () => {
                   value={formik.values.roleId}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-[#543C2A] text-white h-12 rounded-lg px-4"
-                >
+                  className="bg-[#543C2A] text-white h-12 rounded-lg px-4">
                   <option value="">Seleccionar</option>
                   <option value="USER">Usuario</option>
                   <option value="CREATOR">Creador</option>
@@ -214,31 +214,31 @@ const RegisterForm = () => {
                 type="submit"
                 disabled={formik.isSubmitting}
                 className={`w-full h-14 rounded-lg text-white font-bold transition-all cursor-pointer
-            ${formik.isSubmitting
-                    ? "bg-[#F57C00]/50 cursor-not-allowed"
-                    : "bg-[#F57C00] hover:scale-105"
-                  }
-          `}
-              >
+            ${
+              formik.isSubmitting
+                ? "bg-[#F57C00]/50 cursor-not-allowed"
+                : "bg-[#F57C00] hover:scale-105"
+            }
+          `}>
                 {formik.isSubmitting ? "Registrando..." : "Registrarse"}
               </button>
             </form>
 
             {/* Divider */}
-                <div className="relative flex items-center py-4">
-                    <div className="grow border-t border-gray-600"></div>
-                    <span className="mx-4 text-[#D2B48C] text-sm">
-                        ¿Ya tienes cuenta?
-                    </span>
-                    <div className="grow border-t border-gray-600"></div>
-                </div>
+            <div className="relative flex items-center py-4">
+              <div className="grow border-t border-gray-600"></div>
+              <span className="mx-4 text-[#D2B48C] text-sm">
+                ¿Ya tienes cuenta?
+              </span>
+              <div className="grow border-t border-gray-600"></div>
+            </div>
 
-                <button
-                    type="button"
-                    className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
-                    onClick={() => router.push("/login")}>
-                    Iniciar Sesion
-                </button>
+            <button
+              type="button"
+              className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
+              onClick={() => router.push("/login")}>
+              Iniciar Sesion
+            </button>
 
             {/* Divider Google */}
             <div className="relative flex items-center py-4">
@@ -253,14 +253,12 @@ const RegisterForm = () => {
             <div className="flex items-center justify-center">
               <button
                 type="button"
-                className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
-              >
+                className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110">
                 <svg
                   className="w-6 h-6"
                   viewBox="0 0 24 24"
                   fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                  xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M21.805 10.038C21.925 10.686 22 11.35 22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C14.706 2 17.11 3.09 18.84 4.88L15.342 8.378C14.398 7.493 13.28 7 12 7C9.239 7 7 9.239 7 12C7 14.761 9.239 17 12 17C14.398 17 16.327 15.34 16.839 13.195H12V10H21.805V10.038Z"
                     fill="#D2B48C"

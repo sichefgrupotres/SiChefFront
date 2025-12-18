@@ -12,7 +12,6 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
       body: JSON.stringify(Data),
     });
     console.log(Data);
-    
 
     if (response.ok) {
       alert("Inicio de sesión exitoso ✔️");
@@ -41,7 +40,7 @@ export const registerUserService = async (
 
     if (response.ok) {
       alert("Registro exitoso ✔️");
-      const data = await response.json()
+      const data = await response.json();
       return data;
     }
   } catch (error) {
@@ -50,24 +49,20 @@ export const registerUserService = async (
   }
 };
 
-export const recipeFormValue = async (recipeData: RecipeFormValuesInterface) => {
-  try {
-    const response = await fetch(`http://localhost:3001/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(recipeData),
-    });
+export const recipeFormValue = async (
+  recipeData: RecipeFormValuesInterface
+) => {
+  const response = await fetch("http://localhost:3001/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(recipeData),
+  });
 
-     if (response.ok) {
-      alert("Creacion de receta exitoso ✔️");
-      const data = await response.json().catch(() => null);
-      return data;
-    }
-  } catch (error) {
-    console.error("Error al crear receta", error);
-    throw error;
+  if (!response.ok) {
+    throw await response.json();
   }
+  alert("Creacion de receta exitosa ✔️");
+  return response.json();
 };
-
