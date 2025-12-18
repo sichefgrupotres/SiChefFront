@@ -1,5 +1,7 @@
 "use client";
 
+import { recipeFormValue } from "@/services/aut.services";
+
 import {
   RecipeFormValuesInterface,
   initialValuesRecipe,
@@ -12,8 +14,17 @@ export default function NewRecipePage() {
   const formik = useFormik<RecipeFormValuesInterface>({
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
-    onSubmit: (values) => {
-      console.log("RECETA:", values);
+    onSubmit: async (values, { resetForm }) => {
+      const payload = {
+        title: values.title,
+        description: values.description,
+        ingredients: values.ingredients,
+        difficulty: values.difficulty,
+        isPremium: values.isPremium,
+      };
+
+      await recipeFormValue(payload);
+      resetForm();
     },
   });
 
@@ -55,11 +66,11 @@ export default function NewRecipePage() {
         </div>
 
         {/* Foto Principal */}
-        <div>
+        {/* <div>
           <label className="text-sm font-semibold">Foto Principal</label>
 
           <div className="mt-2 flex items-center gap-4">
-            {/* Preview */}
+           
             <div className="w-72 h-64 rounded-lg bg-[#543C2A] border border-white/10 flex items-center justify-center overflow-hidden">
               {imagePreview ? (
                 <img
@@ -74,7 +85,7 @@ export default function NewRecipePage() {
               )}
             </div>
 
-            {/* Botón */}
+            
             <label className="cursor-pointer">
               <input
                 type="file"
@@ -91,7 +102,7 @@ export default function NewRecipePage() {
           {formik.touched.imageUrl && formik.errors.imageUrl && (
             <p className="text-red-400 text-sm mt-1">{formik.errors.imageUrl}</p>
           )}
-        </div>
+        </div> */}
 
         {/* Ingredientes */}
         <div>
@@ -136,8 +147,7 @@ export default function NewRecipePage() {
             name="difficulty"
             value={formik.values.difficulty}
             onChange={formik.handleChange}
-            className="w-full mt-1 rounded-lg bg-[#543C2A] border border-white/10 px-5 py-3"
-          >
+            className="w-full mt-1 rounded-lg bg-[#543C2A] border border-white/10 px-5 py-3">
             <option value="facil">Fácil</option>
             <option value="medio">Medio</option>
             <option value="dificil">Difícil</option>
@@ -170,8 +180,7 @@ export default function NewRecipePage() {
         {/* Submit */}
         <button
           type="submit"
-          className="mt-4 h-12 rounded-lg bg-[#F57C00] font-bold hover:bg-orange-500 transition cursor-pointer"
-        >
+          className="mt-4 h-12 rounded-lg bg-[#F57C00] font-bold hover:bg-orange-500 transition cursor-pointer">
           Publicar receta
         </button>
       </form>

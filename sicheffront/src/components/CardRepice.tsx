@@ -10,10 +10,9 @@ interface RecipeCardProps {
 const RecipeCard = ({ recipe }: RecipeCardProps) => {
   return (
     <div className="flex flex-col w-72 h-96 bg-[#543C2A] rounded-xl shadow hover:shadow-xl transition p-4 gap-3">
-
       {/* Imagen */}
       <img
-        src={recipe.image}
+        // src={recipe.image}
         alt={recipe.title}
         className="w-full h-40 object-cover rounded-lg"
       />
