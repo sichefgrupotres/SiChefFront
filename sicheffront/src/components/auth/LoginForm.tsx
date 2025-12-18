@@ -17,16 +17,16 @@ const LoginForm = () => {
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
-   onSubmit: async (values, { resetForm }) => {
-         try {
-           const response = await loginUserService(values);
-           console.log("Sesion iniciada con exito", response);
-           router.push("/creator");
-           resetForm();
-         } catch (error) {
-           console.error(error);
-         }
-       },
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const response = await loginUserService(values);
+        console.log("Sesion iniciada con exito", response);
+        router.push("/creator");
+        resetForm();
+      } catch (error) {
+        console.error(error);
+      }
+    },
   });
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
@@ -122,21 +122,21 @@ const LoginForm = () => {
               </button>
             </form>
 
-                 {/* Divider */}
-                <div className="relative flex items-center py-4">
-                    <div className="grow border-t border-gray-600"></div>
-                    <span className="mx-4 text-[#D2B48C] text-sm">
-                        ¿No tienes cuenta aun?
-                    </span>
-                    <div className="grow border-t border-gray-600"></div>
-                </div>
+            {/* Divider */}
+            <div className="relative flex items-center py-4">
+              <div className="grow border-t border-gray-600"></div>
+              <span className="mx-4 text-[#D2B48C] text-sm">
+                ¿No tienes cuenta aun?
+              </span>
+              <div className="grow border-t border-gray-600"></div>
+            </div>
 
-                <button
-                    type="button"
-                    className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
-                    onClick={() => router.push("/register")}>
-                    Registrate
-                </button>
+            <button
+              type="button"
+              className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
+              onClick={() => router.push("/register")}>
+              Registrate
+            </button>
 
             {/* Divider Google */}
             <div className="relative flex items-center py-4">
@@ -187,17 +187,16 @@ const LoginForm = () => {
         </div>
 
 
-        <div className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0">
-          <div className="relative w-80 h-56 md:w-105 md:h-75 rounded-xl overflow-hidden shadow-xl">
-            <Image
-              src="/chefLogin.jpg"
-              alt="Chef Login"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
+        <div className="hidden md:block md:w-1/2 h-screen relative">
+          <Image
+            src="/chefformLogin.jpg"
+            alt="Chef Login"
+            fill
+            priority
+            className="object-contain"
+          />
         </div>
+
       </div>
     </div>
   );

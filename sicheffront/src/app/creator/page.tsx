@@ -5,6 +5,23 @@ export default function CreatorPage() {
   return (
     <div className="flex flex-col gap-8 p-4 pb-28 bg-[#3D2B1F] min-h-screen px-4 sm:px-8 lg:px-16">
 
+      <header className="sticky top-0 z-40 bg-[#3D2B1F] border-b border-[#e6e0db] dark:border-[#393028] px-0 py-2 flex items-center justify-end transition-colors duration-300">
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium">
+            Chef Marco
+          </span>
+
+          <img
+            src="/chef-avatar.jpg"
+            alt="User avatar"
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        </div>
+
+      </header>
+
+
       {/* OVERVIEW */}
       <section>
         <h2 className="text-lg font-semibold mb-4">Descripción general</h2>

@@ -1,5 +1,6 @@
 "use client";
-import { creatorNavItems } from "@/utils/creatorNavItems";
+
+import { guestNavItems } from "@/utils/guestNavitems";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,7 +9,7 @@ interface Props {
     setCollapsed: (value: boolean) => void;
 }
 
-export default function NavBarCreator({
+export default function NavBarGuest({
     collapsed,
     setCollapsed,
 }: Props) {
@@ -43,7 +44,7 @@ export default function NavBarCreator({
 
             {/* NAV ITEMS */}
             <ul className="flex flex-col gap-2 px-3 text-sm">
-                {creatorNavItems.map((item) => {
+                {guestNavItems.map((item) => {
                     const active = pathname === item.href;
 
                     return (
