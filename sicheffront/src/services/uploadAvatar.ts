@@ -3,13 +3,13 @@ export const uploadAvatar = async (file: File): Promise<string> => {
   formData.append("file", file);
   formData.append("upload_preset", "TU_UPLOAD_PRESET");
 
-  const res = await fetch(
-    "https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload",
-    {
-      method: "POST",
-      body: formData,
-    }
-  );
+   const res = await fetch("http://localhost:3001/posts", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
 
   if (!res.ok) throw new Error("Error subiendo imagen");
 
