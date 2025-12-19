@@ -21,7 +21,6 @@ export default function NewRecipePage() {
         ingredients: values.ingredients,
         difficulty: values.difficulty,
         isPremium: values.isPremium,
-        // imageUrl: values.imageUrl,
       };
 
       await recipeFormValue(payload);
@@ -36,7 +35,7 @@ export default function NewRecipePage() {
 
     if (!file) return;
 
-    formik.setFieldValue("image", file);
+    formik.setFieldValue("imageUrl", file);
 
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
@@ -67,7 +66,7 @@ export default function NewRecipePage() {
         </div>
 
         {/* Foto Principal */}
-        {/* <div>
+        <div>
           <label className="text-sm font-semibold">Foto Principal</label>
 
           <div className="mt-2 flex items-center gap-4">
@@ -100,10 +99,10 @@ export default function NewRecipePage() {
             </label>
           </div>
 
-          {formik.touched.imageUrl && formik.errors.imageUrl && (
-            <p className="text-red-400 text-sm mt-1">{formik.errors.imageUrl}</p>
-          )}
-        </div> */}
+          {/* {formik.touched.image && formik.errors.image && (
+            <p className="text-red-400 text-sm mt-1">{formik.errors.image}</p>
+          )} */}
+        </div>
 
         {/* Ingredientes */}
         <div>
