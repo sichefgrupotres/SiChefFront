@@ -9,14 +9,12 @@ export default function GuestHomePage() {
             <header className="w-full">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-end items-center gap-4">
 
-                    {/* Iniciar sesión */}
-                    <button className="px-6 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-gray-100 cursor-pointer">
+                    <button className="px-5 py-2 rounded-full border border-gray-300 text-sm font-medium text-white hover:bg-gray-50 hover:text-black transition-all duration-200 cursor-pointer">
                         Iniciar sesión
                     </button>
 
-                    {/* Crear receta */}
-                    <button className="px-6 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold transition flex items-center gap-1 cursor-pointer">
-                        <span className="text-lg leading-none">+</span>
+                    <button className="px-5 py-2 rounded-full bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5 cursor-pointer">
+                        <span className="text-xl leading-none mb-0.5">+</span>
                         Crear una receta
                     </button>
 
@@ -31,7 +29,7 @@ export default function GuestHomePage() {
 
                     {/* Logo */}
                     <div className="text-center">
-                        <span className="material-symbols-outlined text-[#F57C00] text-4xl!">
+                        <span className="material-symbols-outlined text-[#F57C00] text-5xl!">
                             Si Chef! skillet
                         </span>
                     </div>

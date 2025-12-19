@@ -21,6 +21,7 @@ export default function NewRecipePage() {
         ingredients: values.ingredients,
         difficulty: values.difficulty,
         isPremium: values.isPremium,
+        // imageUrl: values.imageUrl,
       };
 
       await recipeFormValue(payload);
@@ -70,7 +71,7 @@ export default function NewRecipePage() {
           <label className="text-sm font-semibold">Foto Principal</label>
 
           <div className="mt-2 flex items-center gap-4">
-           
+
             <div className="w-72 h-64 rounded-lg bg-[#543C2A] border border-white/10 flex items-center justify-center overflow-hidden">
               {imagePreview ? (
                 <img
@@ -85,7 +86,7 @@ export default function NewRecipePage() {
               )}
             </div>
 
-            
+
             <label className="cursor-pointer">
               <input
                 type="file"

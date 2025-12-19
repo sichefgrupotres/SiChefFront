@@ -13,12 +13,11 @@ export default function CreatorLayout({
   return (
     <div className="min-h-screen bg-[#3D2B1F] text-white">
 
-      <NavBarCreator
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-      />
-
       <main className={`p-4 pb-28 transition-all duration-300  ${collapsed ? "ml-20" : "ml-64"}`}>
+        <NavBarCreator
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+        />
         {children}
       </main>
 

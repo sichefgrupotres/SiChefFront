@@ -1,18 +1,15 @@
 "use client";
 import { useFormik } from "formik";
-import {
-  initialValuesLogin,
-  LoginFormValuesInterface,
-  LoginSchema,
-} from "@/validators/LoginSchema";
+import { initialValuesLogin, LoginFormValuesInterface, LoginSchema, } from "@/validators/LoginSchema";
 import { loginUserService } from "@/services/aut.services";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 const LoginForm = () => {
   const router = useRouter();
 
-  // const { setDataUser } = useAuth();
+  const { setDataUser } = useAuth();
 
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
@@ -20,14 +17,26 @@ const LoginForm = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const response = await loginUserService(values);
+
+        setDataUser(response)
+
         console.log("Sesion iniciada con exito", response);
-        router.push("/creator");
+
+
+        if (response?.token) {
+          router.push("/creator");
+        }
+
         resetForm();
+
+
       } catch (error) {
         console.error(error);
       }
     },
   });
+
+
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
@@ -167,14 +176,6 @@ const LoginForm = () => {
               </button>
             </div>
 
-            {/* Footer */}
-            <div className="text-center text-xs text-gray-400 pt-2">
-              <p>
-                Al continuar, aceptas nuestros{" "}
-                <span className="underline cursor-pointer">Términos</span> y{" "}
-                <span className="underline cursor-pointer">Privacidad</span>.
-              </p>
-            </div>
             {/* Footer */}
             <div className=" items'center text-center text-xs text-gray-400 pt-2">
               <p>
