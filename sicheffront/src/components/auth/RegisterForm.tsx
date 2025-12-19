@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -243,15 +244,14 @@ const RegisterForm = () => {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={
-                  formik.isSubmitting || !(formik.isValid && formik.dirty)
-                }
-                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${
-                  !(formik.isValid && formik.dirty && !formik.isSubmitting)
-                    ? "bg-orange-300 cursor-not-allowed"
-                    : "bg-[#F57C00] hover:scale-105 cursor-pointer"
-                }`}
-              >
+               disabled={formik.isSubmitting}
+                className={`w-full h-14 rounded-lg text-white font-bold transition-all cursor-pointer
+            ${
+              formik.isSubmitting
+                ? "bg-[#F57C00]/50 cursor-not-allowed"
+                : "bg-[#F57C00] hover:scale-105"
+            }
+          `}>
                 {formik.isSubmitting ? "Registrando..." : "Registrarse"}
               </button>
             </form>
