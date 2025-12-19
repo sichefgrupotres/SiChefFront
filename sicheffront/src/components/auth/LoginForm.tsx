@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -134,9 +135,6 @@ const LoginForm = () => {
 
               <button
                 type="submit"
-                disabled={
-                  formik.isSubmitting || !(formik.isValid && formik.dirty)
-                }
                 className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${
                   !(formik.isValid && formik.dirty && !formik.isSubmitting)
                     ? "bg-orange-300 cursor-not-allowed"
