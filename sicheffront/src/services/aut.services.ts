@@ -1,56 +1,97 @@
-import { LoginFormValuesInterface } from "@/validators/LoginSchema"
-import { RegisterFormValuesInterface } from '@/validators/RegisterSchema';
+import { LoginFormValuesInterface } from "@/validators/LoginSchema";
+import { RecipeFormValuesInterface } from "@/validators/RecipeSchema";
+import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
 
-export const loginUserService = async (userData: LoginFormValuesInterface) => {
+export const loginUserService = async (Data: LoginFormValuesInterface) => {
+  try {
+    const response = await fetch("http://localhost:3001/auth/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(Data),
+    });
 
-    try {
+    console.log(Data);
 
-        const response = await fetch(`http://localhost:3001/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        })
+    if (response.ok) {
+      alert("Inicio de sesión exitoso ✔️");
 
-        if (response.ok) {
-            alert('Inicio de sesión exitoso ✔️')
-            return response.json()
+      const result = await response.json();
 
+      // 🔐 GUARDAR TOKEN PARA USARLO EN /posts
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+      }
 
-        } else {
-            alert('Error en el login del usuario ❌');
-            throw new Error('Error en el logeo del usuario');
-        }
+      return result;
 
-
-    } catch (error: any) {
-
-        throw new Error(error);
-
+    } else {
+      alert("Error en el login del usuario ❌");
+      throw new Error("Error en el logeo del usuario");
     }
-}
 
-export const registerUserService = async (userData: RegisterFormValuesInterface) => {
-    try {
-        const response = await fetch(`http://localhost:3001/users/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        })
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
 
-        if (response.ok) {
-            alert('Registro exitoso ✔️')
-            return response.json()
+export const registerUserService = async (
+  userData: RegisterFormValuesInterface
+) => {
+  try {
+    const response = await fetch(`http://localhost:3001/users/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+    console.log(response);
 
-        } else {
-            alert('Error en el registro del usuario ❌');
-            throw new Error('Error en el registro del usuario');
-        }
-    } catch (error: any) {
-
-        throw new Error(error);
+    if (response.ok) {
+      alert("Registro exitoso ✔️");
+      const data = await response.json();
+      return data;
     }
-}
+  } catch (error) {
+    console.error("Registro no realizado", error);
+    throw error;
+  }
+};
+
+
+export const recipeFormValue = async (
+  recipeData: RecipeFormValuesInterface
+) => {
+  try {
+    // obtener token guardado en login
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      throw new Error("No hay token de autenticación");
+    }
+
+    const response = await fetch("http://localhost:3001/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // 👈 CLAVE
+      },
+      body: JSON.stringify(recipeData),
+    });
+
+    if (!response.ok) {
+      // opcional: leer mensaje del backend
+      const errorText = await response.text();
+      throw new Error(errorText || "Error al crear la receta");
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error("Registro no realizado", error);
+    throw error;
+  }
+};

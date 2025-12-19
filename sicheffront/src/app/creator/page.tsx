@@ -4,29 +4,23 @@ import Link from "next/link";
 export default function CreatorPage() {
   return (
     <div className="flex flex-col gap-8 p-4 pb-28 bg-[#3D2B1F] min-h-screen px-4 sm:px-8 lg:px-16">
-      {/* HEADER ACTIONS */}
-      <section className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4">
-        <Link
-          href={PATHROUTES.NEWREPICE}
-          className="w-full sm:w-48 py-3 rounded-lg bg-[#F57C00] text-white font-semibold
-                   flex items-center justify-center gap-2
-                   hover:bg-orange-600 transition-all active:scale-95"
-        >
-          <span className="material-symbols-outlined text-[26px]">
-            restaurant_menu
-          </span>
-          <span>Nueva Receta</span>
-        </Link>
 
-        <button
-          className="w-full sm:w-48 py-3 rounded-lg bg-[#543C2A] text-white font-semibold
-                   flex items-center justify-center gap-2
-                   hover:bg-[#8C6A4E] transition-all active:scale-95"
-        >
-          <span className="text-xl">🎥</span>
-          <span>Nuevo tutorial</span>
-        </button>
-      </section>
+      <header className="sticky top-0 z-40 bg-[#3D2B1F] border-b border-[#e6e0db] dark:border-[#393028] px-0 py-2 flex items-center justify-end transition-colors duration-300">
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium">
+            Chef Marco
+          </span>
+
+          <img
+            src="/chef-avatar.jpg"
+            alt="User avatar"
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        </div>
+
+      </header>
+
 
       {/* OVERVIEW */}
       <section>
@@ -48,6 +42,32 @@ export default function CreatorPage() {
             <p className="text-xl font-semibold">4.8</p>
           </div>
         </div>
+      </section>
+
+      {/* HEADER ACTIONS */}
+      <section className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4">
+        <Link
+          href={PATHROUTES.NEWREPICE}
+          className="w-full sm:w-48 py-3 rounded-lg bg-[#F57C00] text-white font-semibold
+                   flex items-center justify-center gap-2
+                   hover:bg-orange-600 transition-all active:scale-95"
+        >
+          <span className="material-symbols-outlined text-[26px]">
+            restaurant_menu
+          </span>
+          <span>Nueva Receta</span>
+        </Link>
+
+        <button
+          className="w-full sm:w-48 py-3 rounded-lg bg-[#F57C00] text-white font-semibold
+                   flex items-center justify-center gap-2
+                   hover:bg-orange-600 transition-all active:scale-95 cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-[26px]">
+            video_camera_front
+          </span>
+          <span>Nuevo tutorial</span>
+        </button>
       </section>
 
       {/* PERFORMANCE */}
