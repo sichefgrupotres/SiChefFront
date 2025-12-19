@@ -1,6 +1,7 @@
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
 import { RecipeFormValuesInterface } from "@/validators/RecipeSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
+import Swal from "sweetalert2";
 
 export const loginUserService = async (Data: LoginFormValuesInterface) => {
   try {
@@ -15,7 +16,15 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
     console.log(Data);
 
     if (response.ok) {
-      alert("Inicio de sesión exitoso ✔️");
+      // alert("Inicio de sesión exitoso ✔️");
+      Swal.fire({
+        icon: "success",
+        title: "Inicio de sesión exitoso",
+        text: "Bienvenido 👋",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
 
       const result = await response.json();
 
@@ -25,12 +34,20 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
       }
 
       return result;
-
     } else {
-      alert("Error en el login del usuario ❌");
+      // alert("Error en el login del usuario ❌");
+
+      Swal.fire({
+        icon: "error",
+        title: "Error en el login",
+        text: "Credenciales inválidas ❌",
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+      });
+
       throw new Error("Error en el logeo del usuario");
     }
-
   } catch (error: any) {
     throw new Error(error);
   }
@@ -50,7 +67,16 @@ export const registerUserService = async (
     console.log(response);
 
     if (response.ok) {
-      alert("Registro exitoso ✔️");
+      // alert("Registro exitoso ✔️");
+      Swal.fire({
+        icon: "success",
+        title: "Registro exitoso",
+        text: "Tu cuenta fue creada correctamente 🎉",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
+
       const data = await response.json();
       return data;
     }
@@ -59,7 +85,6 @@ export const registerUserService = async (
     throw error;
   }
 };
-
 
 export const recipeFormValue = async (
   recipeData: RecipeFormValuesInterface
@@ -89,7 +114,6 @@ export const recipeFormValue = async (
 
     const data = await response.json();
     return data;
-
   } catch (error) {
     console.error("Registro no realizado", error);
     throw error;

@@ -8,11 +8,13 @@ import { registerUserService } from "@/services/aut.services";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { register } from "module";
-import { signIn } from "next-auth/react";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const RegisterForm = () => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const formik = useFormik<RegisterFormValuesInterface>({
     initialValues: initialValuesRegister,
     validationSchema: RegisterSchema,
@@ -134,7 +136,7 @@ const RegisterForm = () => {
                 </div>
 
                 {formik.touched.email && formik.errors.email && (
-                  <p className="text-red-400">{formik.errors.email}</p>
+                  <p className="text-red-400 text-sm">{formik.errors.email}</p>
                 )}
               </div>
 
@@ -144,23 +146,34 @@ const RegisterForm = () => {
                   <label className="text-white">Contraseña</label>
 
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D2B48C]">
+                    <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[#D2B48C] text-[15px]">
                       lock
                     </span>
 
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       name="password"
-                      placeholder="Introduce tu contraseña"
+                      placeholder="Ingresa tu contraseña"
                       value={formik.values.password}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 w-full"
+                      className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 pr-10 w-full placeholder:text-sm"
                     />
+
+                    {/* 👁 OJITO */}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D2B48C] hover:text-white cursor-pointer "
+                    >
+                      {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
                   </div>
 
                   {formik.touched.password && formik.errors.password && (
-                    <p className="text-red-400">{formik.errors.password}</p>
+                    <p className="text-red-400 text-sm">
+                      {formik.errors.password}
+                    </p>
                   )}
                 </div>
 
@@ -169,24 +182,39 @@ const RegisterForm = () => {
                   <label className="text-white">Confirmar contraseña</label>
 
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D2B48C]">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D2B48C] text-[15px]">
                       lock_reset
                     </span>
 
                     <input
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       placeholder="Confirma tu contraseña"
                       value={formik.values.confirmPassword}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 w-full"
+                      className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 pr-10 w-full placeholder:text-sm "
                     />
+
+                    {/* 👁 OJITO */}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D2B48C] hover:text-white cursor-pointer"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={15} />
+                      ) : (
+                        <Eye size={15} />
+                      )}
+                    </button>
                   </div>
 
                   {formik.touched.confirmPassword &&
                     formik.errors.confirmPassword && (
-                      <p className="text-red-400">
+                      <p className="text-red-400 text-sm">
                         {formik.errors.confirmPassword}
                       </p>
                     )}
@@ -201,27 +229,29 @@ const RegisterForm = () => {
                   value={formik.values.roleId}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-[#543C2A] text-white h-12 rounded-lg px-4">
+                  className="bg-[#543C2A] text-white h-12 rounded-lg px-4"
+                >
                   <option value="">Seleccionar</option>
                   <option value="USER">Usuario</option>
                   <option value="CREATOR">Creador</option>
                 </select>
                 {formik.touched.roleId && formik.errors.roleId && (
-                  <p className="text-red-400">{formik.errors.roleId}</p>
+                  <p className="text-red-400 ">{formik.errors.roleId}</p>
                 )}
               </div>
 
               {/* Submit */}
               <button
                 type="submit"
-                disabled={formik.isSubmitting}
-                className={`w-full h-14 rounded-lg text-white font-bold transition-all cursor-pointer
-            ${
-              formik.isSubmitting
-                ? "bg-[#F57C00]/50 cursor-not-allowed"
-                : "bg-[#F57C00] hover:scale-105"
-            }
-          `}>
+                disabled={
+                  formik.isSubmitting || !(formik.isValid && formik.dirty)
+                }
+                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${
+                  !(formik.isValid && formik.dirty && !formik.isSubmitting)
+                    ? "bg-orange-300 cursor-not-allowed"
+                    : "bg-[#F57C00] hover:scale-105 cursor-pointer"
+                }`}
+              >
                 {formik.isSubmitting ? "Registrando..." : "Registrarse"}
               </button>
             </form>

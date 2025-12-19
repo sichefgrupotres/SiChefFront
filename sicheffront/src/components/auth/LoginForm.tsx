@@ -9,12 +9,14 @@ import { loginUserService } from "@/services/aut.services";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { signIn } from "next-auth/react";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const LoginForm = () => {
   const router = useRouter();
 
   const { setDataUser } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
@@ -72,6 +74,7 @@ const LoginForm = () => {
                     placeholder="Introduce tu email"
                     value={formik.values.email}
                     onChange={formik.handleChange}
+                    required
                     className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
                   />
                 </div>
@@ -95,13 +98,22 @@ const LoginForm = () => {
                   </div>
 
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Introduce tu contraseña"
                     value={formik.values.password}
                     onChange={formik.handleChange}
                     className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
                   />
+
+                  {/* 👁 OJITO */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="pr-4 text-[#D2B48C] hover:text-white focus:outline-none cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
 
                 {formik.errors.password && (
@@ -119,17 +131,19 @@ const LoginForm = () => {
               </div>
 
               {/* SUBMIT */}
+
               <button
                 type="submit"
-                disabled={formik.isSubmitting}
-                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 cursor-pointer
-                                ${
-                                  formik.isSubmitting
-                                    ? "bg-orange-300 cursor-not-allowed"
-                                    : "bg-[#F57C00] hover:scale-105"
-                                }`}
+                disabled={
+                  formik.isSubmitting || !(formik.isValid && formik.dirty)
+                }
+                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${
+                  !(formik.isValid && formik.dirty && !formik.isSubmitting)
+                    ? "bg-orange-300 cursor-not-allowed"
+                    : "bg-[#F57C00] hover:scale-105 cursor-pointer"
+                }`}
               >
-                {formik.isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
+                {formik.isSubmitting ? "Iniciando Sesion..." : "Entrar"}
               </button>
             </form>
 
@@ -144,7 +158,7 @@ const LoginForm = () => {
 
             <button
               type="button"
-              className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
+              className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2] cursor-pointer"
               onClick={() => router.push("/register")}
             >
               Registrate
