@@ -1,15 +1,22 @@
 "use client";
 import { useFormik } from "formik";
-import { initialValuesLogin, LoginFormValuesInterface, LoginSchema, } from "@/validators/LoginSchema";
+import {
+  initialValuesLogin,
+  LoginFormValuesInterface,
+  LoginSchema,
+} from "@/validators/LoginSchema";
 import { loginUserService } from "@/services/aut.services";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const LoginForm = () => {
   const router = useRouter();
 
   const { setDataUser } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
@@ -18,24 +25,20 @@ const LoginForm = () => {
       try {
         const response = await loginUserService(values);
 
-        setDataUser(response)
+        setDataUser(response);
 
         console.log("Sesion iniciada con exito", response);
-
 
         if (response?.token) {
           router.push("/creator");
         }
 
         resetForm();
-
-
       } catch (error) {
         console.error(error);
       }
     },
   });
-
 
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
@@ -71,6 +74,7 @@ const LoginForm = () => {
                     placeholder="Introduce tu email"
                     value={formik.values.email}
                     onChange={formik.handleChange}
+                    required
                     className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
                   />
                 </div>
@@ -94,13 +98,22 @@ const LoginForm = () => {
                   </div>
 
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Introduce tu contraseña"
                     value={formik.values.password}
                     onChange={formik.handleChange}
                     className="w-full h-14 bg-transparent text-white placeholder:text-gray-300 px-4 focus:outline-none"
                   />
+
+                  {/* 👁 OJITO */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="pr-4 text-[#D2B48C] hover:text-white focus:outline-none cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
 
                 {formik.errors.password && (
@@ -118,16 +131,19 @@ const LoginForm = () => {
               </div>
 
               {/* SUBMIT */}
+
               <button
                 type="submit"
-                disabled={formik.isSubmitting}
-                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 cursor-pointer
-                                ${formik.isSubmitting
+                disabled={
+                  formik.isSubmitting || !(formik.isValid && formik.dirty)
+                }
+                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${
+                  !(formik.isValid && formik.dirty && !formik.isSubmitting)
                     ? "bg-orange-300 cursor-not-allowed"
-                    : "bg-[#F57C00] hover:scale-105"
-                  }`}
+                    : "bg-[#F57C00] hover:scale-105 cursor-pointer"
+                }`}
               >
-                {formik.isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
+                {formik.isSubmitting ? "Iniciando Sesion..." : "Entrar"}
               </button>
             </form>
 
@@ -142,8 +158,9 @@ const LoginForm = () => {
 
             <button
               type="button"
-              className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2]"
-              onClick={() => router.push("/register")}>
+              className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 hover:bg-[#FFE0B2] cursor-pointer"
+              onClick={() => router.push("/register")}
+            >
               Registrate
             </button>
 
@@ -163,7 +180,7 @@ const LoginForm = () => {
                 className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-6 h-6 cursor-pointer"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -187,7 +204,6 @@ const LoginForm = () => {
           </div>
         </div>
 
-
         <div className="hidden md:block md:w-1/2 h-screen relative">
           <Image
             src="/chefformLogin.jpg"
@@ -197,7 +213,6 @@ const LoginForm = () => {
             className="object-contain"
           />
         </div>
-
       </div>
     </div>
   );
