@@ -178,7 +178,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
-                onClick={() => signIn("google")}
+                onClick={() => signIn("google", { callbackUrl: "/creator" })}
               >
                 <svg
                   className="w-6 h-6"
