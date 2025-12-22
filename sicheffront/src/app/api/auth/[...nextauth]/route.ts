@@ -1,22 +1,17 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import CredentialsProviders from "next-auth/providers/credentials";
 
-export const handler = NextAuth({
+const auth = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_0AUTH_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_0AUTH_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET as string,
     }),
-    CredentialsProviders({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
-    })
   ],
-  
-})
+  session: {
+    strategy: "jwt",
+  },
+});
 
-export {handler as GET, handler as POST};
+export const GET = auth.handlers.GET;
+export const POST = auth.handlers.POST;

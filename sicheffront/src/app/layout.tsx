@@ -1,5 +1,6 @@
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
+import { Provider } from "./providers";
 
 export const metadata = {
   title: "Si Chef!",
@@ -20,7 +21,9 @@ export default function RootLayout({
       </head>
       <body className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
         <AuthProvider>
+        <Provider>
           {children}
+        </Provider>
         </AuthProvider>
       </body>
     </html>
