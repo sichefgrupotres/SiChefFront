@@ -29,11 +29,18 @@ export default function GuestHomePage() {
       <main className="max-w-7xl mx-auto">
         {/* ================= HERO TOP ================= */}
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
-          {/* Logo */}
-          <div className="text-center">
-            <span className="material-symbols-outlined text-[#F57C00] text-5xl!">
-              Si Chef! skillet
-            </span>
+          <div className="flex items-center gap-4">
+            <Image
+              src="/logosichef.png"
+              alt="Logo Si Chef"
+              width={150}
+              height={150}
+              className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
+            />
+
+            <h1 className="text-[#F57C00] text-4xl md:text-6xl font-bold">
+              Si Chef!
+            </h1>
           </div>
 
           {/* Buscador */}
@@ -49,7 +56,7 @@ export default function GuestHomePage() {
               />
             </div>
 
-            <button className="bg-orange-500 text-white px-8 rounded-r-xl text-sm font-semibold cursor-pointer">
+            <button className="bg-orange-500 text-white px-8 rounded-r-xl text-sm font-semibold">
               Buscar
             </button>
           </div>
