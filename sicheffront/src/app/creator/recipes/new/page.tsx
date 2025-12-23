@@ -1,6 +1,6 @@
 "use client";
 
-import { recipeFormValue } from "@/services/aut.services";
+import { createPost } from "@/services/aut.services";
 
 import {
   RecipeFormValuesInterface,
@@ -14,18 +14,23 @@ export default function NewRecipePage() {
   const formik = useFormik<RecipeFormValuesInterface>({
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
-    onSubmit: async (values, { resetForm }) => {
-      const payload = {
-        title: values.title,
-        description: values.description,
-        ingredients: values.ingredients,
-        difficulty: values.difficulty,
-        isPremium: values.isPremium,
-      };
+   onSubmit: async (values, { resetForm }) => {
+  if (!values.file) {
+    alert("Debes subir una imagen");
+    return;
+  }
 
-      await recipeFormValue(payload);
-      resetForm();
-    },
+  await createPost({
+    title: values.title,
+    description: values.description,
+    ingredients: values.ingredients,
+    difficulty: values.difficulty,
+    file: values.file,
+  });
+
+  resetForm();
+  setImagePreview(null);
+},
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -35,7 +40,7 @@ export default function NewRecipePage() {
 
     if (!file) return;
 
-    formik.setFieldValue("imageUrl", file);
+    formik.setFieldValue("file", file);
 
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
@@ -99,9 +104,6 @@ export default function NewRecipePage() {
             </label>
           </div>
 
-          {/* {formik.touched.image && formik.errors.image && (
-            <p className="text-red-400 text-sm mt-1">{formik.errors.image}</p>
-          )} */}
         </div>
 
         {/* Ingredientes */}

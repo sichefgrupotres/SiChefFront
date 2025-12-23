@@ -7,6 +7,7 @@ export interface RecipeFormValuesInterface {
   ingredients: string;
   isPremium: boolean;
   difficulty: string;
+  file: File | null;
 }
 
 export const initialValuesRecipe: RecipeFormValuesInterface = {
@@ -15,6 +16,7 @@ export const initialValuesRecipe: RecipeFormValuesInterface = {
   ingredients: "",
   isPremium: false,
   difficulty: "facil",
+  file: null,
 };
 
 export const RecipeSchema = Yup.object({
