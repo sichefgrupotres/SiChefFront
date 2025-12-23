@@ -11,13 +11,15 @@ import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 const LoginForm = () => {
   const router = useRouter();
 
   const { setDataUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const { data: session } = useSession();
+  console.log(session);
 
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
@@ -176,7 +178,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
-                onClick={() => signIn("google")}
+                onClick={() => signIn("google", { callbackUrl: "/creator" })}
               >
                 <svg
                   className="w-6 h-6"

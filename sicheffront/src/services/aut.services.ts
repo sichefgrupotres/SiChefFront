@@ -91,7 +91,7 @@ export const recipeFormValue = async (
 ) => {
   try {
     // obtener token guardado en login
-    const token = localStorage.getItem("token");
+   const token = localStorage.getItem("token");
 
     if (!token) {
       throw new Error("No hay token de autenticación");
