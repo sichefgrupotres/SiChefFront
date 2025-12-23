@@ -4,5 +4,4 @@ export interface RecipeInterface {
   imageUrl: string
   difficulty: "facil" | "medio" | "dificil";
   isPremium: boolean;
-
 }
