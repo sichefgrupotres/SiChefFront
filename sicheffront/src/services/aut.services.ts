@@ -1,5 +1,4 @@
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
-import { RecipeFormValuesInterface } from "@/validators/RecipeSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
 import Swal from "sweetalert2";
 
@@ -86,36 +85,40 @@ export const registerUserService = async (
   }
 };
 
-export const recipeFormValue = async (
-  recipeData: RecipeFormValuesInterface
-) => {
-  try {
-    // obtener token guardado en login
-   const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("No hay token de autenticación");
-    }
-
-    const response = await fetch("http://localhost:3001/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // 👈 CLAVE
-      },
-      body: JSON.stringify(recipeData),
-    });
-
-    if (!response.ok) {
-      // opcional: leer mensaje del backend
-      const errorText = await response.text();
-      throw new Error(errorText || "Error al crear la receta");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Registro no realizado", error);
-    throw error;
+export const createPost = async (data: {
+  title: string;
+  description: string;
+  ingredients: string;
+  difficulty: string;
+  file: File;
+}) => {
+  const token = localStorage.getItem("token");
+  
+  if (!token) {
+    throw new Error("No hay token de autenticación");
   }
+
+  const formData = new FormData();
+
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  formData.append("ingredients", data.ingredients);
+  formData.append("difficulty", data.difficulty);
+  formData.append("file", data.file); 
+
+  const response = await fetch("http://localhost:3001/posts", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`, 
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error);
+  }
+
+  return response.json();
 };
+
