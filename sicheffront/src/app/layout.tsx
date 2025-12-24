@@ -1,6 +1,7 @@
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { Provider } from "./providers";
+import { RecipeProvider } from "@/context/RecipeContext";
 
 export const metadata = {
   title: "Si Chef!",
@@ -21,9 +22,11 @@ export default function RootLayout({
       </head>
       <body className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
         <AuthProvider>
+        <RecipeProvider>
         <Provider>
           {children}
         </Provider>
+        </RecipeProvider>
         </AuthProvider>
       </body>
     </html>
