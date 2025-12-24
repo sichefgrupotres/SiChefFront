@@ -4,5 +4,4 @@ export interface RecipeInterface {
   file: string;
   difficulty: "facil" | "medio" | "dificil";
   isPremium: boolean;
-
 }

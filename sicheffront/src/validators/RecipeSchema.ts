@@ -1,3 +1,4 @@
+import { Difficulty } from "@/interfaces/IRecipe";
 import * as Yup from "yup";
 
 // Definimos la interfaz de los valores del formulario, en este caso es de nueva receta
@@ -6,7 +7,7 @@ export interface RecipeFormValuesInterface {
   description: string;
   ingredients: string;
   isPremium: boolean;
-  difficulty: string;
+  difficulty: Difficulty;
   file: File | null;
 }
 
@@ -14,8 +15,8 @@ export const initialValuesRecipe: RecipeFormValuesInterface = {
   title: "",
   description: "",
   ingredients: "",
-  isPremium: false,
   difficulty: "facil",
+  isPremium: false,
   file: null,
 };
 
