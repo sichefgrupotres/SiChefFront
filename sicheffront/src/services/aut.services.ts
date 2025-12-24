@@ -119,6 +119,6 @@ export const createPost = async (data: {
     throw new Error(error);
   }
 
-  return response.json();
+  return response.text();
 };
 
