@@ -1,3 +1,4 @@
+import { CreateRecipePayload } from "@/interfaces/IRecipe";
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
 import Swal from "sweetalert2";
@@ -85,40 +86,36 @@ export const registerUserService = async (
   }
 };
 
-export const createPost = async (data: {
-  title: string;
-  description: string;
-  ingredients: string;
-  difficulty: string;
-  file: File;
-}) => {
+export const createPost = async (
+  data: CreateRecipePayload
+): Promise<boolean> => {
   const token = localStorage.getItem("token");
-  
+
   if (!token) {
-    throw new Error("No hay token de autenticación");
+    return false;
   }
 
-  const formData = new FormData();
+  try {
+    const formData = new FormData();
 
-  formData.append("title", data.title);
-  formData.append("description", data.description);
-  formData.append("ingredients", data.ingredients);
-  formData.append("difficulty", data.difficulty);
-  formData.append("file", data.file); 
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("ingredients", data.ingredients);
+    formData.append("difficulty", data.difficulty);
+    formData.append("isPremium", String(data.isPremium)); // ✅
+    formData.append("file", data.file);
 
-  const response = await fetch("http://localhost:3001/posts", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`, 
-    },
-    body: formData,
-  });
+    const response = await fetch("http://localhost:3001/posts", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error);
+    return response.ok;
+  } catch {
+    return false;
   }
-
-  return response.json();
 };
 
