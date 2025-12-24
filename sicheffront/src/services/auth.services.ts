@@ -1,6 +1,7 @@
 import { CreateRecipePayload } from "@/interfaces/IRecipe";
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
+import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
 
 export const loginUserService = async (Data: LoginFormValuesInterface) => {
@@ -89,33 +90,44 @@ export const registerUserService = async (
 export const createPost = async (
   data: CreateRecipePayload
 ): Promise<boolean> => {
-  const token = localStorage.getItem("token");
+  // Intenta leer distintos nombres de token que pueda usar el backend
+  const token =
+    localStorage.getItem("token");
 
   if (!token) {
-    return false;
+    console.error("No hay token válido en localStorage");
+    return false; // evita enviar request si no hay token
   }
 
   try {
     const formData = new FormData();
-
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("ingredients", data.ingredients);
     formData.append("difficulty", data.difficulty);
-    formData.append("isPremium", String(data.isPremium)); // ✅
+    formData.append("isPremium", String(data.isPremium));
     formData.append("file", data.file);
 
     const response = await fetch("http://localhost:3001/posts", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, // token seguro
       },
       body: formData,
     });
 
+    if (response.status === 401) {
+      console.error("Token inválido o expirado");
+      return false;
+    }
+
     return response.ok;
-  } catch {
+  } catch (error) {
+    console.error("Error al crear el post:", error);
     return false;
   }
 };
+
+ 
+
 

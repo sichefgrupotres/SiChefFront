@@ -5,7 +5,7 @@ import {
   LoginFormValuesInterface,
   LoginSchema,
 } from "@/validators/LoginSchema";
-import { loginUserService } from "@/services/aut.services";
+import { loginUserService } from "@/services/auth.services";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
@@ -18,8 +18,6 @@ const LoginForm = () => {
 
   const { setDataUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const { data: session } = useSession();
-  console.log(session);
 
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
@@ -43,6 +41,39 @@ const LoginForm = () => {
     },
   });
 
+  const { data: session } = useSession();
+  console.log(session);
+  const handleGoogleLogin = async () => {
+    // 1️⃣ Abrir ventana de login de Google
+    const result = await signIn("google", { redirect: false }); // redirect false para controlar flujo
+    const token = localStorage.getItem("token");
+    if (result?.ok) {
+      // 2️⃣ Enviar info del usuario a tu backend para recibir JWT
+      const response = await fetch(
+        "http://localhost:3001/auth/register-google",
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            email: session?.user?.email,
+            name: session?.user?.name,
+            googleId: session?.user?.id,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        console.log("Token guardado:", data.token);
+      } else {
+        alert("Error al obtener token de backend");
+      }
+    } else {
+      alert("Error al iniciar sesión con Google");
+    }
+  };
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
@@ -178,7 +209,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
-                onClick={() => signIn("google", { callbackUrl: "/creator" })}
+                onClick={handleGoogleLogin}
               >
                 <svg
                   className="w-6 h-6"

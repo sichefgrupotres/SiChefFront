@@ -4,7 +4,7 @@ import {
   RegisterFormValuesInterface,
   RegisterSchema,
 } from "@/validators/RegisterSchema";
-import { registerUserService } from "@/services/aut.services";
+import { registerUserService } from "@/services/auth.services";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
