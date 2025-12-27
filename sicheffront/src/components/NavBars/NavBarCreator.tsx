@@ -2,6 +2,7 @@
 import { creatorNavItems } from "@/utils/creatorNavItems";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface Props {
     collapsed: boolean;
@@ -13,12 +14,13 @@ export default function NavBarCreator({
     setCollapsed,
 }: Props) {
     const pathname = usePathname();
+    const { logout } = useAuth();
 
     return (
         <nav
             className={`
                 fixed left-0 top-0 h-screen
-                bg-[#3D2B1F] border-r border-white/10
+                bg-[#2a221b] border-r border-white/10
                 transition-all duration-300
                 ${collapsed ? "w-20" : "w-64"}
             `}
@@ -71,6 +73,27 @@ export default function NavBarCreator({
                         </li>
                     );
                 })}
+                <li>
+                    <button
+                        onClick={logout}
+                        className="
+                            w-full flex items-center gap-3 px-3 py-3 rounded-lg
+                            opacity-70 hover:bg-white/5 hover:opacity-100
+                            transition cursor-pointer hover:text-red-400
+                            "
+                    >
+                        <span className="material-symbols-outlined text-lg">
+                            logout
+                        </span>
+
+                        {!collapsed && (
+                            <span className="font-medium">
+                                Logout
+                            </span>
+                        )}
+                    </button>
+                </li>
+
             </ul>
         </nav>
     );

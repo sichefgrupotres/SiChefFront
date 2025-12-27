@@ -1,6 +1,7 @@
 'use client';
 import { userSessionInterface } from "@/interfaces/IUser";
 import { createContext, useState, useEffect, useContext, ReactNode, } from "react";
+import { string } from "yup";
 
 
 interface AuthContextProps {
@@ -9,6 +10,7 @@ interface AuthContextProps {
     logout: () => void;
     loading: boolean;
     isLoadingUser: boolean;
+
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -16,7 +18,8 @@ const AuthContext = createContext<AuthContextProps>({
     setDataUser: () => { },
     logout: () => { },
     loading: true,
-    isLoadingUser: true
+    isLoadingUser: true,
+
 
 });
 
@@ -57,8 +60,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             localStorage.removeItem('userSession');
         }
     }
+
+
+
     return (
-        <AuthContext.Provider value={{ dataUser, setDataUser, logout, loading, isLoadingUser }}>
+        <AuthContext.Provider value={{ dataUser, setDataUser, logout, loading, isLoadingUser, }}>
             {children}
         </AuthContext.Provider>
     )

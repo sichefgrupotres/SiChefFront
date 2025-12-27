@@ -11,18 +11,18 @@ export default function GuestLayout({
     const [collapsed, setCollapsed] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#3D2B1F] text-white">
+        <div className="min-h-screen bg-[#181411] text-white">
 
-            <NavBarGuest
+            {/* <NavBarGuest
                 collapsed={collapsed}
                 setCollapsed={setCollapsed}
-            />
+            /> */}
 
             <main
-                className={`
-                    p-4 pb-28 transition-all duration-300
-                    ${collapsed ? "ml-20" : "ml-64"}
-                `}
+            //     className={`
+            //         p-4 pb-28 transition-all duration-300
+            //         ${collapsed ? "ml-20" : "ml-64"}
+            //     `}
             >
                 {children}
             </main>
