@@ -9,7 +9,7 @@ interface RecipeCardProps {
 
 const RecipeCard = ({ recipe }: RecipeCardProps) => {
   return (
-    <div className="flex flex-col w-72 h-96 bg-[#543C2A] rounded-xl shadow hover:shadow-xl transition p-4 gap-3">
+    <div className="flex flex-col w-72 h-96 bg-[#2a221b] rounded-xl shadow hover:shadow-xl transition p-4 gap-3">
       {/* Imagen */}
       <img
         // src={recipe.image}
@@ -35,7 +35,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
 
       {/* Acción */}
       <Link href={`/recipes/${recipe.id}`}>
-        <button className="w-full mt-2 bg-[#F57C00] text-white py-2 rounded-lg hover:bg-orange-500 transition cursor-pointer">
+        <button className="w-full mt-2 bg-orange-500/20 text-[#F57C00] py-2 rounded-lg hover:bg-[#F57C00] hover:text-white transition-all active:scale-95  cursor-pointer font-semibold">
           Ver receta
         </button>
       </Link>
