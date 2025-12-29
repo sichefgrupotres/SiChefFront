@@ -1,7 +1,6 @@
 'use client';
 import { userSessionInterface } from "@/interfaces/IUser";
 import { createContext, useState, useEffect, useContext, ReactNode, } from "react";
-import { string } from "yup";
 
 
 interface AuthContextProps {
