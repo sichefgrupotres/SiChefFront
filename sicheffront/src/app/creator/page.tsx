@@ -47,7 +47,7 @@ export default function CreatorPage() {
       {/* HEADER ACTIONS */}
       <section className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mt-4">
         <Link
-          href={PATHROUTES.NEWREPICE}
+          href={PATHROUTES.NEWRECIPE}
           className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
                    flex items-center justify-center gap-2
                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 

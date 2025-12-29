@@ -16,7 +16,7 @@ export default function GuestHomePage() {
             </button>
           </Link>
 
-          <Link href={PATHROUTES.NEWREPICE}>
+          <Link href={PATHROUTES.NEWRECIPE}>
             <button className="px-5 py-2 rounded-full bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5 cursor-pointer">
               <span className="text-xl leading-none mb-0.5">+</span>
               Crear una receta

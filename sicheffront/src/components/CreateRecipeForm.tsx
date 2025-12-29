@@ -8,14 +8,18 @@ import {
   RecipeSchema,
 } from "@/validators/RecipeSchema";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
 export default function NewRecipePage() {
+  const router = useRouter();
   const formik = useFormik<RecipeFormValuesInterface>({
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
     onSubmit: async (values, { resetForm }) => {
+       if (loading) return;
+      setLoading(true);
   if (!values.file) {
     Swal.fire({
       icon: "warning",
@@ -35,14 +39,16 @@ export default function NewRecipePage() {
   });
 
   if (success) {
-    Swal.fire({
-      icon: "success",
-      title: "Receta publicada",
-      text: "Tu receta se creó correctamente",
-    });
-
+  Swal.fire({
+    icon: "success",
+    title: "Receta publicada",
+    text: "Tu receta se creó correctamente",
+    confirmButtonText: "Aceptar",
+  }).then(() => {
     resetForm();
     setImagePreview(null);
+    router.push("/creator/recipes");
+  });
   } else {
     Swal.fire({
       icon: "error",
@@ -54,6 +60,7 @@ export default function NewRecipePage() {
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
@@ -200,14 +207,18 @@ export default function NewRecipePage() {
         {/* Submit */}
         <button
           type="submit"
-          className="mt-4 h-12 rounded-lg bg-[#F57C00] font-bold hover:bg-orange-500 transition cursor-pointer"
+          disabled={loading}
+          className={`mt-4 h-12 rounded-lg font-bold transition
+            ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+            }
+          `}
         >
-          Publicar receta
+          {loading ? "Publicando..." : "Publicar receta"}
         </button>
       </form>
     </div>
   );
 }
-
-
-

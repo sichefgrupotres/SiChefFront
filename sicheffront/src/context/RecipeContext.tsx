@@ -42,7 +42,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const fetchRecipes = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3001/recipes");
+      const res = await fetch("http://localhost:3001/posts",);
       const data = await res.json();
       setRecipes(data);
     } catch {
@@ -67,6 +67,8 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
 
+
+
       const res = await fetch("http://localhost:3001/posts", {
         method: "POST",
         headers: {
@@ -87,7 +89,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
 
   const updateRecipe = async (id: string, data: Partial<RecipeInterface>) => {
     try {
-      const res = await fetch(`http://localhost:3001/recipes/${id}`, {
+      const res = await fetch(`http://localhost:3001/posts/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +109,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
 
   const deleteRecipe = async (id: string) => {
     try {
-      await fetch(`http://localhost:3001/recipes/${id}`, {
+      await fetch(`http://localhost:3001/posts/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
