@@ -2,7 +2,7 @@ export enum PATHROUTES {
   HOME = "/",
   LOGIN = "/login",
   REGISTER = "/register",
-  NEWREPICE = "/creator/recipes/new",
+  NEWRECIPE = "/creator/recipes/new",
   CREATOR_DASHBOARD = "/creator",
   CREATOR_RECIPES = "/creator/recipes",
   CREATOR_CHAT = "/creator/chat",
