@@ -1,6 +1,6 @@
 "use client";
 
-import { createPost } from "@/services/aut.services";
+import { createPost } from "@/services/auth.services";
 
 import {
   RecipeFormValuesInterface,

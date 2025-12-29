@@ -1,7 +1,7 @@
 export interface RecipeInterface {
   id: string;
   title: string;
-  image: string
+  file: string;
   difficulty: "facil" | "medio" | "dificil";
   isPremium: boolean;
 }

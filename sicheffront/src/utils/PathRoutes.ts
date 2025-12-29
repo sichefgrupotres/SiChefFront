@@ -1,5 +1,5 @@
 export enum PATHROUTES {
-  HOME = "/",
+  HOME = "/guest",
   LOGIN = "/login",
   REGISTER = "/register",
   NEWRECIPE = "/creator/recipes/new",

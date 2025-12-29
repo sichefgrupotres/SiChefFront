@@ -31,11 +31,11 @@ export default function GuestHomePage() {
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-4">
             <Image
-              src="/logosichef.png"
+              src="/Logo.png"
               alt="Logo Si Chef"
               width={150}
               height={150}
-              className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
+              className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover"
             />
 
             <h1 className="text-[#F57C00] text-4xl md:text-6xl font-bold">
