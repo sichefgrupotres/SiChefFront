@@ -1,36 +1,41 @@
-import RecipeCard from "@/components/CardRepice";
-import { RecipeInterface } from "@/interfaces/IRepice";
+"use client";
 
-const recipes: RecipeInterface[] = [
-  {
-    id: "1",
-    title: "Lasaña clásica",
-    file: "/lasagna.jpg",
-    difficulty: "medio",
-    isPremium: true,
-  },
-  {
-    id: "2",
-    title: "Pizza napolitana",
-    file: "/pizza.jpg",
-    difficulty: "facil",
-    isPremium: true,
-  },
-  {
-    id: "3",
-    title: "Ravioli",
-    file: "/ravioli.jpg",
-    difficulty: "facil",
-    isPremium: true,
-  },
-];
+import { useEffect } from "react";
+import RecipeCard from "@/components/CardRecipe";
+import { useRecipe } from "@/context/RecipeContext";
 
 export default function RecipesList() {
+  const { recipes, fetchRecipes, loading, error } = useRecipe();
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Cargando recetas...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-400">
+        {error}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-[#181411] min-h-screen">
-      {recipes.map((recipe) => (
-        <RecipeCard key={recipe.id} recipe={recipe} />
-      ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 bg-[#3D2B1F] min-h-screen">
+      {recipes.length === 0 ? (
+        <p className="text-white col-span-full text-center">
+          Aun no haz creado recetas.
+        </p>
+      ) : (
+        recipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
+      )}
     </div>
   );
 }

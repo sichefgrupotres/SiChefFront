@@ -3,7 +3,7 @@ export type Difficulty = "facil" | "medio" | "dificil";
 export interface RecipeInterface {
   id: string;
   title: string;
-  image: string;
+  imageUrl: string;
   ingredients: string;
   description: string;
   difficulty: Difficulty;
