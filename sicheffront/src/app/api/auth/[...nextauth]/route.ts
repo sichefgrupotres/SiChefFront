@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { cookies } from "next/headers";
 
 export const authOptions = NextAuth({
   providers: [
@@ -8,28 +9,36 @@ export const authOptions = NextAuth({
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET as string,
     }),
   ],
-   callbacks: {
-    async jwt({ token, user, account }: any) {
+  callbacks: {
+    async jwt({ token, user, account, profile }: any) {
       // Cuando el usuario inicia sesión con Google
       if (account && user) {
+        const cookieStore = await cookies();
+        const roleId = cookieStore.get("selected_role")?.value || "USER";
+
+        // El ID real de Google está aquí:
+        const googleId = profile?.sub || account.providerAccountId;
         try {
           // LLAMADA A TU BACKEND NESTJS
-          const response = await fetch(`${process.env.NEXTAUTH_URL}/auth/register-google`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              googleId: user.id,
-              email: user.email,
-              name: user.name.split(' ')[0], // Ajusta según tu DTO
-              lastname: user.name.split(' ').slice(1).join(' '),
-              roleId: token.roleId
-            }),
-          });
+          const response = await fetch(
+            `${process.env.NEXTAUTH_URL}/auth/register-google`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                googleId: String(googleId), // <--- ID Real de Google
+                email: user.email,
+                name: user.name?.split(" ")[0] || "Usuario",
+                lastname: user.name?.split(" ").slice(1).join(" ") || "",
+                roleId: roleId,
+              }),
+            }
+          );
 
           const userData = await response.json();
-          
+
           // Inyectamos el ROL que viene de tu DB de NestJS en el token de NextAuth
-          token.roleId = userData.user.roleId; 
+          token.roleId = userData.user.roleId;
           token.backendToken = userData.token; // Si tu back devuelve un JWT
         } catch (error) {
           console.error("Error vinculando con el backend:", error);
@@ -37,13 +46,12 @@ export const authOptions = NextAuth({
       }
       return token;
     },
-     async session({ session, token }) {
-      
-    if (session.user) {
-      (session.user as any).id = token.sub; // Mapea el ID de Google a la sesión
-    }
-    return session;
-  },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).id = token.sub; // Mapea el ID de Google a la sesión
+      }
+      return session;
+    },
   },
   session: { strategy: "jwt" },
 });

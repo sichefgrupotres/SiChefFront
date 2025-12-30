@@ -1,65 +1,48 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import Image from "next/image";
 
-interface GoogleAuthButtonProps {
-  roleIntent: "USER" | "CREATOR"; // El rol que queremos asignar
-}
-
-export const GoogleAuthButton = ({ roleIntent }: GoogleAuthButtonProps) => {
+export const GoogleAuthButton = ({ roleIntent }: { roleIntent: "USER" | "CREATOR" }) => {
   const router = useRouter();
   const { setDataUser } = useAuth();
 
   const handleAuth = async () => {
-    // 1. Guardar la intención en una Cookie (dura 10 min)
-    document.cookie = `intended_role=${roleIntent}; path=/; max-age=600; SameSite=Lax`;
-
-    // 2. Iniciar Google
+    // 1. Iniciar Google
     const result = await signIn("google", { redirect: false });
 
     if (result?.ok) {
-      const { getSession } = await import("next-auth/react");
-      const currentSession = await getSession();
-
-      if (currentSession?.user) {
+      const session = await getSession();
+      if (session?.user) {
         try {
-          // 3. Registro en Backend (Sin enviar 'role' para evitar el error 400)
+          // 2. Llamada a tu backend (NestJS findOrCreate)
           const response = await fetch("http://localhost:3001/auth/register-google", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              email: currentSession.user.email,
-              name: currentSession.user.name,
-              googleId: (currentSession.user as any).id || (currentSession as any).sub,
+              email: session.user.email,
+              name: session.user.name?.split(" ")[0] || "USER",
+              lastname: session.user.name?.split(" ").slice(1).join(" ") || "",
+              googleId: (session.user as any).id || (session as any).sub,
+              roleId: roleIntent,
             }),
           });
 
           const data = await response.json();
 
-          if (response.ok) {
-            // 4. Recuperar el rol de la cookie
-            const savedRole = document.cookie
-              .split("; ")
-              .find((row) => row.startsWith("intended_role="))
-              ?.split("=")[1] || "USER";
+          if (response.ok && data.token) {
+            // 3. GUARDAR TOKEN EN LOCALSTORAGE (Crucial para tus servicios)
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user || data));
+            
+            setDataUser(data.user || data);
 
-            // 5. Sincronizar Contexto con el rol de la cookie
-            const sessionData = {
-              ...data, 
-              role: savedRole, // Aplicamos el rol que guardamos antes de ir a Google
-            };
-
-            setDataUser(sessionData);
-            localStorage.setItem("userSession", JSON.stringify(sessionData));
-
-            // 6. Limpiar cookie y redirigir
-            document.cookie = "intended_role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
-            router.push(savedRole === "CREATOR" ? "/creator" : "/home");
+            // 4. Redirigir según el rol que devuelva el BACKEND
+            const finalRole = data.user?.roleId || data.roleId;
+            router.push(finalRole === "CREATOR" ? "/creator" : "/guest");
           }
         } catch (error) {
-          console.error("Error en el flujo de autenticación", error);
+          console.error("Error en autenticación Google:", error);
         }
       }
     }
