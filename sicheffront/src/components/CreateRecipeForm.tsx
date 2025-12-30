@@ -18,45 +18,45 @@ export default function NewRecipePage() {
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
     onSubmit: async (values, { resetForm }) => {
-       if (loading) return;
+      if (loading) return;
       setLoading(true);
-  if (!values.file) {
-    Swal.fire({
-      icon: "warning",
-      title: "Imagen requerida",
-      text: "Debes subir una imagen",
-    });
-    return;
-  }
+      if (!values.file) {
+        Swal.fire({
+          icon: "warning",
+          title: "Imagen requerida",
+          text: "Debes subir una imagen",
+        });
+        return;
+      }
 
-  const success = await createPost({
-    title: values.title,
-    description: values.description,
-    ingredients: values.ingredients,
-    difficulty: values.difficulty,
-    isPremium: values.isPremium,
-    file: values.file,
-  });
+      const success = await createPost({
+        title: values.title,
+        description: values.description,
+        ingredients: values.ingredients,
+        difficulty: values.difficulty,
+        isPremium: values.isPremium,
+        file: values.file,
+      });
 
-  if (success) {
-  Swal.fire({
-    icon: "success",
-    title: "Receta publicada",
-    text: "Tu receta se creó correctamente",
-    confirmButtonText: "Aceptar",
-  }).then(() => {
-    resetForm();
-    setImagePreview(null);
-    router.push("/creator/recipes");
-  });
-  } else {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "No se pudo crear la receta",
-    });
-  }
-},
+      if (success) {
+        Swal.fire({
+          icon: "success",
+          title: "Receta publicada",
+          text: "Tu receta se creó correctamente",
+          confirmButtonText: "Aceptar",
+        }).then(() => {
+          resetForm();
+          setImagePreview(null);
+          router.push("/creator/recipes");
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo crear la receta",
+        });
+      }
+    },
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -90,7 +90,7 @@ export default function NewRecipePage() {
             value={formik.values.title}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full mt-1 rounded-lg bg-[#543C2A] border border-white/10 px-5 py-3 outline-none focus:border-primary"
+            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3 outline-none focus:border-primary"
           />
           {formik.touched.title && formik.errors.title && (
             <p className="text-red-400 text-sm">{formik.errors.title}</p>
@@ -102,7 +102,7 @@ export default function NewRecipePage() {
           <label className="text-sm font-semibold">Foto Principal</label>
 
           <div className="mt-2 flex items-center gap-4">
-            <div className="w-72 h-64 rounded-lg bg-[#543C2A] border border-white/10 flex items-center justify-center overflow-hidden">
+            <div className="w-72 h-64 rounded-lg bg-[#2a221b] border border-white/10 flex items-center justify-center overflow-hidden">
               {imagePreview ? (
                 <img
                   src={imagePreview}
@@ -140,7 +140,7 @@ export default function NewRecipePage() {
             value={formik.values.ingredients}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full mt-1 rounded-lg bg-[#543C2A] border border-white/10 px-5 py-3 outline-none focus:border-primary resize-none"
+            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3 outline-none focus:border-primary resize-none"
           />
           {formik.touched.ingredients && formik.errors.ingredients && (
             <p className="text-red-400 text-sm">{formik.errors.ingredients}</p>
@@ -159,7 +159,7 @@ export default function NewRecipePage() {
             value={formik.values.description}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full mt-1 rounded-lg bg-[#543C2A] border border-white/10 px-5 py-3 outline-none focus:border-primary resize-none"
+            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3 outline-none focus:border-primary resize-none"
           />
           {formik.touched.description && formik.errors.description && (
             <p className="text-red-400 text-sm">{formik.errors.description}</p>
@@ -173,7 +173,7 @@ export default function NewRecipePage() {
             name="difficulty"
             value={formik.values.difficulty}
             onChange={formik.handleChange}
-            className="w-full mt-1 rounded-lg bg-[#543C2A] border border-white/10 px-5 py-3"
+            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3"
           >
             <option value="facil">Fácil</option>
             <option value="medio">Medio</option>
@@ -182,7 +182,7 @@ export default function NewRecipePage() {
         </div>
 
         {/* PREMIUM */}
-        <div className="flex items-center justify-between rounded-xl bg-[#543C2A] border border-white/10 px-5 py-4">
+        <div className="flex items-center justify-between rounded-xl bg-[#2a221b] border border-white/10 px-5 py-4">
           <div>
             <p className="text-white font-semibold">Marcar como Premium</p>
             <p className="text-sm text-white/60">
@@ -209,10 +209,9 @@ export default function NewRecipePage() {
           type="submit"
           disabled={loading}
           className={`mt-4 h-12 rounded-lg font-bold transition
-            ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+            ${loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
             }
           `}
         >
