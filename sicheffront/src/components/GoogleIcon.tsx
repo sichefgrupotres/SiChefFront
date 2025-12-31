@@ -7,4 +7,4 @@ const GoogleIcon = () => (
   </svg>
 );
 
-export default GoogleRegisterButtons;
+export default GoogleIcon;

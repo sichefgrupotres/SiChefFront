@@ -21,13 +21,13 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
+        <Provider>
         <AuthProvider>
         <RecipeProvider>
-        <Provider>
           {children}
-        </Provider>
         </RecipeProvider>
         </AuthProvider>
+        </Provider>
       </body>
     </html>
   );

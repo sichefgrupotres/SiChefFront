@@ -34,7 +34,7 @@ export default function RecipesList() {
           Aun no haz creado recetas.
         </p>
       ) : (
-        recipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
+        recipes?.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
       )}
     </div>
   );

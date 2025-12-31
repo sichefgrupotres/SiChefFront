@@ -1,5 +1,6 @@
 "use client";
 import { userSessionInterface } from "@/interfaces/IUser";
+import { useSession } from "next-auth/react";
 import { createContext, useState, useEffect, useContext, ReactNode, } from "react";
 
 interface AuthContextProps {
@@ -26,6 +27,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [dataUser, setDataUser] = useState<userSessionInterface | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const { data: session, status } = useSession();
+   const [user, setUser] = useState<any>(null);
+
+useEffect(() => {
+    if (status === "authenticated" && session?.backendToken) {
+      // 🔥 GUARDAMOS SOLO EL TOKEN DEL BACKEND
+      localStorage.setItem("token", session.backendToken);
+      localStorage.setItem("user", JSON.stringify(session.user));
+
+      setUser(session.user);
+    }
+
+    if (status === "unauthenticated") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setUser(null);
+    }
+  }, [session, status]);
+
 
   useEffect(() => {
     //se encarga de extraer la informacion del localStorage cuando se recarga la pagina y almacenar en el estado

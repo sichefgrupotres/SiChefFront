@@ -9,49 +9,44 @@ export const authOptions = NextAuth({
       clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET as string,
     }),
   ],
-  callbacks: {
-    async jwt({ token, user, account, profile }: any) {
-      // Cuando el usuario inicia sesión con Google
-      if (account && user) {
-        const cookieStore = await cookies();
-        const roleId = cookieStore.get("selected_role")?.value || "USER";
+ callbacks: {
+  async jwt({ token, user, account, profile }) {
+    if (account && profile) {
+      const cookieStore = cookies();
+      const roleId = (await cookieStore).get("selected_role")?.value || "USER";
 
-        // El ID real de Google está aquí:
-        const googleId = profile?.sub || account.providerAccountId;
-        try {
-          // LLAMADA A TU BACKEND NESTJS
-          const response = await fetch(
-            `${process.env.NEXTAUTH_URL}/auth/register-google`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                googleId: String(googleId), // <--- ID Real de Google
-                email: user.email,
-                name: user.name?.split(" ")[0] || "Usuario",
-                lastname: user.name?.split(" ").slice(1).join(" ") || "",
-                roleId: roleId,
-              }),
-            }
-          );
+      const googleId = profile.sub;
 
-          const userData = await response.json();
-
-          // Inyectamos el ROL que viene de tu DB de NestJS en el token de NextAuth
-          token.roleId = userData.user.roleId;
-          token.backendToken = userData.token; // Si tu back devuelve un JWT
-        } catch (error) {
-          console.error("Error vinculando con el backend:", error);
+      const response = await fetch(
+        "http://localhost:3001/auth/register-google",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            googleId,
+            email: profile.email,
+            name: profile.given_name,
+            lastname: profile.family_name,
+            roleId,
+          }),
         }
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        (session.user as any).id = token.sub; // Mapea el ID de Google a la sesión
-      }
-      return session;
-    },
+      );
+
+      const data = await response.json();
+
+      // 🔥 GUARDAMOS LO IMPORTANTE
+      token.backendToken = data.token;
+      token.user = data.user;
+    }
+
+    return token;
+  },
+
+  async session({ session, token }) {
+    session.user = token.user as any;
+    session.backendToken = token.backendToken as string;
+    return session;
+  },
   },
   session: { strategy: "jwt" },
 });
