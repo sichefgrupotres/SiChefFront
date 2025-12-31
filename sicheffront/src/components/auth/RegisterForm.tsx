@@ -11,6 +11,8 @@ import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { signIn, useSession } from "next-auth/react";
+import {setCookie} from "cookies-next"
+import { GoogleAuthButton } from "../ButtonGoogle/GoogleAuthButton";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -43,6 +45,18 @@ const RegisterForm = () => {
       }
     },
   });
+ const handleGoogleRegister = (role: string) => {
+  // 1. Guardamos el rol en la cookie para que el servidor lo lea después
+  setCookie("selected_role", role, { 
+    maxAge: 300, 
+    path: "/" // Importante para que sea accesible en toda la app
+  });
+  
+  // 2. Redirección inteligente según el rol
+  const destination = role === "CREATOR" ? "/creator" : "/guest";
+  
+  signIn("google", { callbackUrl: destination }); 
+};
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
@@ -289,25 +303,17 @@ const RegisterForm = () => {
             </div>
 
             {/* Google */}
-            <div className="flex items-center justify-center">
-              <button
-                type="button"
-                className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
-                onClick={() => signIn("google" , { callbackUrl: "/login" })}
-              >
-                <svg
-                  className="w-6 h-6"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M21.805 10.038C21.925 10.686 22 11.35 22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C14.706 2 17.11 3.09 18.84 4.88L15.342 8.378C14.398 7.493 13.28 7 12 7C9.239 7 7 9.239 7 12C7 14.761 9.239 17 12 17C14.398 17 16.327 15.34 16.839 13.195H12V10H21.805V10.038Z"
-                    fill="#D2B48C"
-                  />
-                </svg>
-              </button>
-            </div>
+             {/* BOTÓN PARA USUARIO */}
+      <div className="flex flex-col items-center gap-2">
+          <GoogleAuthButton roleIntent="USER" />  
+        <span className="text-[#D2B48C] text-sm font-medium">Registrarme como Usuario</span>
+      </div>
+
+      {/* BOTÓN PARA CREADOR */}
+      <div className="flex flex-col items-center gap-2">
+          <GoogleAuthButton roleIntent="CREATOR"/>
+        <span className="text-[#D2B48C] text-sm font-medium">Registrarme como Creador</span>
+      </div>
 
             {/* Footer */}
             <div className="text-center text-xs text-gray-400 pt-2">

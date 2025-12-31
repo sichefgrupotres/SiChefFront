@@ -39,18 +39,21 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRecipes = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("http://localhost:3001/posts",);
-      const data = await res.json();
-      setRecipes(data);
-    } catch {
-      setError("Error al obtener recetas");
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchRecipes = async () => {
+  try {
+    setLoading(true);
+    const res = await fetch("http://localhost:3001/posts");
+    const json = await res.json();
+
+    // 🔹 usa solo json.data que es el array de recetas
+    setRecipes(json.data); 
+  } catch {
+    setError("Error al obtener recetas");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const addRecipe = async (data: CreateRecipePayload): Promise<boolean> => {
     if (!token) {

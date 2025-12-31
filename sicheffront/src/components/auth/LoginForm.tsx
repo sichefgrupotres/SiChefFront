@@ -225,6 +225,7 @@ const LoginForm = () => {
               </button>
             </div>
 
+
             {/* Footer */}
             <div className=" items'center text-center text-xs text-gray-400 pt-2">
               <p>
