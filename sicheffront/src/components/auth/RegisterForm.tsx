@@ -10,9 +10,9 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
-import {setCookie} from "cookies-next"
+import { useSession } from "next-auth/react";
 import { GoogleAuthButton } from "../ButtonGoogle/GoogleAuthButton";
+
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -45,18 +45,6 @@ const RegisterForm = () => {
       }
     },
   });
- const handleGoogleRegister = (role: string) => {
-  // 1. Guardamos el rol en la cookie para que el servidor lo lea después
-  setCookie("selected_role", role, { 
-    maxAge: 300, 
-    path: "/" // Importante para que sea accesible en toda la app
-  });
-  
-  // 2. Redirección inteligente según el rol
-  const destination = role === "CREATOR" ? "/creator" : "/guest";
-  
-  signIn("google", { callbackUrl: destination }); 
-};
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
@@ -306,13 +294,13 @@ const RegisterForm = () => {
              {/* BOTÓN PARA USUARIO */}
       <div className="flex flex-col items-center gap-2">
           <GoogleAuthButton roleIntent="USER" />  
-        <span className="text-[#D2B48C] text-sm font-medium">Registrarme como Usuario</span>
+        <span className="text-xs font-bold text-[#D2B99F] stroke-text">USUARIO</span>
       </div>
 
       {/* BOTÓN PARA CREADOR */}
       <div className="flex flex-col items-center gap-2">
           <GoogleAuthButton roleIntent="CREATOR"/>
-        <span className="text-[#D2B48C] text-sm font-medium">Registrarme como Creador</span>
+        <span className="text-xs font-bold text-[#D2B97F] stroke-text">CREADOR</span>
       </div>
 
             {/* Footer */}

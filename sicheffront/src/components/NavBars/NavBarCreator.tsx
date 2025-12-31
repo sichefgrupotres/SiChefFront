@@ -1,7 +1,7 @@
 "use client";
 import { creatorNavItems } from "@/utils/creatorNavItems";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 interface Props {
@@ -14,7 +14,18 @@ export default function NavBarCreator({
     setCollapsed,
 }: Props) {
     const pathname = usePathname();
+    const routes = useRouter();
     const { logout } = useAuth();
+    const handleLogout = () => {
+    // 1️⃣ Limpiar estado del contexto
+    logout();
+
+    // 2️⃣ Limpiar localStorage (tokens o datos de sesión)
+    localStorage.clear();
+
+    // 3️⃣ Redirigir al login
+    routes.push("/login");
+  };
 
     return (
         <nav
@@ -75,7 +86,7 @@ export default function NavBarCreator({
                 })}
                 <li>
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="
                             w-full flex items-center gap-3 px-3 py-3 rounded-lg
                             opacity-70 hover:bg-white/5 hover:opacity-100

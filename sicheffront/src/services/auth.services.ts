@@ -1,7 +1,6 @@
 import { CreateRecipePayload } from "@/interfaces/IRecipe";
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
-import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
 
 export const loginUserService = async (Data: LoginFormValuesInterface) => {
@@ -137,6 +136,8 @@ export const createPost = async (
   }
 };
 
+
+const response = await fetch("http://localhost:3001/posts/id")
  
 
 
