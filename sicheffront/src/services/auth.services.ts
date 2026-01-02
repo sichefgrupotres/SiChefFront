@@ -136,8 +136,6 @@ export const createPost = async (
   }
 };
 
-
-const response = await fetch("http://localhost:3001/posts/id")
  
 
 
