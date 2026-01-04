@@ -39,20 +39,20 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
- const fetchRecipes = async () => {
-  try {
-    setLoading(true);
-    const res = await fetch("http://localhost:3001/posts");
-    const json = await res.json();
+  const fetchRecipes = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("http://localhost:3001/posts");
+      const json = await res.json();
 
-    // 🔹 usa solo json.data que es el array de recetas
-    setRecipes(json.data); 
-  } catch {
-    setError("Error al obtener recetas");
-  } finally {
-    setLoading(false);
-  }
-};
+      // 🔹 usa solo json.data que es el array de recetas
+      setRecipes(json.data);
+    } catch {
+      setError("Error al obtener recetas");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const addRecipe = async (data: CreateRecipePayload): Promise<boolean> => {
@@ -61,9 +61,9 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       return false;
     }
     if (!data.file) {
-    setError("Debes seleccionar una imagen");
-    return false;
-  }
+      setError("Debes seleccionar una imagen");
+      return false;
+    }
     try {
       const formData = new FormData();
 
@@ -73,6 +73,8 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       formData.append("difficulty", data.difficulty);
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
+      formData.append("categories", JSON.stringify(data.categories));
+
 
 
 

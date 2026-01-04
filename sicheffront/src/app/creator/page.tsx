@@ -1,142 +1,187 @@
 "use client";
 
-import { PATHROUTES } from "@/utils/PathRoutes";
 import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import RecipeCard from "@/components/CardRecipe";
+import { useRecipe } from "@/context/RecipeContext";
 
 export default function GuestHomePage() {
+  // 1. Contexto: Traemos las recetas y funciones del backend
+  const { recipes, fetchRecipes, loading, error } = useRecipe();
+
+  // 2. Estados Locales: Para controlar qué está escribiendo o seleccionando el usuario
+  const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // 3. Effect: Carga las recetas al entrar a la página
+  useEffect(() => {
+    fetchRecipes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // =========================================================
+  // 4. MOTOR DE FILTRADO (La parte más importante)
+  // =========================================================
+  const filteredRecipes = recipes.filter((recipe) => {
+
+    // PASO A: Normalizar Categorías (Blindaje contra errores de datos)
+    // Si la receta no tiene categorías (undefined), usamos un array vacío [] para que no explote.
+    let categoriesArray: string[] = [];
+
+    if (Array.isArray(recipe.categories)) {
+      categoriesArray = recipe.categories;
+    } else if (typeof recipe.categories === "string") {
+      // Si viene como texto "['Cenas']", intentamos convertirlo a lista real
+      try {
+        const parsed = JSON.parse(recipe.categories);
+        categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+      } catch {
+        // Si es texto simple "Cenas", lo guardamos en una lista
+        categoriesArray = [recipe.categories];
+      }
+    }
+
+    // PASO B: Filtro por Categoría
+    // Si elegiste "Todas", pasa. Si no, revisamos si la lista de categorías incluye la seleccionada.
+    const matchesCategory =
+      selectedCategory === "Todas" ||
+      categoriesArray.includes(selectedCategory);
+
+    // PASO C: Filtro por Buscador (Título o Ingredientes)
+    // Usamos ?. para asegurar que existan antes de pasar a minúsculas
+    const title = recipe.title ? recipe.title.toLowerCase() : "";
+    const ingredients = recipe.ingredients ? recipe.ingredients.toLowerCase() : "";
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      title.includes(search) || ingredients.includes(search);
+
+    // La receta se muestra solo si cumple AMBAS condiciones
+    return matchesCategory && matchesSearch;
+  });
+
+  // 5. Manejo de Carga y Errores
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <div className="animate-pulse">Cargando recetas deliciosas...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-400">
+        Error: {error}
+      </div>
+    );
+  }
+
+  // Lista de categorías para generar los botones
+  const categoriesList = ["Todas", "Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"];
+
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       {/* ================= MAIN ================= */}
-      <main className="max-w-7xl mx-auto">
-        {/* ================= HERO TOP ================= */}
+      <main className="max-w-7xl mx-auto w-full flex-grow">
+
+        {/* ================= HEADER & SEARCH ================= */}
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 animate-fade-in-down">
             <Image
               src="/Logo.png"
               alt="Logo Si Chef"
               width={150}
               height={150}
-              className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover"
+              className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover shadow-lg border-2 border-orange-500"
+              priority
             />
-
-            <h1 className="text-[#F57C00] text-4xl md:text-6xl font-bold">
+            <h1 className="text-[#F57C00] text-4xl md:text-6xl font-extrabold tracking-tight">
               Si Chef!
             </h1>
           </div>
 
-          {/* Buscador */}
-          <div className="flex w-full max-w-2xl">
-            <div className="flex items-center gap-2 w-full border border-gray-300 rounded-l-xl px-4 py-3 bg-white">
+          {/* Buscador Interactivo */}
+          <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden transition-all focus-within:ring-2 focus-within:ring-orange-500">
+            <div className="flex items-center gap-2 w-full border-none px-4 py-3 bg-white">
               <span className="material-symbols-outlined text-gray-400">
                 search
               </span>
               <input
                 type="text"
-                placeholder="Busca por receta o ingredientes"
-                className="w-full outline-none text-sm text-black"
+                placeholder="¿Qué se te antoja hoy?"
+                className="w-full outline-none text-base text-gray-700 placeholder-gray-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-
-            <button className="bg-orange-500 text-white px-8 rounded-r-xl text-sm font-semibold">
+            <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors">
               Buscar
             </button>
           </div>
         </section>
 
-        {/* ================= HERO IMAGE ================= */}
-        <section className="px-4 md:px-8 pb-12">
-          <div className="relative overflow-hidden rounded-2xl bg-surface-dark min-h-[480px]">
-            <Image
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7LBKM97Hw5BXXGD8gI11cVkTG7xDfs2TGaqn8td8kqqfQm3OuNbStLJBUbaImwCcWtAyp-pElKomgPFLajP3LH1XdJhPIaynka_BJ6Yg4NHZ6rybPdbbp7TqdO86RwYJ4MIOkw99xeTGSFHmC5TQ08cm2ZY10V5swnX-iBM2br7s54n2Ch5zsAYpPxFIsIfPrjgKnJvV8P5busW2i3JGpWHF8a4ccfxHtmtRZhzPCJWSAljDFRKfPVYpuFaU6jT08R0ApUQqobtY"
-              alt="Hero"
-              fill
-              className="object-cover opacity-60"
-            />
-
-            <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent" />
-
-            <div className="relative z-10 p-6 md:p-16 flex flex-col justify-end min-h-120">
-              <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-4">
-                Premium
-              </span>
-
-              <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
-                Domina el Arte del{" "}
-                <span className="text-primary">Risotto Perfecto</span>
-              </h1>
-
-              <p className="text-gray-300 max-w-xl mb-8">
-                Accedé a tutoriales exclusivos paso a paso con chefs
-                profesionales.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-primary text-white font-bold px-8 py-4 rounded-xl">
-                  Ver Tutorial Premium
-                </button>
-                <button className="bg-white/10 text-white px-8 py-4 rounded-xl">
-                  Explorar cursos
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ================= CATEGORIES ================= */}
         <section className="px-4 md:px-8 pb-8">
-          <h2 className="text-2xl font-bold mb-4 text-white">
-            Categorías Populares
-          </h2>
-          <div className="flex gap-4 overflow-x-auto">
-            {["Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"].map(
-              (cat) => (
-                <div
-                  key={cat}
-                  className="min-w-35 h-24 bg-black/40 rounded-xl flex items-center justify-center text-white font-bold"
-                >
-                  {cat}
-                </div>
-              )
-            )}
-          </div>
-        </section>
-
-        {/* ================= RECIPES GRID ================= */}
-        <section className="px-4 md:px-8 pb-16">
-          <h2 className="text-2xl font-bold mb-6 text-white">
-            Tendencias de la semana
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+            Explorar Categorías
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow hover:shadow-xl transition"
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+            {categoriesList.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`
+                  min-w-[120px] h-20 rounded-xl flex items-center justify-center font-bold text-lg transition-all transform hover:scale-105 cursor-pointer
+                  ${selectedCategory === cat
+                    ? "bg-orange-500/20 text-[#F57C00]"
+                    : "bg-[#2a221b] text-gray-400 hover:text-white hover:bg-[#3a3028]"
+                  }
+                `}
               >
-                <div className="relative h-40">
-                  <Image
-                    src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092"
-                    alt="recipe"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-bold">Receta ejemplo</h3>
-                  <p className="text-sm text-gray-500">
-                    Descripción corta de la receta.
-                  </p>
-                </div>
-              </div>
+                {cat}
+              </button>
             ))}
           </div>
         </section>
+
+        {/* ================= GRID DE RECETAS ================= */}
+        <section className="px-4 md:px-8 pb-16 bg-[#181411]">
+          {filteredRecipes.length === 0 ? (
+            // Mensaje Estado Vacío
+            <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
+              <span className="text-6xl mb-4">🍽️</span>
+              <h3 className="text-xl text-white font-semibold">
+                No encontramos recetas
+              </h3>
+              <p className="text-gray-400 mt-2 max-w-md">
+                No hay resultados para "{searchTerm}" en la categoría "{selectedCategory}".
+              </p>
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("Todas");
+                }}
+                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
+              >
+                Limpiar filtros y ver todo
+              </button>
+            </div>
+          ) : (
+            // Grilla Responsive
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+          )}
+        </section>
       </main>
 
-      <footer className=" border-gray-200 dark:border-white/10 py-10 text-center text-sm text-gray-500">
-        © 2025 SiChef! · Todos los derechos reservados
+      {/* FOOTER */}
+      <footer className="border-t border-white/10 py-8 text-center text-sm text-gray-500 ">
+        <p>© 2025 SiChef! · Cocinando con amor 🧡</p>
       </footer>
     </div>
   );

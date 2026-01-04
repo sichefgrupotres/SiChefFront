@@ -10,7 +10,7 @@ interface RecipeCardProps {
 
 const RecipeCard = ({ recipe }: RecipeCardProps) => {
   return (
-    <div className="relative flex flex-col w-86 h-76 rounded-xl overflow-hidden shadow hover:shadow-xl transition">
+    <div className="relative flex flex-col w-86 h-76 rounded-xl overflow-hidden shadow hover:shadow-xl transition m-6">
       {/* Imagen */}
       <img
         src={recipe.imageUrl}
