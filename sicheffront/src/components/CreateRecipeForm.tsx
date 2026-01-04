@@ -1,7 +1,6 @@
 "use client";
 
 import { createPost } from "@/services/auth.services";
-
 import {
   RecipeFormValuesInterface,
   initialValuesRecipe,
@@ -14,18 +13,23 @@ import Swal from "sweetalert2";
 
 export default function NewRecipePage() {
   const router = useRouter();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const formik = useFormik<RecipeFormValuesInterface>({
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
     onSubmit: async (values, { resetForm }) => {
       if (loading) return;
       setLoading(true);
+
       if (!values.file) {
         Swal.fire({
           icon: "warning",
           title: "Imagen requerida",
           text: "Debes subir una imagen",
         });
+        setLoading(false);
         return;
       }
 
@@ -36,6 +40,9 @@ export default function NewRecipePage() {
         difficulty: values.difficulty,
         isPremium: values.isPremium,
         file: values.file,
+
+        // ✅ categorías enviadas correctamente
+        categories: values.categories,
       });
 
       if (success) {
@@ -56,19 +63,16 @@ export default function NewRecipePage() {
           text: "No se pudo crear la receta",
         });
       }
+
+      setLoading(false);
     },
   });
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
-
     if (!file) return;
 
     formik.setFieldValue("file", file);
-
     const previewUrl = URL.createObjectURL(file);
     setImagePreview(previewUrl);
   };
@@ -97,7 +101,7 @@ export default function NewRecipePage() {
           )}
         </div>
 
-        {/* Foto Principal */}
+        {/* Foto principal */}
         <div>
           <label className="text-sm font-semibold">Foto Principal</label>
 
@@ -143,13 +147,17 @@ export default function NewRecipePage() {
             className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3 outline-none focus:border-primary resize-none"
           />
           {formik.touched.ingredients && formik.errors.ingredients && (
-            <p className="text-red-400 text-sm">{formik.errors.ingredients}</p>
+            <p className="text-red-400 text-sm">
+              {formik.errors.ingredients}
+            </p>
           )}
         </div>
 
-        {/* Pasos de preparación */}
+        {/* Preparación */}
         <div>
-          <label className="text-sm font-semibold">Pasos de preparación</label>
+          <label className="text-sm font-semibold">
+            Pasos de preparación
+          </label>
           <textarea
             name="description"
             rows={4}
@@ -162,7 +170,55 @@ export default function NewRecipePage() {
             className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3 outline-none focus:border-primary resize-none"
           />
           {formik.touched.description && formik.errors.description && (
-            <p className="text-red-400 text-sm">{formik.errors.description}</p>
+            <p className="text-red-400 text-sm">
+              {formik.errors.description}
+            </p>
+          )}
+        </div>
+
+        {/* Categorías */}
+        <div>
+          <label className="text-sm font-semibold block mb-2">
+            Categorías
+          </label>
+
+          <div className="grid grid-cols-2 gap-3">
+            {["Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"].map(
+              (cat) => (
+                <label
+                  key={cat}
+                  className="flex items-center gap-2 text-white cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formik.values.categories.includes(cat)}
+                    onChange={() => {
+                      const current = formik.values.categories;
+
+                      if (current.includes(cat)) {
+                        formik.setFieldValue(
+                          "categories",
+                          current.filter((c) => c !== cat)
+                        );
+                      } else {
+                        formik.setFieldValue("categories", [
+                          ...current,
+                          cat,
+                        ]);
+                      }
+                    }}
+                    className="accent-orange-500"
+                  />
+                  <span>{cat}</span>
+                </label>
+              )
+            )}
+          </div>
+
+          {formik.touched.categories && formik.errors.categories && (
+            <p className="text-red-400 text-sm mt-1">
+              {formik.errors.categories}
+            </p>
           )}
         </div>
 
@@ -181,7 +237,7 @@ export default function NewRecipePage() {
           </select>
         </div>
 
-        {/* PREMIUM */}
+        {/* Premium */}
         <div className="flex items-center justify-between rounded-xl bg-[#2a221b] border border-white/10 px-5 py-4">
           <div>
             <p className="text-white font-semibold">Marcar como Premium</p>
@@ -198,7 +254,6 @@ export default function NewRecipePage() {
               onChange={formik.handleChange}
               className="sr-only peer"
             />
-
             <div className="w-11 h-6 rounded-full bg-gray-500 peer-checked:bg-green-500 transition-colors duration-300" />
             <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-5" />
           </label>
@@ -208,13 +263,10 @@ export default function NewRecipePage() {
         <button
           type="submit"
           disabled={loading}
-          className={`mt-4 h-12 rounded-lg font-bold transition
-            ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
-            }
-          `}
+          className={`mt-4 h-12 rounded-lg font-bold transition ${loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+            }`}
         >
           {loading ? "Publicando..." : "Publicar receta"}
         </button>
