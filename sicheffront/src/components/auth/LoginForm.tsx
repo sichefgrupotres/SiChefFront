@@ -42,13 +42,13 @@ const LoginForm = () => {
   });
 
   const { data: session } = useSession();
- const handleGoogleLogin = () => {
-  signIn("google", {
-    callbackUrl: "/creator", // o /guest según rol
-  });
-};
+  const handleGoogleLogin = () => {
+    signIn("google", {
+      callbackUrl: "/creator", // o /guest según rol
+    });
+  };
   return (
-    <div className="min-h-screen bg-[#3D2B1F]">
+    <div className="min-h-screen bg-[#181411]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
         <div className="w-full md:w-1/2 flex justify-center">
           <div className="w-full max-w-md space-y-8 py-10">
@@ -70,8 +70,8 @@ const LoginForm = () => {
               {/* EMAIL */}
               <label className="flex flex-col w-full">
                 <p className="text-white text-base font-medium pb-2">Email</p>
-                <div className="bg-[#543C2A] flex items-center rounded-lg">
-                  <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
+                <div className="bg-[#2a221b] flex items-center rounded-lg">
+                  <div className="flex items-center justify-center pl-4 text-white">
                     <span className="material-symbols-outlined">mail</span>
                   </div>
 
@@ -99,8 +99,8 @@ const LoginForm = () => {
                   Contraseña
                 </p>
 
-                <div className="bg-[#543C2A] flex items-center rounded-lg">
-                  <div className="flex items-center justify-center pl-4 text-[#D2B48C]">
+                <div className="bg-[#2a221b] flex items-center rounded-lg">
+                  <div className="flex items-center justify-center pl-4 text-white">
                     <span className="material-symbols-outlined">lock</span>
                   </div>
 
@@ -117,7 +117,7 @@ const LoginForm = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="pr-4 text-[#D2B48C] hover:text-white focus:outline-none cursor-pointer"
+                    className="pr-4 text-white hover:text-white focus:outline-none cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -132,7 +132,7 @@ const LoginForm = () => {
 
               {/* Forgot password */}
               <div className="flex justify-end">
-                <p className="text-[#D2B48C] text-sm underline cursor-pointer">
+                <p className="text-white text-sm underline cursor-pointer">
                   Olvidé mi contraseña
                 </p>
               </div>
@@ -141,11 +141,10 @@ const LoginForm = () => {
 
               <button
                 type="submit"
-                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${
-                  !(formik.isValid && formik.dirty && !formik.isSubmitting)
-                    ? "bg-orange-300 cursor-not-allowed"
-                    : "bg-[#F57C00] hover:scale-105 cursor-pointer"
-                }`}
+                className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-transform duration-200 ${!(formik.isValid && formik.dirty && !formik.isSubmitting)
+                  ? "bg-orange-300 cursor-not-allowed"
+                  : "bg-[#F57C00] hover:scale-105 cursor-pointer"
+                  }`}
               >
                 {formik.isSubmitting ? "Iniciando Sesion..." : "Entrar"}
               </button>
@@ -154,7 +153,7 @@ const LoginForm = () => {
             {/* Divider */}
             <div className="relative flex items-center py-4">
               <div className="grow border-t border-gray-600"></div>
-              <span className="mx-4 text-[#D2B48C] text-sm">
+              <span className="mx-4 text-white text-sm">
                 ¿No tienes cuenta aun?
               </span>
               <div className="grow border-t border-gray-600"></div>
@@ -171,7 +170,7 @@ const LoginForm = () => {
             {/* Divider Google */}
             <div className="relative flex items-center py-4">
               <div className="grow border-t border-gray-600"></div>
-              <span className="shrink mx-4 text-[#D2B48C] text-sm">
+              <span className="shrink mx-4 text-white text-sm">
                 O continuar con
               </span>
               <div className="grow border-t border-gray-600"></div>
@@ -181,7 +180,7 @@ const LoginForm = () => {
             <div className="flex items-center justify-center">
               <button
                 type="button"
-                className="flex items-center justify-center w-14 h-14 bg-[#543C2A] rounded-full transition-transform duration-200 hover:scale-110"
+                className="flex items-center justify-center w-14 h-14 bg-orange-500/20 rounded-full transition-transform duration-200 hover:scale-110"
                 onClick={handleGoogleLogin}
               >
                 <svg
@@ -192,7 +191,7 @@ const LoginForm = () => {
                 >
                   <path
                     d="M21.805 10.038C21.925 10.686 22 11.35 22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C14.706 2 17.11 3.09 18.84 4.88L15.342 8.378C14.398 7.493 13.28 7 12 7C9.239 7 7 9.239 7 12C7 14.761 9.239 17 12 17C14.398 17 16.327 15.34 16.839 13.195H12V10H21.805V10.038Z"
-                    fill="#D2B48C"
+                    fill="#F57C00"
                   />
                 </svg>
               </button>
