@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { useAuth } from "./AuthContext";
 import { RecipeInterface, CreateRecipePayload } from "@/interfaces/IRecipe";
+import { useSession } from "next-auth/react";
 
 interface RecipeContextProps {
   recipes: RecipeInterface[];
@@ -31,8 +31,8 @@ interface RecipeProviderProps {
 }
 
 export const RecipeProvider = ({ children }: RecipeProviderProps) => {
-  const { dataUser } = useAuth();
-  const token = dataUser?.token;
+ const { data: session } = useSession();
+const token = session?.backendToken;
 
   const [recipes, setRecipes] = useState<RecipeInterface[]>([]);
   const [userRecipes, setUserRecipes] = useState<RecipeInterface[]>([]);
@@ -42,11 +42,15 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
  const fetchRecipes = async () => {
   try {
     setLoading(true);
-    const res = await fetch("http://localhost:3001/posts");
-    const json = await res.json();
 
-    // 🔹 usa solo json.data que es el array de recetas
-    setRecipes(json.data); 
+    const res = await fetch("http://localhost:3001/posts", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const json = await res.json();
+    setRecipes(json.data);
   } catch {
     setError("Error al obtener recetas");
   } finally {

@@ -8,12 +8,14 @@ import {
   RecipeSchema,
 } from "@/validators/RecipeSchema";
 import { useFormik } from "formik";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
 export default function NewRecipePage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const formik = useFormik<RecipeFormValuesInterface>({
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
@@ -36,7 +38,7 @@ export default function NewRecipePage() {
         difficulty: values.difficulty,
         isPremium: values.isPremium,
         file: values.file,
-      });
+      }, session);
 
       if (success) {
         Swal.fire({

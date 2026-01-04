@@ -17,6 +17,7 @@ export const GoogleAuthButton = ({
 
     signIn("google", {
       callbackUrl: roleIntent === "CREATOR" ? "/creator" : "/guest",
+      role: roleIntent
     });
   };
 
