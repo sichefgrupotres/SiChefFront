@@ -2,6 +2,7 @@ import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { Provider } from "./providers";
 import { RecipeProvider } from "@/context/RecipeContext";
+import { AuthBootstrap } from "@/components/AuthBootstrap";
 
 export const metadata = {
   title: "Si Chef!",
@@ -24,6 +25,7 @@ export default function RootLayout({
         <Provider>
         <AuthProvider>
         <RecipeProvider>
+          <AuthBootstrap/>
           {children}
         </RecipeProvider>
         </AuthProvider>

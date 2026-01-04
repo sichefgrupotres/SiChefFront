@@ -1,5 +1,9 @@
 "use client";
+import { useSyncGoogleSession } from "@/hooks/useSyncGoogleSession";
+import { AuthSession } from "@/interfaces/IAuth";
 import { userSessionInterface } from "@/interfaces/IUser";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 import {
   createContext,
   useState,
@@ -9,8 +13,8 @@ import {
 } from "react";
 
 interface AuthContextProps {
-  dataUser: userSessionInterface | null;
-  setDataUser: (dataUser: userSessionInterface | null) => void;
+  dataUser: AuthSession | null;
+  setDataUser: (dataUser: AuthSession | null) => void;
   logout: () => void;
   loading: boolean;
   isLoadingUser: boolean;
@@ -29,10 +33,10 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [dataUser, setDataUser] = useState<userSessionInterface | null>(null);
+  const [dataUser, setDataUser] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-
+  useSyncGoogleSession();
   useEffect(() => {
     // se ejecutara cuando mi dataUser cambie, y lo guardara en el localStorage
     if (dataUser) {
@@ -55,10 +59,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoadingUser(false);
   }, []);
 
-  const logout = () => {
-     setDataUser(null);
-  localStorage.removeItem("userSession");
-  localStorage.removeItem("token");
+  const logout = async () => {
+    setDataUser(null);
+    localStorage.removeItem("userSession");
+    localStorage.removeItem("token");
+
+    await signOut({
+    callbackUrl: "/login",
+  });
+
   };
   return (
     <AuthContext.Provider
