@@ -16,7 +16,6 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
     console.log(Data);
 
     if (response.ok) {
-      // alert("Inicio de sesión exitoso ✔️");
       Swal.fire({
         icon: "success",
         title: "Inicio de sesión exitoso",
@@ -28,15 +27,14 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
 
       const result = await response.json();
 
-      // 🔐 GUARDAR TOKEN PARA USARLO EN /posts
-      if (result.token) {
-        localStorage.setItem("token", result.token);
-      }
+      // // 🔐 GUARDAR TOKEN PARA USARLO EN /posts
+      // if (result.token) {
+      //   localStorage.setItem("token", result.token);
+      // }
 
       return result;
     } else {
-      // alert("Error en el login del usuario ❌");
-
+      
       Swal.fire({
         icon: "error",
         title: "Error en el login",

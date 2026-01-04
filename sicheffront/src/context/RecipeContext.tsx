@@ -60,6 +60,10 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       setError("No autorizado");
       return false;
     }
+    if (!data.file) {
+    setError("Debes seleccionar una imagen");
+    return false;
+  }
     try {
       const formData = new FormData();
 

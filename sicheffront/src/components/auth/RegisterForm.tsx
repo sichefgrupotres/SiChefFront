@@ -11,7 +11,7 @@ import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { GoogleAuthButton } from "../ButtonGoogle/GoogleAuthButton";
+import { GoogleAuthButton } from "../Buttons/GoogleAuthButton";
 
 
 const RegisterForm = () => {
@@ -20,7 +20,7 @@ const RegisterForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { data: session } = useSession();
-  console.log(session);
+  // console.log(session);
 
   const formik = useFormik<RegisterFormValuesInterface>({
     initialValues: initialValuesRegister,
