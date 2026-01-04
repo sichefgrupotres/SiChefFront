@@ -1,13 +1,12 @@
-export interface AuthUser {
-  id: string;
+export interface AuthSessionUser {
+  id?: string;
   email: string;
   name?: string;
   lastname?: string;
   roleId: "USER" | "CREATOR";
 }
 
-export interface userSessionInterface {
+export interface AuthSession {
   token: string;
-  user: AuthUser;
+  user: AuthSessionUser;
 }
-

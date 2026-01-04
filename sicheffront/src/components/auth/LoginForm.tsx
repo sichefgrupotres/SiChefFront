@@ -12,7 +12,6 @@ import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { getToken } from "next-auth/jwt";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -23,17 +22,18 @@ const LoginForm = () => {
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
-   onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values, { resetForm }) => {
       try {
         const response = await loginUserService(values);
 
-        setDataUser(response)
+        setDataUser(response);
 
         console.log("Sesion iniciada con exito", response);
 
-        // if (response?.token) {
-        //   localStorage.setItem("token", response.token);
+        if (response?.token) {
           router.push("/creator");
+        }
+
         resetForm();
       } catch (error) {
         console.error(error);
@@ -42,38 +42,11 @@ const LoginForm = () => {
   });
 
   const { data: session } = useSession();
-  // console.log(session);
-  const handleGoogleLogin = async () => {
-    // 1️⃣ Abrir ventana de login de Google
-    const result = await signIn("google", { redirect: false }); // redirect false para controlar flujo
-    const token = localStorage.getItem("token");
-    if (result?.ok) {
-      // 2️⃣ Enviar info del usuario a tu backend para recibir JWT
-      const response = await fetch(
-        "http://localhost:3001/auth/register-google",
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: JSON.stringify({
-            email: session?.user?.email,
-            name: session?.user?.name,
-            googleId: session?.user?.id,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        console.log("Token guardado:", data.token);
-      } else {
-        alert("Error al obtener token de backend");
-      }
-    } else {
-      alert("Error al iniciar sesión con Google");
-    }
-  };
+ const handleGoogleLogin = () => {
+  signIn("google", {
+    callbackUrl: "/creator", // o /guest según rol
+  });
+};
   return (
     <div className="min-h-screen bg-[#3D2B1F]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
@@ -224,6 +197,7 @@ const LoginForm = () => {
                 </svg>
               </button>
             </div>
+
 
             {/* Footer */}
             <div className=" items'center text-center text-xs text-gray-400 pt-2">
