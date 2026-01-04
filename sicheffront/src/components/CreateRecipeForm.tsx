@@ -209,9 +209,10 @@ export default function NewRecipePage() {
           type="submit"
           disabled={loading}
           className={`mt-4 h-12 rounded-lg font-bold transition
-            ${loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+            ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
             }
           `}
         >

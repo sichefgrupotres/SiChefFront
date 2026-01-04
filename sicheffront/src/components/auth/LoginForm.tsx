@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { signIn, useSession } from "next-auth/react";
+import { getToken } from "next-auth/jwt";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -22,18 +23,17 @@ const LoginForm = () => {
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
-    onSubmit: async (values, { resetForm }) => {
+   onSubmit: async (values, { resetForm }) => {
       try {
         const response = await loginUserService(values);
 
-        setDataUser(response);
+        setDataUser(response)
 
         console.log("Sesion iniciada con exito", response);
 
-        if (response?.token) {
+        // if (response?.token) {
+        //   localStorage.setItem("token", response.token);
           router.push("/creator");
-        }
-
         resetForm();
       } catch (error) {
         console.error(error);
@@ -42,7 +42,7 @@ const LoginForm = () => {
   });
 
   const { data: session } = useSession();
-  console.log(session);
+  // console.log(session);
   const handleGoogleLogin = async () => {
     // 1️⃣ Abrir ventana de login de Google
     const result = await signIn("google", { redirect: false }); // redirect false para controlar flujo
@@ -224,7 +224,6 @@ const LoginForm = () => {
                 </svg>
               </button>
             </div>
-
 
             {/* Footer */}
             <div className=" items'center text-center text-xs text-gray-400 pt-2">

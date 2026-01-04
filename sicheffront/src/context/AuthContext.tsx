@@ -1,7 +1,12 @@
 "use client";
 import { userSessionInterface } from "@/interfaces/IUser";
-import { useSession } from "next-auth/react";
-import { createContext, useState, useEffect, useContext, ReactNode, } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from "react";
 
 interface AuthContextProps {
   dataUser: userSessionInterface | null;
@@ -27,25 +32,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [dataUser, setDataUser] = useState<userSessionInterface | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-  const { data: session, status } = useSession();
-   const [user, setUser] = useState<any>(null);
 
-useEffect(() => {
-    if (status === "authenticated" && session?.backendToken) {
-      // 🔥 GUARDAMOS SOLO EL TOKEN DEL BACKEND
-      localStorage.setItem("token", session.backendToken);
-      localStorage.setItem("user", JSON.stringify(session.user));
-
-      setUser(session.user);
+  useEffect(() => {
+    // se ejecutara cuando mi dataUser cambie, y lo guardara en el localStorage
+    if (dataUser) {
+      localStorage.setItem("userSession", JSON.stringify(dataUser));
     }
-
-    if (status === "unauthenticated") {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setUser(null);
+    if (dataUser?.token) {
+      localStorage.setItem("token", dataUser.token);
     }
-  }, [session, status]);
-
+  }, [dataUser]);
 
   useEffect(() => {
     //se encarga de extraer la informacion del localStorage cuando se recarga la pagina y almacenar en el estado
@@ -59,20 +55,11 @@ useEffect(() => {
     setIsLoadingUser(false);
   }, []);
 
-  useEffect(() => {
-    // se ejecutara cuando mi dataUser cambie, y lo guardara en el localStorage
-    if (dataUser) {
-      localStorage.setItem("userSession", JSON.stringify(dataUser));
-    }
-  }, [dataUser]);
-
   const logout = () => {
-    setDataUser(null);
-    if (typeof window !== "undefined" && window.localStorage) {
-      localStorage.removeItem("userSession");
-    }
+     setDataUser(null);
+  localStorage.removeItem("userSession");
+  localStorage.removeItem("token");
   };
-
   return (
     <AuthContext.Provider
       value={{ dataUser, setDataUser, logout, loading, isLoadingUser }}
