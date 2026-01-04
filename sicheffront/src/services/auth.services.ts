@@ -95,7 +95,7 @@ export const createPost = async (
   }
 
   const session = JSON.parse(sessionString);
-  const token = session.token || session.backendToken 
+  const token = localStorage.getItem("token");
 
   if (!token) {
     console.error("No hay token válido en localStorage");
