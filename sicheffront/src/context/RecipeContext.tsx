@@ -65,9 +65,9 @@ const token = session?.backendToken;
       return false;
     }
     if (!data.file) {
-    setError("Debes seleccionar una imagen");
-    return false;
-  }
+      setError("Debes seleccionar una imagen");
+      return false;
+    }
     try {
       const formData = new FormData();
 
@@ -77,6 +77,8 @@ const token = session?.backendToken;
       formData.append("difficulty", data.difficulty);
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
+      formData.append("categories", JSON.stringify(data.categories));
+
 
 
 
