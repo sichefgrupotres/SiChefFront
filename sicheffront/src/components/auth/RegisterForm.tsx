@@ -46,7 +46,7 @@ const RegisterForm = () => {
     },
   });
   return (
-    <div className="min-h-screen bg-[#3D2B1F]">
+    <div className="min-h-screen bg-[#181411]">
       <div className="min-h-screen max-w-6xl mx-auto flex flex-col md:flex-row items-center px-6 md:px-12">
         <div className="w-full md:w-1/2 flex justify-center">
           <div className="w-full max-w-md space-y-8 py-10">
@@ -75,7 +75,7 @@ const RegisterForm = () => {
                   <label className="text-white">Nombre</label>
 
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#D2B48C]">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white">
                       badge
                     </span>
 
@@ -86,7 +86,7 @@ const RegisterForm = () => {
                       value={formik.values.name}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="bg-[#543C2A] text-white h-12 rounded-lg pl-12 pr-4 w-full"
+                      className="bg-[#2a221b] text-white h-12 rounded-lg pl-12 pr-4 w-full"
                     />
                   </div>
 
@@ -100,7 +100,7 @@ const RegisterForm = () => {
                   <label className="text-white">Apellido</label>
 
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#D2B48C]">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white">
                       person
                     </span>
 
@@ -111,7 +111,7 @@ const RegisterForm = () => {
                       value={formik.values.lastname}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="bg-[#543C2A] text-white h-12 rounded-lg pl-12 pr-4 w-full"
+                      className="bg-[#2a221b] text-white h-12 rounded-lg pl-12 pr-4 w-full"
                     />
                   </div>
 
@@ -128,7 +128,7 @@ const RegisterForm = () => {
                 <label className="text-white">Email</label>
 
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D2B48C]">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white">
                     mail
                   </span>
 
@@ -139,7 +139,7 @@ const RegisterForm = () => {
                     value={formik.values.email}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 w-full"
+                    className="bg-[#2a221b] text-white h-12 rounded-lg px-4 pl-12 w-full"
                   />
                 </div>
 
@@ -154,7 +154,7 @@ const RegisterForm = () => {
                   <label className="text-white">Contraseña</label>
 
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[#D2B48C] text-[15px]">
+                    <span className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-white text-[15px]">
                       lock
                     </span>
 
@@ -165,14 +165,14 @@ const RegisterForm = () => {
                       value={formik.values.password}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 pr-10 w-full placeholder:text-sm"
+                      className="bg-[#2a221b] text-white h-12 rounded-lg px-4 pl-12 pr-10 w-full placeholder:text-sm"
                     />
 
                     {/* 👁 OJITO */}
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D2B48C] hover:text-white cursor-pointer "
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-white cursor-pointer "
                     >
                       {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
@@ -190,7 +190,7 @@ const RegisterForm = () => {
                   <label className="text-white">Confirmar contraseña</label>
 
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#D2B48C] text-[15px]">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white text-[15px]">
                       lock_reset
                     </span>
 
@@ -201,7 +201,7 @@ const RegisterForm = () => {
                       value={formik.values.confirmPassword}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="bg-[#543C2A] text-white h-12 rounded-lg px-4 pl-12 pr-10 w-full placeholder:text-sm "
+                      className="bg-[#2a221b] text-white h-12 rounded-lg px-4 pl-12 pr-10 w-full placeholder:text-sm "
                     />
 
                     {/* 👁 OJITO */}
@@ -210,7 +210,7 @@ const RegisterForm = () => {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D2B48C] hover:text-white cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-white cursor-pointer"
                     >
                       {showConfirmPassword ? (
                         <EyeOff size={15} />
@@ -237,7 +237,7 @@ const RegisterForm = () => {
                   value={formik.values.roleId}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  className="bg-[#543C2A] text-white h-12 rounded-lg px-4"
+                  className="bg-[#2a221b] text-white h-12 rounded-lg px-4"
                 >
                   <option value="">Seleccionar</option>
                   <option value="USER">Usuario</option>
@@ -253,11 +253,10 @@ const RegisterForm = () => {
                 type="submit"
                 disabled={formik.isSubmitting}
                 className={`w-full h-14 rounded-lg text-white font-bold transition-all cursor-pointer
-            ${
-              formik.isSubmitting
-                ? "bg-[#F57C00]/50 cursor-not-allowed"
-                : "bg-[#F57C00] hover:scale-105"
-            }
+            ${formik.isSubmitting
+                    ? "bg-[#F57C00]/50 cursor-not-allowed"
+                    : "bg-[#F57C00] hover:scale-105"
+                  }
           `}
               >
                 {formik.isSubmitting ? "Registrando..." : "Registrarse"}
@@ -267,7 +266,7 @@ const RegisterForm = () => {
             {/* Divider */}
             <div className="relative flex items-center py-4">
               <div className="grow border-t border-gray-600"></div>
-              <span className="mx-4 text-[#D2B48C] text-sm">
+              <span className="mx-4 text-white text-sm">
                 ¿Ya tienes cuenta?
               </span>
               <div className="grow border-t border-gray-600"></div>
@@ -284,24 +283,28 @@ const RegisterForm = () => {
             {/* Divider Google */}
             <div className="relative flex items-center py-4">
               <div className="grow border-t border-gray-600"></div>
-              <span className="shrink mx-4 text-[#D2B48C] text-sm">
+              <span className="shrink mx-4 text-white text-sm">
                 O continuar con
               </span>
               <div className="grow border-t border-gray-600"></div>
             </div>
 
             {/* Google */}
-             {/* BOTÓN PARA USUARIO */}
-      <div className="flex flex-col items-center gap-2">
-          <GoogleAuthButton roleIntent="USER" />  
-        <span className="text-xs font-bold text-[#D2B99F] stroke-text">USUARIO</span>
-      </div>
+            {/* BOTÓN PARA USUARIO */}
+            <div className="flex items-center justify-center gap-25">
+              <div className="flex flex-col items-center gap-2">
+                <GoogleAuthButton roleIntent="USER" />
+                <span className="text-xs font-bold text-white stroke-text">USUARIO</span>
+              </div>
 
-      {/* BOTÓN PARA CREADOR */}
-      <div className="flex flex-col items-center gap-2">
-          <GoogleAuthButton roleIntent="CREATOR"/>
-        <span className="text-xs font-bold text-[#D2B97F] stroke-text">CREADOR</span>
-      </div>
+              {/* BOTÓN PARA CREADOR */}
+              <div className="flex flex-col items-center gap-2">
+                <GoogleAuthButton roleIntent="CREATOR" />
+                <span className="text-xs font-bold text-white stroke-text">CREADOR</span>
+              </div>
+            </div>
+
+
 
             {/* Footer */}
             <div className="text-center text-xs text-gray-400 pt-2">
