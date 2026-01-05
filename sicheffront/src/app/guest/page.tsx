@@ -3,21 +3,79 @@
 import { PATHROUTES } from "@/utils/PathRoutes";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import RecipeCard from "@/components/CardRecipe";
+import { useRecipe } from "@/context/RecipeContext";
+import MyRecipesList from "@/components/MyRecipesList";
 
 export default function GuestHomePage() {
+  const { recipes, fetchRecipes, loading, error } = useRecipe();
+
+  const [selectedCategory, setSelectedCategory] = useState("Todas");
+
+  useEffect(() => {
+    fetchRecipes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const categoriesList = [
+    { name: "Todas", image: "/categories/todas.jpg" },
+    { name: "Desayunos", image: "/categories/desayuno.jpg" },
+    { name: "Almuerzos", image: "/categories/almuerzo.jpg" },
+    { name: "Meriendas", image: "/categories/merienda.jpg" },
+    { name: "Cenas", image: "/categories/cena.jpg" },
+    { name: "Postres", image: "/categories/postres.jpg" },
+  ];
+
+  const filteredRecipes =
+    selectedCategory === "Todas"
+      ? recipes
+      : recipes.filter((recipe) => {
+          let categoriesArray: string[] = [];
+
+          if (Array.isArray(recipe.categories)) {
+            categoriesArray = recipe.categories;
+          } else if (typeof recipe.categories === "string") {
+            try {
+              const parsed = JSON.parse(recipe.categories);
+              categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+            } catch {
+              categoriesArray = [recipe.categories];
+            }
+          }
+
+          return categoriesArray.includes(selectedCategory);
+        });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Cargando recetas...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-400">
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* ================= HEADER ================= */}
       <header className="w-full">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-end items-center gap-4">
           <Link href={PATHROUTES.LOGIN}>
-            <button className="px-5 py-2 rounded-full border border-gray-300 text-sm font-medium text-white hover:bg-gray-50 hover:text-black transition-all duration-200 cursor-pointer">
+            <button className="px-5 py-2 rounded-full border border-gray-300 text-sm font-medium text-white hover:bg-gray-50 hover:text-black transition-all">
               Iniciar sesión
             </button>
           </Link>
 
           <Link href={PATHROUTES.REGISTER}>
-            <button className="px-5 py-2 rounded-full bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5 cursor-pointer">
+            <button className="px-5 py-2 rounded-full bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md flex items-center gap-1.5">
               <span className="text-xl leading-none mb-0.5">+</span>
               Crear una receta
             </button>
@@ -27,7 +85,7 @@ export default function GuestHomePage() {
 
       {/* ================= MAIN ================= */}
       <main className="max-w-7xl mx-auto">
-        {/* ================= HERO TOP ================= */}
+        {/* ================= HERO ================= */}
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-4">
             <Image
@@ -37,7 +95,6 @@ export default function GuestHomePage() {
               height={150}
               className="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover"
             />
-
             <h1 className="text-[#F57C00] text-4xl md:text-6xl font-bold">
               Si Chef!
             </h1>
@@ -62,98 +119,51 @@ export default function GuestHomePage() {
           </div>
         </section>
 
-        {/* ================= HERO IMAGE ================= */}
-        <section className="px-4 md:px-8 pb-12">
-          <div className="relative overflow-hidden rounded-2xl bg-surface-dark min-h-[480px]">
-            <Image
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7LBKM97Hw5BXXGD8gI11cVkTG7xDfs2TGaqn8td8kqqfQm3OuNbStLJBUbaImwCcWtAyp-pElKomgPFLajP3LH1XdJhPIaynka_BJ6Yg4NHZ6rybPdbbp7TqdO86RwYJ4MIOkw99xeTGSFHmC5TQ08cm2ZY10V5swnX-iBM2br7s54n2Ch5zsAYpPxFIsIfPrjgKnJvV8P5busW2i3JGpWHF8a4ccfxHtmtRZhzPCJWSAljDFRKfPVYpuFaU6jT08R0ApUQqobtY"
-              alt="Hero"
-              fill
-              className="object-cover opacity-60"
-            />
-
-            <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent" />
-
-            <div className="relative z-10 p-6 md:p-16 flex flex-col justify-end min-h-120">
-              <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full w-fit mb-4">
-                Premium
-              </span>
-
-              <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
-                Domina el Arte del{" "}
-                <span className="text-primary">Risotto Perfecto</span>
-              </h1>
-
-              <p className="text-gray-300 max-w-xl mb-8">
-                Accedé a tutoriales exclusivos paso a paso con chefs
-                profesionales.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-primary text-white font-bold px-8 py-4 rounded-xl">
-                  Ver Tutorial Premium
-                </button>
-                <button className="bg-white/10 text-white px-8 py-4 rounded-xl">
-                  Explorar cursos
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ================= CATEGORIES ================= */}
-        <section className="px-4 md:px-8 pb-8">
-          <h2 className="text-2xl font-bold mb-4 text-white">
-            Categorías Populares
-          </h2>
-          <div className="flex gap-4 overflow-x-auto">
-            {["Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"].map(
-              (cat) => (
-                <div
-                  key={cat}
-                  className="min-w-35 h-24 bg-black/40 rounded-xl flex items-center justify-center text-white font-bold"
-                >
-                  {cat}
-                </div>
-              )
-            )}
-          </div>
-        </section>
-
-        {/* ================= RECIPES GRID ================= */}
-        <section className="px-4 md:px-8 pb-16">
-          <h2 className="text-2xl font-bold mb-6 text-white">
-            Tendencias de la semana
+        {/* ================= CATEGORIES (ACTUALIZADAS) ================= */}
+         <section className="px-4 md:px-8 pb-15">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+           Explorar Categorias
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow hover:shadow-xl transition"
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {categoriesList.map((cat) => (
+              <button
+                key={cat.name}
+                onClick={() => setSelectedCategory(cat.name)}
+                style={{ backgroundImage: `url(${cat.image})` }}
+                className={`
+                  relative overflow-hidden bg-cover bg-center
+                  min-w-[140px] h-24 rounded-xl
+                  flex items-center justify-center
+                  font-bold text-white
+                  transition-transform hover:scale-105
+
+                  after:absolute after:inset-0 after:bg-black/50 after:content-['']
+
+                  ${
+                    selectedCategory === cat.name
+                      ? "ring-2 ring-orange-500"
+                      : ""
+                  }
+                `}
               >
-                <div className="relative h-40">
-                  <Image
-                    src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092"
-                    alt="recipe"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-bold">Receta ejemplo</h3>
-                  <p className="text-sm text-gray-500">
-                    Descripción corta de la receta.
-                  </p>
-                </div>
-              </div>
+                <span className="relative z-10">{cat.name}</span>
+              </button>
             ))}
           </div>
         </section>
+
+        {/* ================= RECIPES GRID (REAL) ================= */}
+       <section className="px-4 md:px-8 pb-15">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+            Tendencias semanales
+          </h2>
+                <MyRecipesList />
+              
+        </section>
       </main>
 
-      <footer className=" border-gray-200 dark:border-white/10 py-10 text-center text-sm text-gray-500">
+      <footer className="border-gray-200 dark:border-white/10 py-10 text-center text-sm text-gray-500">
         © 2025 SiChef! · Todos los derechos reservados
       </footer>
     </div>

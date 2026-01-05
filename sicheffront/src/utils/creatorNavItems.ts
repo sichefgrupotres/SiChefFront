@@ -5,11 +5,6 @@ export const creatorNavItems = [
         icon: "home",
     },
     {
-        label: "Recetas",
-        href: "/creator/recipes",
-        icon: "menu_book",
-    },
-    {
         label: "Chat",
         href: "/creator/chat",
         icon: "chat",

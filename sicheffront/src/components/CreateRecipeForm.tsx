@@ -56,7 +56,7 @@ export default function NewRecipePage() {
         }).then(() => {
           resetForm();
           setImagePreview(null);
-          router.push("/creator/recipes");
+          router.push("/creator/profile");
         });
       } else {
         Swal.fire({
