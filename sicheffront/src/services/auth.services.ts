@@ -100,7 +100,6 @@ export const createPost = async (
     formData.append("ingredients", data.ingredients);
     formData.append("difficulty", data.difficulty);
     formData.append("isPremium", String(data.isPremium));
-    formData.append("Categories", String(data.categories));
 
      if (data.file) {
       formData.append("file", data.file);
@@ -109,6 +108,7 @@ export const createPost = async (
     const response = await fetch("http://localhost:3001/posts", {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${session.backendToken}`,
       },
       body: formData,
     });
