@@ -85,21 +85,12 @@ export const registerUserService = async (
 };
 
 export const createPost = async (
-  data: CreateRecipePayload
+  data: CreateRecipePayload,
+  session: any
 ): Promise<boolean> => {
   // Intenta leer distintos nombres de token que pueda usar el backend
-  const sessionString = localStorage.getItem("userSession");
-  
-  if (!sessionString) {
+  if (!session.backendToken) {
     throw new Error("No hay sesión activa. Por favor, inicia sesión.");
-  }
-
-  const session = JSON.parse(sessionString);
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    console.error("No hay token válido en localStorage");
-    return false; // evita enviar request si no hay token
   }
 
   try {
@@ -109,6 +100,7 @@ export const createPost = async (
     formData.append("ingredients", data.ingredients);
     formData.append("difficulty", data.difficulty);
     formData.append("isPremium", String(data.isPremium));
+    formData.append("Categories", String(data.categories));
 
      if (data.file) {
       formData.append("file", data.file);
@@ -117,7 +109,6 @@ export const createPost = async (
     const response = await fetch("http://localhost:3001/posts", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`, // token seguro
       },
       body: formData,
     });
