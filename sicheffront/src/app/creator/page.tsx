@@ -23,7 +23,6 @@ export default function GuestHomePage() {
   // 4. MOTOR DE FILTRADO (La parte más importante)
   // =========================================================
   const filteredRecipes = recipes.filter((recipe) => {
-
     // PASO A: Normalizar Categorías (Blindaje contra errores de datos)
     // Si la receta no tiene categorías (undefined), usamos un array vacío [] para que no explote.
     let categoriesArray: string[] = [];
@@ -50,7 +49,9 @@ export default function GuestHomePage() {
     // PASO C: Filtro por Buscador (Título o Ingredientes)
     // Usamos ?. para asegurar que existan antes de pasar a minúsculas
     const title = recipe.title ? recipe.title.toLowerCase() : "";
-    const ingredients = recipe.ingredients ? recipe.ingredients.toLowerCase() : "";
+    const ingredients = recipe.ingredients
+      ? recipe.ingredients.toLowerCase()
+      : "";
     const search = searchTerm.toLowerCase();
 
     const matchesSearch =
@@ -78,13 +79,19 @@ export default function GuestHomePage() {
   }
 
   // Lista de categorías para generar los botones
-  const categoriesList = ["Todas", "Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"];
+  const categoriesList = [
+    { name: "Todas", image: "/categories/todas.jpg" },
+    { name: "Desayunos", image: "/categories/desayuno.jpg" },
+    { name: "Almuerzos", image: "/categories/almuerzo.jpg" },
+    { name: "Meriendas", image: "/categories/merienda.jpg" },
+    { name: "Cenas", image: "/categories/cena.jpg" },
+    { name: "Postres", image: "/categories/postres.jpg" },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* ================= MAIN ================= */}
       <main className="max-w-7xl mx-auto w-full flex-grow">
-
         {/* ================= HEADER & SEARCH ================= */}
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-4 animate-fade-in-down">
@@ -130,24 +137,51 @@ export default function GuestHomePage() {
           <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
             {categoriesList.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`
-                  min-w-[120px] h-20 rounded-xl flex items-center justify-center font-bold text-lg transition-all transform hover:scale-105 cursor-pointer
-                  ${selectedCategory === cat
-                    ? "bg-orange-500/20 text-[#F57C00]"
-                    : "bg-[#2a221b] text-gray-400 hover:text-white hover:bg-[#3a3028]"
-                  }
-                `}
+                key={cat.name}
+                onClick={() => setSelectedCategory(cat.name)}
+                 style={{ backgroundImage: `url(${cat.image})` }}
+                 className={`
+    relative
+    overflow-hidden
+    bg-cover
+    bg-center
+    min-w-[120px]
+    h-20
+    rounded-xl
+    flex
+    items-center
+    justify-center
+    font-bold
+    text-lg
+    transition-all
+    transform
+    hover:scale-105
+    cursor-pointer
+
+    after:absolute
+    after:inset-0
+    after:bg-black/50
+    after:content-['']
+
+    ${
+      selectedCategory === cat.name
+        ? "text-[#F57C00]"
+        : "text-white"
+    }
+  `}
               >
-                {cat}
+                {/* Texto (igual que antes) */}
+                <span className="relative z-10">{cat.name}</span>
               </button>
             ))}
           </div>
         </section>
 
         {/* ================= GRID DE RECETAS ================= */}
-        <section className="px-4 md:px-8 pb-16 bg-[#181411]">
+        <section className="px-4 md:px-8 pb-15">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+            Explorar Recetas
+          </h2>
           {filteredRecipes.length === 0 ? (
             // Mensaje Estado Vacío
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
@@ -156,7 +190,8 @@ export default function GuestHomePage() {
                 No encontramos recetas
               </h3>
               <p className="text-gray-400 mt-2 max-w-md">
-                No hay resultados para "{searchTerm}" en la categoría "{selectedCategory}".
+                No hay resultados para "{searchTerm}" en la categoría "
+                {selectedCategory}".
               </p>
               <button
                 onClick={() => {
