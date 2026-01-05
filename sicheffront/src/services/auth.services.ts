@@ -34,7 +34,7 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
 
       return result;
     } else {
-      
+
       Swal.fire({
         icon: "error",
         title: "Error en el login",
@@ -100,8 +100,10 @@ export const createPost = async (
     formData.append("ingredients", data.ingredients);
     formData.append("difficulty", data.difficulty);
     formData.append("isPremium", String(data.isPremium));
+    formData.append("category", String(data.category));
 
-     if (data.file) {
+
+    if (data.file) {
       formData.append("file", data.file);
     }
 
@@ -125,6 +127,6 @@ export const createPost = async (
   }
 };
 
- 
+
 
 

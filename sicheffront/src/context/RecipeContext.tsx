@@ -31,32 +31,32 @@ interface RecipeProviderProps {
 }
 
 export const RecipeProvider = ({ children }: RecipeProviderProps) => {
- const { data: session } = useSession();
-const token = session?.backendToken;
+  const { data: session } = useSession();
+  const token = session?.backendToken;
 
   const [recipes, setRecipes] = useState<RecipeInterface[]>([]);
   const [userRecipes, setUserRecipes] = useState<RecipeInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
- const fetchRecipes = async () => {
-  try {
-    setLoading(true);
+  const fetchRecipes = async () => {
+    try {
+      setLoading(true);
 
-    const res = await fetch("http://localhost:3001/posts", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const res = await fetch("http://localhost:3001/posts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const json = await res.json();
-    setRecipes(json.data);
-  } catch {
-    setError("Error al obtener recetas");
-  } finally {
-    setLoading(false);
-  }
-};
+      const json = await res.json();
+      setRecipes(json.data);
+    } catch {
+      setError("Error al obtener recetas");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const addRecipe = async (data: CreateRecipePayload): Promise<boolean> => {
@@ -77,7 +77,7 @@ const token = session?.backendToken;
       formData.append("difficulty", data.difficulty);
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
-      formData.append("categories", JSON.stringify(data.categories));
+      formData.append("category", JSON.stringify(data.category));
 
 
 

@@ -10,45 +10,47 @@ interface RecipeCardProps {
 
 const RecipeCard = ({ recipe }: RecipeCardProps) => {
   return (
-    <div className="relative flex flex-col w-86 h-76 rounded-xl overflow-hidden shadow hover:shadow-xl transition m-6">
-      {/* Imagen */}
-      <img
-        src={recipe.imageUrl}
-        alt={recipe.title}
-        className="w-full h-50 object-cover"
-      />
-
-      {/* Favorito */}
-      <button className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm p-2 rounded-full hover:bg-black/70 transition">
-        <Heart
-          size={18}
-          className="text-white hover:fill-red-500 hover:text-red-500 transition cursor-pointer"
+    <div className="relative flex flex-col w-full rounded-xl overflow-hidden shadow hover:shadow-xl transition bg-[#2a221b]">
+      {/* Imagen: Cambié h-50 por h-44 para hacerla apenitas más chica */}
+      <div className="relative w-full h-44">
+        <img
+          src={recipe.imageUrl}
+          alt={recipe.title}
+          className="w-full h-full object-cover"
         />
-      </button>
+
+        {/* Favorito */}
+        <button className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm p-2 rounded-full hover:bg-black/70 transition">
+          <Heart
+            size={18}
+            className="text-white hover:fill-red-500 hover:text-red-500 transition cursor-pointer"
+          />
+        </button>
+      </div>
 
       {/* Contenido */}
-      <div className="flex flex-col justify-between flex-1 bg-[#2a221b] p-3 gap-2">
+      <div className="flex flex-col justify-between flex-1 p-3 gap-2">
         <div className="flex items-center justify-between gap-2">
-          <p className="font-semibold text-white truncate capitalize">
+          <p className="font-semibold text-white truncate capitalize text-base">
             {recipe.title}
           </p>
 
-          <div className="flex items-center gap-2 text-sm text-white/80">
+          <div className="flex items-center gap-2 text-xs text-white/80 shrink-0">
             <div className="flex items-center gap-1">
               <BarChart3 size={14} />
               <span className="capitalize">{recipe.difficulty}</span>
             </div>
 
             {recipe.isPremium === true && (
-              <span className="text-xs bg-[#F57C00] text-white px-2 py-0.5 rounded-full">
-                <Crown size={14} />
+              <span className="text-[10px] bg-[#F57C00] text-white px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Crown size={12} />
               </span>
             )}
           </div>
         </div>
 
         <Link href={`/creator/recipes/${recipe.id}`}>
-          <button className="w-full bg-[#F57C00] text-white py-1.5 rounded-lg hover:bg-orange-500 transition text-sm cursor-pointer">
+          <button className="w-full bg-[#F57C00] text-white py-1.5 rounded-lg hover:bg-orange-600 transition text-sm cursor-pointer font-medium">
             Ver receta
           </button>
         </Link>
