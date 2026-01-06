@@ -9,7 +9,7 @@ export interface RecipeFormValuesInterface {
   isPremium: boolean;
   difficulty: Difficulty;
   file: File | null;
-  categories: string[];
+  category: string[];
 }
 
 export const initialValuesRecipe: RecipeFormValuesInterface = {
@@ -19,7 +19,7 @@ export const initialValuesRecipe: RecipeFormValuesInterface = {
   difficulty: "facil",
   isPremium: false,
   file: null,
-  categories: [],
+  category: [],
 };
 
 export const RecipeSchema = Yup.object({
@@ -27,7 +27,7 @@ export const RecipeSchema = Yup.object({
   description: Yup.string().required("La descripción es obligatoria"),
   ingredients: Yup.string().required("Agregá al menos un ingrediente"),
   isPremium: Yup.boolean(),
-  categories: Yup.array()
+  category: Yup.array()
     .min(1, "Seleccioná al menos una categoría")
     .required(),
 });

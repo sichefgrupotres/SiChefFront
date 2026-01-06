@@ -42,7 +42,7 @@ export default function NewRecipePage() {
           difficulty: values.difficulty,
           isPremium: values.isPremium,
           file: values.file,
-          categories: values.categories,
+          category: values.category,
         },
         session
       );
@@ -177,7 +177,7 @@ export default function NewRecipePage() {
           <label className="text-sm font-semibold block mb-2">Categorías</label>
 
           <div className="grid grid-cols-2 gap-3">
-            {["Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"].map(
+            {["desayunos", "almuerzos", "meriendas", "cenas", "postres"].map(
               (cat) => (
                 <label
                   key={cat}
@@ -185,9 +185,9 @@ export default function NewRecipePage() {
                 >
                   <input
                     type="checkbox"
-                    checked={formik.values.categories.includes(cat)}
+                    checked={formik.values.category.includes(cat)}
                     onChange={() => {
-                      const current = formik.values.categories;
+                      const current = formik.values.category;
 
                       if (current.includes(cat)) {
                         formik.setFieldValue(
@@ -195,7 +195,7 @@ export default function NewRecipePage() {
                           current.filter((c) => c !== cat)
                         );
                       } else {
-                        formik.setFieldValue("categories", [...current, cat]);
+                        formik.setFieldValue("category", [...current, cat]);
                       }
                     }}
                     className="accent-orange-500"
@@ -206,9 +206,9 @@ export default function NewRecipePage() {
             )}
           </div>
 
-          {formik.touched.categories && formik.errors.categories && (
+          {formik.touched.category && formik.errors.category && (
             <p className="text-red-400 text-sm mt-1">
-              {formik.errors.categories}
+              {formik.errors.category}
             </p>
           )}
         </div>
@@ -254,11 +254,10 @@ export default function NewRecipePage() {
         <button
           type="submit"
           disabled={loading}
-          className={`mt-4 h-12 rounded-lg font-bold transition ${
-            loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
-          }`}
+          className={`mt-4 h-12 rounded-lg font-bold transition ${loading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+            }`}
         >
           {loading ? "Publicando..." : "Publicar receta"}
         </button>

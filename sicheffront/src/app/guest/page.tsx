@@ -31,21 +31,21 @@ export default function GuestHomePage() {
     selectedCategory === "Todas"
       ? recipes
       : recipes.filter((recipe) => {
-          let categoriesArray: string[] = [];
+        let categoriesArray: string[] = [];
 
-          if (Array.isArray(recipe.categories)) {
-            categoriesArray = recipe.categories;
-          } else if (typeof recipe.categories === "string") {
-            try {
-              const parsed = JSON.parse(recipe.categories);
-              categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
-            } catch {
-              categoriesArray = [recipe.categories];
-            }
+        if (Array.isArray(recipe.categories)) {
+          categoriesArray = recipe.categories;
+        } else if (typeof recipe.categories === "string") {
+          try {
+            const parsed = JSON.parse(recipe.categories);
+            categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+          } catch {
+            categoriesArray = [recipe.categories];
           }
+        }
 
-          return categoriesArray.includes(selectedCategory);
-        });
+        return categoriesArray.includes(selectedCategory);
+      });
 
   if (loading) {
     return (
@@ -113,19 +113,19 @@ export default function GuestHomePage() {
               />
             </div>
 
-            <button className="bg-orange-500 text-white px-8 rounded-r-xl text-sm font-semibold">
+            <button className="bg-orange-500 text-white px-8 rounded-r-xl text-sm font-semibold cursor-pointer">
               Buscar
             </button>
           </div>
         </section>
 
         {/* ================= CATEGORIES (ACTUALIZADAS) ================= */}
-         <section className="px-4 md:px-8 pb-15">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
-           Explorar Categorias
+        <section className="px-4 md:px-8 pb-15">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3 pb-4">
+            Explorar Categorias
           </h2>
 
-          <div className="flex gap-4 overflow-x-auto pb-2">
+          <div className="flex gap-6 overflow-x-auto pb-2 pt-2 pl-2">
             {categoriesList.map((cat) => (
               <button
                 key={cat.name}
@@ -140,10 +140,9 @@ export default function GuestHomePage() {
 
                   after:absolute after:inset-0 after:bg-black/50 after:content-['']
 
-                  ${
-                    selectedCategory === cat.name
-                      ? "ring-2 ring-orange-500"
-                      : ""
+                  ${selectedCategory === cat.name
+                    ? "ring-2 ring-orange-500"
+                    : ""
                   }
                 `}
               >
@@ -154,12 +153,12 @@ export default function GuestHomePage() {
         </section>
 
         {/* ================= RECIPES GRID (REAL) ================= */}
-       <section className="px-4 md:px-8 pb-15">
+        <section className="px-4 md:px-8 pb-15">
           <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
             Tendencias semanales
           </h2>
-                <MyRecipesList />
-              
+          <MyRecipesList />
+
         </section>
       </main>
 

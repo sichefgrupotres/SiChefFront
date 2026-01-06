@@ -71,9 +71,9 @@ export default function CreatorPage() {
 
       {/* OVERVIEW */}
       <section className="px-4 md:px-8 pb-8">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
-            Descripcion general
-          </h2>
+        <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+          Descripcion general
+        </h2>
 
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -121,10 +121,10 @@ export default function CreatorPage() {
       </section>
 
       {/* MIS RECETAS */}
-       <section className="px-4 md:px-8 pb-16 bg-[#181411]">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
-            Mis Recetas
-          </h2>
+      <section className="px-4 md:px-8 pb-16 bg-[#181411]">
+        <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+          Mis Recetas
+        </h2>
         <MyRecipesList />
       </section>
     </div>

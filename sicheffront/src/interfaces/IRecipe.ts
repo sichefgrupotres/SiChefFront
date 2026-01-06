@@ -8,7 +8,7 @@ export interface RecipeInterface {
   description: string;
   difficulty: Difficulty;
   isPremium: boolean;
-  categories: string[];
+  category: string[];
 }
 export interface CreateRecipePayload {
   title: string;
@@ -17,5 +17,5 @@ export interface CreateRecipePayload {
   difficulty: Difficulty;
   isPremium: boolean;
   file: File;
-  categories: string[];
+  category: string[];
 }

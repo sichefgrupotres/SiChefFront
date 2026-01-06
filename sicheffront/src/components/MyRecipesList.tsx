@@ -29,7 +29,7 @@ export default function MyRecipesList() {
 
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-15"
+      className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10"
     >
       {recipes.length === 0 ? (
         <p className="text-white col-span-full text-center">

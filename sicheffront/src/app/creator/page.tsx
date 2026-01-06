@@ -27,16 +27,16 @@ export default function GuestHomePage() {
     // Si la receta no tiene categorías (undefined), usamos un array vacío [] para que no explote.
     let categoriesArray: string[] = [];
 
-    if (Array.isArray(recipe.categories)) {
-      categoriesArray = recipe.categories;
-    } else if (typeof recipe.categories === "string") {
+    if (Array.isArray(recipe.category)) {
+      categoriesArray = recipe.category;
+    } else if (typeof recipe.category === "string") {
       // Si viene como texto "['Cenas']", intentamos convertirlo a lista real
       try {
-        const parsed = JSON.parse(recipe.categories);
+        const parsed = JSON.parse(recipe.category);
         categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
       } catch {
         // Si es texto simple "Cenas", lo guardamos en una lista
-        categoriesArray = [recipe.categories];
+        categoriesArray = [recipe.category];
       }
     }
 
@@ -81,11 +81,11 @@ export default function GuestHomePage() {
   // Lista de categorías para generar los botones
   const categoriesList = [
     { name: "Todas", image: "/categories/todas.jpg" },
-    { name: "Desayunos", image: "/categories/desayuno.jpg" },
-    { name: "Almuerzos", image: "/categories/almuerzo.jpg" },
-    { name: "Meriendas", image: "/categories/merienda.jpg" },
-    { name: "Cenas", image: "/categories/cena.jpg" },
-    { name: "Postres", image: "/categories/postres.jpg" },
+    { name: "desayunos", image: "/categories/desayuno.jpg" },
+    { name: "almuerzos", image: "/categories/almuerzo.jpg" },
+    { name: "meriendas", image: "/categories/merienda.jpg" },
+    { name: "cenas", image: "/categories/cena.jpg" },
+    { name: "postres", image: "/categories/postres.jpg" },
   ];
 
   return (
@@ -134,13 +134,13 @@ export default function GuestHomePage() {
             Explorar Categorías
           </h2>
 
-          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide pl-2 pt-2">
             {categoriesList.map((cat) => (
               <button
                 key={cat.name}
                 onClick={() => setSelectedCategory(cat.name)}
-                 style={{ backgroundImage: `url(${cat.image})` }}
-                 className={`
+                style={{ backgroundImage: `url(${cat.image})` }}
+                className={`
     relative
     overflow-hidden
     bg-cover
@@ -163,11 +163,10 @@ export default function GuestHomePage() {
     after:bg-black/50
     after:content-['']
 
-    ${
-      selectedCategory === cat.name
-        ? "text-[#F57C00]"
-        : "text-white"
-    }
+    ${selectedCategory === cat.name
+                    ? "text-[#F57C00]"
+                    : "text-white"
+                  }
   `}
               >
                 {/* Texto (igual que antes) */}
