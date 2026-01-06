@@ -33,14 +33,14 @@ export default function GuestHomePage() {
       : recipes.filter((recipe) => {
         let categoriesArray: string[] = [];
 
-        if (Array.isArray(recipe.categories)) {
-          categoriesArray = recipe.categories;
-        } else if (typeof recipe.categories === "string") {
+        if (Array.isArray(recipe.category)) {
+          categoriesArray = recipe.category;
+        } else if (typeof recipe.category === "string") {
           try {
-            const parsed = JSON.parse(recipe.categories);
+            const parsed = JSON.parse(recipe.category);
             categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
           } catch {
-            categoriesArray = [recipe.categories];
+            categoriesArray = [recipe.category];
           }
         }
 
