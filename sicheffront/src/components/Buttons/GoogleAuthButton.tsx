@@ -25,7 +25,7 @@ export const GoogleAuthButton = ({
     <div className="flex items-center justify-center">
       <button
         type="button"
-        className="flex items-center justify-center w-14 h-14 bg-orange-500/20 rounded-full transition-transform duration-200 hover:scale-110"
+        className="flex items-center justify-center w-14 h-14 bg-orange-500/20 rounded-full transition-transform duration-200 hover:scale-110 cursor-pointer"
         onClick={handleGoogle}
       >
         <svg
