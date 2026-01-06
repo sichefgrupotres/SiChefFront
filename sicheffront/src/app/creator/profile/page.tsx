@@ -108,18 +108,16 @@ export default function CreatorPage() {
           <span>Nueva Receta</span>
         </Link>
 
-        <Link href={PATHROUTES.NEWTUTORIAL}>
         <button
           className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
                     flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer"
+                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95"
         >
           <span className="material-symbols-outlined text-[26px]">
             video_camera_front
           </span>
           <span>Nuevo tutorial</span>
         </button>
-        </Link>
       </section>
 
       {/* MIS RECETAS */}
