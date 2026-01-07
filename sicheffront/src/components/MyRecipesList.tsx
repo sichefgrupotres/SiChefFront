@@ -28,10 +28,8 @@ export default function MyRecipesList() {
   }
 
   return (
-    <div
-      className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10"
-    >
-      {recipes.length === 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+      {(recipes.length || []) ? (
         <p className="text-white col-span-full text-center">
           Aun no haz creado recetas.
         </p>
