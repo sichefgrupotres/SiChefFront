@@ -22,8 +22,8 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({
   dataUser: null,
-  setDataUser: () => {},
-  logout: () => {},
+  setDataUser: () => { },
+  logout: () => { },
   loading: true,
   isLoadingUser: true,
 });
@@ -65,8 +65,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("token");
 
     await signOut({
-    callbackUrl: "/login",
-  });
+      callbackUrl: "/login",
+    });
 
   };
   return (

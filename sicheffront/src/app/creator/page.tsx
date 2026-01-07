@@ -145,8 +145,8 @@ export default function GuestHomePage() {
     overflow-hidden
     bg-cover
     bg-center
-    min-w-[120px]
-    h-20
+    min-w-[140px]
+    h-24
     rounded-xl
     flex
     items-center
@@ -164,8 +164,8 @@ export default function GuestHomePage() {
     after:content-['']
 
     ${selectedCategory === cat.name
-                    ? "text-[#F57C00]"
-                    : "text-white"
+                    ? "ring-2 ring-orange-500"
+                    : ""
                   }
   `}
               >
