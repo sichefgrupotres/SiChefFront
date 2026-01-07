@@ -163,6 +163,10 @@ const RegisterForm = () => {
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
+              {/* Mensaje de error agregado */}
+              {formik.touched.password && formik.errors.password && (
+                <p className="text-red-400 text-xs mt-1">{formik.errors.password}</p>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -189,6 +193,10 @@ const RegisterForm = () => {
                   {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
+              {/* Mensaje de error agregado */}
+              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                <p className="text-red-400 text-xs mt-1">{formik.errors.confirmPassword}</p>
+              )}
             </div>
           </div>
 
@@ -206,6 +214,10 @@ const RegisterForm = () => {
               <option value="USER">Usuario</option>
               <option value="CREATOR">Creador</option>
             </select>
+            {/* Mensaje de error agregado */}
+            {formik.touched.roleId && formik.errors.roleId && (
+              <p className="text-red-400 text-xs mt-1">{formik.errors.roleId}</p>
+            )}
           </div>
 
           {/* Submit */}

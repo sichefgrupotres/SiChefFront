@@ -137,6 +137,7 @@ export default function GuestHomePage() {
                   flex items-center justify-center
                   font-bold text-white
                   transition-transform hover:scale-105
+                  cursor-pointer
 
                   after:absolute after:inset-0 after:bg-black/50 after:content-['']
 
@@ -155,7 +156,7 @@ export default function GuestHomePage() {
         {/* ================= RECIPES GRID (REAL) ================= */}
         <section className="px-4 md:px-8 pb-15">
           <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
-            Tendencias semanales
+            Explorar Recetas
           </h2>
           <MyRecipesList />
 
