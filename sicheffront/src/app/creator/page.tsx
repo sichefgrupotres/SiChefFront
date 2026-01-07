@@ -22,7 +22,7 @@ export default function GuestHomePage() {
   // =========================================================
   // 4. MOTOR DE FILTRADO (La parte más importante)
   // =========================================================
-  const filteredRecipes = recipes.filter((recipe) => {
+  const filteredRecipes = (recipes ?? []).filter((recipe) => {
     // PASO A: Normalizar Categorías (Blindaje contra errores de datos)
     // Si la receta no tiene categorías (undefined), usamos un array vacío [] para que no explote.
     let categoriesArray: string[] = [];
