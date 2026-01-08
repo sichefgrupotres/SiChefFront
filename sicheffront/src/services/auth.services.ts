@@ -28,9 +28,9 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
       const result = await response.json();
 
       // // 🔐 GUARDAR TOKEN PARA USARLO EN /posts
-      // if (result.token) {
-      //   localStorage.setItem("token", result.token);
-      // }
+      if (result.token) {
+        localStorage.setItem("backendToken", result.token);
+      }
 
       return result;
     } else {

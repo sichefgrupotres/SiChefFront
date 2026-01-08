@@ -81,11 +81,11 @@ export default function GuestHomePage() {
   // Lista de categorías para generar los botones
   const categoriesList = [
     { name: "Todas", image: "/categories/todas.jpg" },
-    { name: "desayunos", image: "/categories/desayuno.jpg" },
-    { name: "almuerzos", image: "/categories/almuerzo.jpg" },
-    { name: "meriendas", image: "/categories/merienda.jpg" },
-    { name: "cenas", image: "/categories/cena.jpg" },
-    { name: "postres", image: "/categories/postres.jpg" },
+    { name: "Desayunos", image: "/categories/desayuno.jpg" },
+    { name: "Almuerzos", image: "/categories/almuerzo.jpg" },
+    { name: "Meriendas", image: "/categories/merienda.jpg" },
+    { name: "Cenas", image: "/categories/cena.jpg" },
+    { name: "Postres", image: "/categories/postres.jpg" },
   ];
 
   return (
@@ -206,7 +206,7 @@ export default function GuestHomePage() {
             // Grilla Responsive
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
               {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
+                <RecipeCard key={recipe.id} recipe={recipe} mode="creator"/>
               ))}
             </div>
           )}

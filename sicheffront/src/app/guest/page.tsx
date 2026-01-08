@@ -4,14 +4,15 @@ import { PATHROUTES } from "@/utils/PathRoutes";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import RecipeCard from "@/components/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 import MyRecipesList from "@/components/MyRecipesList";
+import RecipeCard from "@/components/CardRecipe";
 
 export default function GuestHomePage() {
   const { recipes, fetchRecipes, loading, error } = useRecipe();
 
   const [selectedCategory, setSelectedCategory] = useState("Todas");
+ const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     fetchRecipes();
@@ -120,46 +121,87 @@ export default function GuestHomePage() {
         </section>
 
         {/* ================= CATEGORIES (ACTUALIZADAS) ================= */}
-        <section className="px-4 md:px-8 pb-15">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3 pb-4">
-            Explorar Categorias
+        <section className="px-4 md:px-8 pb-8">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+            Explorar Categorías
           </h2>
 
-          <div className="flex gap-6 overflow-x-auto pb-2 pt-2 pl-2">
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide pl-2 pt-2">
             {categoriesList.map((cat) => (
               <button
                 key={cat.name}
                 onClick={() => setSelectedCategory(cat.name)}
                 style={{ backgroundImage: `url(${cat.image})` }}
                 className={`
-                  relative overflow-hidden bg-cover bg-center
-                  min-w-[140px] h-24 rounded-xl
-                  flex items-center justify-center
-                  font-bold text-white
-                  transition-transform hover:scale-105
-                  cursor-pointer
+    relative
+    overflow-hidden
+    bg-cover
+    bg-center
+    min-w-[140px]
+    h-24
+    rounded-xl
+    flex
+    items-center
+    justify-center
+    font-bold
+    text-lg
+    transition-all
+    transform
+    hover:scale-105
+    cursor-pointer
 
-                  after:absolute after:inset-0 after:bg-black/50 after:content-['']
+    after:absolute
+    after:inset-0
+    after:bg-black/50
+    after:content-['']
 
-                  ${selectedCategory === cat.name
+    ${selectedCategory === cat.name
                     ? "ring-2 ring-orange-500"
                     : ""
                   }
-                `}
+  `}
               >
+                {/* Texto (igual que antes) */}
                 <span className="relative z-10">{cat.name}</span>
               </button>
             ))}
           </div>
         </section>
 
-        {/* ================= RECIPES GRID (REAL) ================= */}
+        {/* ================= GRID DE RECETAS ================= */}
         <section className="px-4 md:px-8 pb-15">
           <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
             Explorar Recetas
           </h2>
-          <MyRecipesList />
-
+          {filteredRecipes.length === 0 ? (
+            // Mensaje Estado Vacío
+            <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
+              <span className="text-6xl mb-4">🍽️</span>
+              <h3 className="text-xl text-white font-semibold">
+                No encontramos recetas
+              </h3>
+              <p className="text-gray-400 mt-2 max-w-md">
+                No hay resultados para "{searchTerm}" en la categoría "
+                {selectedCategory}".
+              </p>
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("Todas");
+                }}
+                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
+              >
+                Limpiar filtros y ver todo
+              </button>
+            </div>
+          ) : (
+            // Grilla Responsive
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} mode="guest"/>
+              ))}
+            </div>
+          )}
         </section>
       </main>
 

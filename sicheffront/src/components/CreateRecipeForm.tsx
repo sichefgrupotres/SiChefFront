@@ -21,6 +21,18 @@ export default function NewRecipePage() {
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
     onSubmit: async (values, { resetForm }) => {
+
+      if (status === "loading") return;
+console.log("SESSION 👉", session);
+
+      if (!session?.backendToken) {
+    Swal.fire({
+      icon: "warning",
+      title: "Sesión no disponible",
+      text: "Por favor inicia sesión nuevamente",
+    });
+    return;
+  }
       if (loading) return;
       setLoading(true);
 
@@ -177,7 +189,7 @@ export default function NewRecipePage() {
           <label className="text-sm font-semibold block mb-2">Categorías</label>
 
           <div className="grid grid-cols-2 gap-3">
-            {["desayunos", "almuerzos", "meriendas", "cenas", "postres"].map(
+            {["Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"].map(
               (cat) => (
                 <label
                   key={cat}
@@ -191,7 +203,7 @@ export default function NewRecipePage() {
 
                       if (current.includes(cat)) {
                         formik.setFieldValue(
-                          "categories",
+                          "category",
                           current.filter((c) => c !== cat)
                         );
                       } else {
