@@ -6,12 +6,18 @@ import { BarChart3, Crown, Heart } from "lucide-react";
 
 interface RecipeCardProps {
   recipe: RecipeInterface;
+  mode?: "creator" | "guest"; // 👈 nueva prop
 }
 
-const RecipeCard = ({ recipe }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, mode = "creator" }: RecipeCardProps) => {
+  const href =
+    mode === "creator"
+      ? `/creator/recipes/${recipe.id}`
+      : `/guest/recipes/${recipe.id}`;
+
   return (
     <div className="relative flex flex-col w-full rounded-xl overflow-hidden shadow hover:shadow-xl transition bg-[#2a221b]">
-      {/* Imagen: Cambié h-50 por h-44 para hacerla apenitas más chica */}
+      {/* Imagen */}
       <div className="relative w-full h-44">
         <img
           src={recipe.imageUrl}
@@ -49,7 +55,7 @@ const RecipeCard = ({ recipe }: RecipeCardProps) => {
           </div>
         </div>
 
-        <Link href={`/creator/recipes/${recipe.id}`}>
+        <Link href={href}>
           <button className="w-full bg-[#F57C00] text-white py-1.5 rounded-lg hover:bg-orange-600 transition text-sm cursor-pointer font-medium">
             Ver receta
           </button>
