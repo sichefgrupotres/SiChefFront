@@ -44,7 +44,7 @@ const RegisterForm = () => {
     /* Contenedor principal con la imagen de fondo */
     <div className="relative min-h-screen w-full flex items-center justify-center">
       <Image
-        src="/Registerbackground.png" // Asegúrate de que el nombre coincida con el archivo en tu carpeta public
+        src="/FondoForms.png" // Asegúrate de que el nombre coincida con el archivo en tu carpeta public
         alt="Background Kitchen"
         fill
         priority
