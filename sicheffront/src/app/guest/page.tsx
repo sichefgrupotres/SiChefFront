@@ -4,13 +4,13 @@ import { PATHROUTES } from "@/utils/PathRoutes";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import RecipeCard from "@/components/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 
 export default function GuestHomePage() {
   const { recipes, fetchRecipes, loading, error } = useRecipe();
 
   const [selectedCategory, setSelectedCategory] = useState("Todas");
+ const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     fetchRecipes();
@@ -118,12 +118,12 @@ export default function GuestHomePage() {
         </section>
 
         {/* ================= CATEGORIES (ACTUALIZADAS) ================= */}
-        <section className="px-4 md:px-8 pb-15">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3 pb-4">
-            Explorar Categorias
+        <section className="px-4 md:px-8 pb-8">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+            Explorar Categorías
           </h2>
 
-          <div className="flex gap-6 overflow-x-auto pb-2 pt-2 pl-2">
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide pl-2 pt-2">
             {categoriesList.map((cat) => (
               <button
                 key={cat.name}
@@ -151,7 +151,7 @@ export default function GuestHomePage() {
           </div>
         </section>
 
-        {/* ================= RECIPES GRID (REAL) ================= */}
+        {/* ================= GRID DE RECETAS ================= */}
         <section className="px-4 md:px-8 pb-15">
           <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
             Explorar Recetas

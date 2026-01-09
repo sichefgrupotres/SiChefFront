@@ -201,7 +201,7 @@ export default function GuestHomePage() {
             // Grilla Responsive
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
               {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
+                <RecipeCard key={recipe.id} recipe={recipe} mode="creator"/>
               ))}
             </div>
           )}

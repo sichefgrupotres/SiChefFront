@@ -163,14 +163,14 @@ const LoginForm = () => {
         </button>
 
         {/* Divider Google */}
-        {/* <div className="relative flex items-center py-8">
+        <div className="relative flex items-center py-8">
           <div className="grow border-t border-white/10"></div>
           <span className="shrink mx-4 text-white/60 text-sm">O continuar con</span>
           <div className="grow border-t border-white/10"></div>
-        </div> */}
+        </div>
 
         {/* Google Button */}
-        {/* <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center">
           <button
             type="button"
             className="group flex items-center justify-center w-14 h-14 bg-orange-500/10 rounded-full border border-orange-500/30 transition-all hover:scale-110 hover:bg-orange-500/20"
@@ -188,7 +188,7 @@ const LoginForm = () => {
               />
             </svg>
           </button>
-        </div> */}
+        </div>
 
         {/* Footer */}
         <div className="text-center text-xs text-white/40 pt-10">
