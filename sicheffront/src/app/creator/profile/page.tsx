@@ -10,6 +10,7 @@ export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
 
   const userInfo = dataUser?.user;
+  console.log("info que esta pidiendo orlando", userInfo);
   const fullName = userInfo
     ? `${userInfo.name} ${userInfo.lastname}`
     : "Chef Invitado";
@@ -42,8 +43,7 @@ export default function CreatorPage() {
           <label
             className="absolute bottom-0 right-0 translate-x-1 translate-y-1 
                         w-9 h-9 rounded-full bg-[#F57C00] flex items-center justify-center 
-                        cursor-pointer shadow-lg hover:scale-105 transition active:scale-95"
-          >
+                        cursor-pointer shadow-lg hover:scale-105 transition active:scale-95">
             <span className="material-symbols-outlined text-white text-[20px]">
               photo_camera
             </span>
@@ -75,7 +75,6 @@ export default function CreatorPage() {
           Descripcion general
         </h2>
 
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-[#2a221b] rounded-xl p-4">
             <p className="text-sm text-white/60">Vistas</p>
@@ -100,8 +99,7 @@ export default function CreatorPage() {
           href={PATHROUTES.NEWRECIPE}
           className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
                     flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95"
-        >
+                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95">
           <span className="material-symbols-outlined text-[26px]">
             restaurant_menu
           </span>
@@ -112,8 +110,7 @@ export default function CreatorPage() {
           <button
             className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
                     flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer"
-          >
+                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer">
             <span className="material-symbols-outlined text-[26px]">
               video_camera_front
             </span>

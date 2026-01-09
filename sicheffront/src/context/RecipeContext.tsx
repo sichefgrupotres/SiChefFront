@@ -10,14 +10,12 @@ interface RecipeContextProps {
   loading: boolean;
   error: string | null;
   fetchRecipes: () => Promise<void>;
-
+  fetchMyRecipes: () => Promise<void>;
   addRecipe: (data: CreateRecipePayload) => Promise<boolean>;
-
   updateRecipe: (
     id: string,
     data: Partial<RecipeInterface>
   ) => Promise<boolean>;
-
   deleteRecipe: (id: string) => Promise<void>;
   getRecipeById: (id: string) => RecipeInterface | undefined;
 }
@@ -42,22 +40,53 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const fetchRecipes = async () => {
     try {
       setLoading(true);
+      setError(null);
 
-      const res = await fetch("http://localhost:3001/posts", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch("http://localhost:3001/posts");
+
+      if (!res.ok) {
+        throw new Error(`Error ${res.status}`);
+      }
 
       const json = await res.json();
-      setRecipes(json.data);
-    } catch {
-      setError("Error al obtener recetas");
+      setRecipes(json.data || json);
+    } catch (err) {
+      console.error("Error fetching recipes:", err);
+      setError(err instanceof Error ? err.message : "Error al obtener recetas");
     } finally {
       setLoading(false);
     }
   };
 
+  const fetchMyRecipes = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (!token) {
+        throw new Error("No estás autenticado");
+      }
+
+      const response = await fetch("http://localhost:3001/posts/my-posts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al cargar tus recetas");
+      }
+
+      const data = await response.json();
+      setUserRecipes(data.data || data);
+    } catch (err) {
+      console.error("Error fetching my recipes:", err);
+      setError(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const addRecipe = async (data: CreateRecipePayload): Promise<boolean> => {
     if (!token) {
@@ -78,9 +107,6 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
       formData.append("category", JSON.stringify(data.category));
-
-
-
 
       const res = await fetch("http://localhost:3001/posts", {
         method: "POST",
@@ -144,12 +170,12 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         loading,
         error,
         fetchRecipes,
+        fetchMyRecipes,
         addRecipe,
         updateRecipe,
         deleteRecipe,
         getRecipeById,
-      }}
-    >
+      }}>
       {children}
     </RecipeContext.Provider>
   );

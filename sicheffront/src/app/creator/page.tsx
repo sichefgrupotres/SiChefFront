@@ -81,11 +81,11 @@ export default function GuestHomePage() {
   // Lista de categorías para generar los botones
   const categoriesList = [
     { name: "Todas", image: "/categories/todas.jpg" },
-    { name: "desayunos", image: "/categories/desayuno.jpg" },
-    { name: "almuerzos", image: "/categories/almuerzo.jpg" },
-    { name: "meriendas", image: "/categories/merienda.jpg" },
-    { name: "cenas", image: "/categories/cena.jpg" },
-    { name: "postres", image: "/categories/postres.jpg" },
+    { name: "Desayunos", image: "/categories/desayuno.jpg" },
+    { name: "Almuerzos", image: "/categories/almuerzo.jpg" },
+    { name: "Meriendas", image: "/categories/merienda.jpg" },
+    { name: "Cenas", image: "/categories/cena.jpg" },
+    { name: "Postres", image: "/categories/postres.jpg" },
   ];
 
   return (
@@ -163,12 +163,8 @@ export default function GuestHomePage() {
     after:bg-black/50
     after:content-['']
 
-    ${selectedCategory === cat.name
-                    ? "ring-2 ring-orange-500"
-                    : ""
-                  }
-  `}
-              >
+    ${selectedCategory === cat.name ? "ring-2 ring-orange-500" : ""}
+  `}>
                 {/* Texto (igual que antes) */}
                 <span className="relative z-10">{cat.name}</span>
               </button>
@@ -197,8 +193,7 @@ export default function GuestHomePage() {
                   setSearchTerm("");
                   setSelectedCategory("Todas");
                 }}
-                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
-              >
+                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold">
                 Limpiar filtros y ver todo
               </button>
             </div>

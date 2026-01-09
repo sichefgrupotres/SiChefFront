@@ -44,7 +44,7 @@ const RegisterForm = () => {
     /* Contenedor principal con la imagen de fondo */
     <div className="relative min-h-screen w-full flex items-center justify-center">
       <Image
-        src="/Registerbackground.png" // Asegúrate de que el nombre coincida con el archivo en tu carpeta public
+        src="/FondoForms.png" // Asegúrate de que el nombre coincida con el archivo en tu carpeta public
         alt="Background Kitchen"
         fill
         priority
@@ -90,7 +90,9 @@ const RegisterForm = () => {
                 />
               </div>
               {formik.touched.name && formik.errors.name && (
-                <p className="text-red-400 text-xs mt-1">{formik.errors.name}</p>
+                <p className="text-red-400 text-xs mt-1">
+                  {formik.errors.name}
+                </p>
               )}
             </div>
 
@@ -111,7 +113,9 @@ const RegisterForm = () => {
                 />
               </div>
               {formik.touched.lastname && formik.errors.lastname && (
-                <p className="text-red-400 text-xs mt-1">{formik.errors.lastname}</p>
+                <p className="text-red-400 text-xs mt-1">
+                  {formik.errors.lastname}
+                </p>
               )}
             </div>
           </div>
@@ -158,14 +162,15 @@ const RegisterForm = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
-                >
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white">
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
               {/* Mensaje de error agregado */}
               {formik.touched.password && formik.errors.password && (
-                <p className="text-red-400 text-xs mt-1">{formik.errors.password}</p>
+                <p className="text-red-400 text-xs mt-1">
+                  {formik.errors.password}
+                </p>
               )}
             </div>
 
@@ -188,15 +193,21 @@ const RegisterForm = () => {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
-                >
-                  {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white">
+                  {showConfirmPassword ? (
+                    <EyeOff size={15} />
+                  ) : (
+                    <Eye size={15} />
+                  )}
                 </button>
               </div>
               {/* Mensaje de error agregado */}
-              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                <p className="text-red-400 text-xs mt-1">{formik.errors.confirmPassword}</p>
-              )}
+              {formik.touched.confirmPassword &&
+                formik.errors.confirmPassword && (
+                  <p className="text-red-400 text-xs mt-1">
+                    {formik.errors.confirmPassword}
+                  </p>
+                )}
             </div>
           </div>
 
@@ -208,15 +219,16 @@ const RegisterForm = () => {
               value={formik.values.roleId}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="bg-[#2a221b] text-white h-12 rounded-lg px-4 border border-transparent focus:border-[#F57C00] outline-none"
-            >
+              className="bg-[#2a221b] text-white h-12 rounded-lg px-4 border border-transparent focus:border-[#F57C00] outline-none">
               <option value="">Seleccionar</option>
               <option value="USER">Usuario</option>
               <option value="CREATOR">Creador</option>
             </select>
             {/* Mensaje de error agregado */}
             {formik.touched.roleId && formik.errors.roleId && (
-              <p className="text-red-400 text-xs mt-1">{formik.errors.roleId}</p>
+              <p className="text-red-400 text-xs mt-1">
+                {formik.errors.roleId}
+              </p>
             )}
           </div>
 
@@ -225,8 +237,11 @@ const RegisterForm = () => {
             type="submit"
             disabled={formik.isSubmitting}
             className={`w-full h-14 rounded-lg text-white font-bold transition-all mt-4
-            ${formik.isSubmitting ? "bg-[#F57C00]/50 cursor-not-allowed" : "bg-[#F57C00] hover:scale-105 cursor-pointer"}`}
-          >
+            ${
+              formik.isSubmitting
+                ? "bg-[#F57C00]/50 cursor-not-allowed"
+                : "bg-[#F57C00] hover:scale-105 cursor-pointer"
+            }`}>
             {formik.isSubmitting ? "Registrando..." : "Registrarse"}
           </button>
         </form>
@@ -241,15 +256,16 @@ const RegisterForm = () => {
         <button
           type="button"
           className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 cursor-pointer"
-          onClick={() => router.push("/login")}
-        >
+          onClick={() => router.push("/login")}>
           Iniciar Sesion
         </button>
 
         {/* Google Auth Section */}
         <div className="relative flex items-center py-4">
           <div className="grow border-t border-gray-600"></div>
-          <span className="shrink mx-4 text-white text-sm">O continuar con</span>
+          <span className="shrink mx-4 text-white text-sm">
+            O continuar con
+          </span>
           <div className="grow border-t border-gray-600"></div>
         </div>
 

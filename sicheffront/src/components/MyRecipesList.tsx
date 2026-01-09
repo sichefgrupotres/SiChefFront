@@ -5,11 +5,18 @@ import RecipeCard from "@/components/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 
 export default function MyRecipesList() {
-  const { recipes, fetchRecipes, loading, error } = useRecipe();
+  const { userRecipes, fetchMyRecipes, loading, error } = useRecipe();
 
   useEffect(() => {
-    fetchRecipes();
+    console.log("🔍 MyRecipesList mounted, calling fetchMyRecipes");
+    fetchMyRecipes();
   }, []);
+
+  console.log("🔍 MyRecipesList state:", {
+    userRecipesCount: userRecipes?.length,
+    loading,
+    error,
+  });
 
   if (loading) {
     return (
@@ -29,12 +36,14 @@ export default function MyRecipesList() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
-      {(recipes.length || []) ? (
+      {!userRecipes || userRecipes.length === 0 ? (
         <p className="text-white col-span-full text-center">
-          Aun no haz creado recetas.
+          Aún no has creado recetas.
         </p>
       ) : (
-        recipes?.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
+        userRecipes.map((recipe) => (
+          <RecipeCard key={recipe.id} recipe={recipe} />
+        ))
       )}
     </div>
   );

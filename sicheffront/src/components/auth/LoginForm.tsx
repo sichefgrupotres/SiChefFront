@@ -5,13 +5,12 @@ import {
   LoginFormValuesInterface,
   LoginSchema,
 } from "@/validators/LoginSchema";
-import { loginUserService } from "@/services/auth.services";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { useAuth } from "@/context/AuthContext";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -22,15 +21,17 @@ const LoginForm = () => {
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
     onSubmit: async (values, { resetForm }) => {
-      try {
-        const response = await loginUserService(values);
-        setDataUser(response);
-        if (response?.token) {
-          router.push("/creator");
-        }
+      const result = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (result?.ok) {
+        router.push("/creator");
         resetForm();
-      } catch (error) {
-        console.error(error);
+      } else {
+        console.error("Login inválido");
       }
     },
   });
@@ -61,9 +62,7 @@ const LoginForm = () => {
           <span className="material-symbols-outlined text-[#F57C00] text-4xl!">
             Si Chef! skillet
           </span>
-          <h1 className="text-white text-[28px] font-bold pt-4">
-            Bienvenido
-          </h1>
+          <h1 className="text-white text-[28px] font-bold pt-4">Bienvenido</h1>
           <p className="text-white text-base pt-1">
             ¡Qué alegría nos da volver a verte aquí! 🧡
           </p>
@@ -73,7 +72,9 @@ const LoginForm = () => {
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* EMAIL */}
           <div className="flex flex-col">
-            <label className="text-white text-sm mb-2 ml-1 font-medium">Email</label>
+            <label className="text-white text-sm mb-2 ml-1 font-medium">
+              Email
+            </label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
                 mail
@@ -94,7 +95,9 @@ const LoginForm = () => {
 
           {/* PASSWORD */}
           <div className="flex flex-col">
-            <label className="text-white text-sm mb-2 ml-1 font-medium">Contraseña</label>
+            <label className="text-white text-sm mb-2 ml-1 font-medium">
+              Contraseña
+            </label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/60">
                 lock
@@ -110,13 +113,14 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
-              >
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white">
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
             {formik.touched.password && formik.errors.password && (
-              <p className="text-red-400 text-xs mt-1">{formik.errors.password}</p>
+              <p className="text-red-400 text-xs mt-1">
+                {formik.errors.password}
+              </p>
             )}
           </div>
 
@@ -132,11 +136,11 @@ const LoginForm = () => {
             type="submit"
             disabled={formik.isSubmitting}
             className={`w-full h-14 rounded-lg text-lg font-bold text-white transition-all mt-4 
-              ${!(formik.isValid && formik.dirty && !formik.isSubmitting)
-                ? "bg-[#F57C00]/50 cursor-not-allowed"
-                : "bg-[#F57C00] hover:scale-[1.02] active:scale-95 shadow-lg shadow-[#F57C00]/20 cursor-pointer"
-              }`}
-          >
+              ${
+                !(formik.isValid && formik.dirty && !formik.isSubmitting)
+                  ? "bg-[#F57C00]/50 cursor-not-allowed"
+                  : "bg-[#F57C00] hover:scale-[1.02] active:scale-95 shadow-lg shadow-[#F57C00]/20 cursor-pointer"
+              }`}>
             {formik.isSubmitting ? "Iniciando Sesión..." : "Entrar"}
           </button>
         </form>
@@ -144,7 +148,9 @@ const LoginForm = () => {
         {/* Divider */}
         <div className="relative flex items-center py-8">
           <div className="grow border-t border-white/10"></div>
-          <span className="mx-4 text-white/60 text-sm">¿No tienes cuenta aún?</span>
+          <span className="mx-4 text-white/60 text-sm">
+            ¿No tienes cuenta aún?
+          </span>
           <div className="grow border-t border-white/10"></div>
         </div>
 
@@ -152,8 +158,7 @@ const LoginForm = () => {
         <button
           type="button"
           className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 cursor-pointer"
-          onClick={() => router.push("/register")}
-        >
+          onClick={() => router.push("/register")}>
           Regístrate
         </button>
 
@@ -189,8 +194,14 @@ const LoginForm = () => {
         <div className="text-center text-xs text-white/40 pt-10">
           <p>
             Al continuar, aceptas nuestros{" "}
-            <span className="underline cursor-pointer hover:text-white">Términos</span> y{" "}
-            <span className="underline cursor-pointer hover:text-white">Privacidad</span>.
+            <span className="underline cursor-pointer hover:text-white">
+              Términos
+            </span>{" "}
+            y{" "}
+            <span className="underline cursor-pointer hover:text-white">
+              Privacidad
+            </span>
+            .
           </p>
         </div>
       </div>

@@ -21,6 +21,14 @@ export default function NewRecipePage() {
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
     onSubmit: async (values, { resetForm }) => {
+      if (status === "loading") {
+        return <p className="text-center p-4">Cargando sesión...</p>;
+      }
+
+      if (!session) {
+        return <p className="text-center p-4">Debes iniciar sesión</p>;
+      }
+
       if (loading) return;
       setLoading(true);
 
@@ -44,15 +52,13 @@ export default function NewRecipePage() {
           file: values.file,
           category: values.category,
         },
-        session
+        session.backendToken // 👈 PASA SOLO EL TOKEN
       );
 
       if (success) {
         Swal.fire({
           icon: "success",
           title: "Receta publicada",
-          text: "Tu receta se creó correctamente",
-          confirmButtonText: "Aceptar",
         }).then(() => {
           resetForm();
           setImagePreview(null);
@@ -177,12 +183,11 @@ export default function NewRecipePage() {
           <label className="text-sm font-semibold block mb-2">Categorías</label>
 
           <div className="grid grid-cols-2 gap-3">
-            {["desayunos", "almuerzos", "meriendas", "cenas", "postres"].map(
+            {["Desayunos", "Almuerzos", "Meriendas", "Cenas", "Postres"].map(
               (cat) => (
                 <label
                   key={cat}
-                  className="flex items-center gap-2 text-white cursor-pointer"
-                >
+                  className="flex items-center gap-2 text-white cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formik.values.category.includes(cat)}
@@ -191,7 +196,7 @@ export default function NewRecipePage() {
 
                       if (current.includes(cat)) {
                         formik.setFieldValue(
-                          "categories",
+                          "category",
                           current.filter((c) => c !== cat)
                         );
                       } else {
@@ -220,8 +225,7 @@ export default function NewRecipePage() {
             name="difficulty"
             value={formik.values.difficulty}
             onChange={formik.handleChange}
-            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3"
-          >
+            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3">
             <option value="facil">Fácil</option>
             <option value="medio">Medio</option>
             <option value="dificil">Difícil</option>
@@ -254,11 +258,11 @@ export default function NewRecipePage() {
         <button
           type="submit"
           disabled={loading}
-          className={`mt-4 h-12 rounded-lg font-bold transition ${loading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
-            }`}
-        >
+          className={`mt-4 h-12 rounded-lg font-bold transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+          }`}>
           {loading ? "Publicando..." : "Publicar receta"}
         </button>
       </form>
