@@ -1,21 +1,17 @@
-import { CreateRecipePayload } from "@/interfaces/IRecipe";
 import { LoginFormValuesInterface } from "@/validators/LoginSchema";
 import { RegisterFormValuesInterface } from "@/validators/RegisterSchema";
+import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
 
-export const loginUserService = async (Data: LoginFormValuesInterface) => {
+export const loginUserService = async (data: LoginFormValuesInterface) => {
   try {
-    const response = await fetch("http://localhost:3001/auth/signin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(Data),
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
     });
 
-    console.log(Data);
-
-    if (response.ok) {
+    if (result?.ok) {
       Swal.fire({
         icon: "success",
         title: "Inicio de sesión exitoso",
@@ -25,29 +21,22 @@ export const loginUserService = async (Data: LoginFormValuesInterface) => {
         timerProgressBar: true,
       });
 
-      const result = await response.json();
-
-      // // 🔐 GUARDAR TOKEN PARA USARLO EN /posts
-      if (result.token) {
-        localStorage.setItem("backendToken", result.token);
-      }
-
-      return result;
-    } else {
-
-      Swal.fire({
-        icon: "error",
-        title: "Error en el login",
-        text: "Credenciales inválidas ❌",
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-      });
-
-      throw new Error("Error en el logeo del usuario");
+      return true;
     }
-  } catch (error: any) {
-    throw new Error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error en el login",
+      text: "Credenciales inválidas ❌",
+      showConfirmButton: false,
+      timer: 2500,
+      timerProgressBar: true,
+    });
+
+    return false;
+  } catch (error) {
+    console.error("Error en login:", error);
+    throw error;
   }
 };
 
@@ -65,7 +54,6 @@ export const registerUserService = async (
     console.log(response);
 
     if (response.ok) {
-      // alert("Registro exitoso ✔️");
       Swal.fire({
         icon: "success",
         title: "Registro exitoso",
@@ -84,49 +72,24 @@ export const registerUserService = async (
   }
 };
 
-export const createPost = async (
-  data: CreateRecipePayload,
-  session: any
-): Promise<boolean> => {
-  // Intenta leer distintos nombres de token que pueda usar el backend
-  if (!session.backendToken) {
-    throw new Error("No hay sesión activa. Por favor, inicia sesión.");
-  }
+export const createPost = async (data, token: string) => {
+  const formData = new FormData();
 
-  try {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("ingredients", data.ingredients);
-    formData.append("difficulty", data.difficulty);
-    formData.append("isPremium", String(data.isPremium));
-    formData.append("category", String(data.category));
-
-
-    if (data.file) {
-      formData.append("file", data.file);
+  Object.entries(data).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((v) => formData.append(key, v));
+    } else {
+      formData.append(key, value as any);
     }
+  });
 
-    const response = await fetch("http://localhost:3001/posts", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${session.backendToken}`,
-      },
-      body: formData,
-    });
+  const res = await fetch("http://localhost:3001/posts", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
 
-    if (response.status === 401) {
-      console.error("Token inválido o expirado");
-      return false;
-    }
-
-    return response.ok;
-  } catch (error) {
-    console.error("Error al crear el post:", error);
-    return false;
-  }
+  return res.ok;
 };
-
-
-
-

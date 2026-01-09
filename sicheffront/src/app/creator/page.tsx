@@ -163,12 +163,8 @@ export default function GuestHomePage() {
     after:bg-black/50
     after:content-['']
 
-    ${selectedCategory === cat.name
-                    ? "ring-2 ring-orange-500"
-                    : ""
-                  }
-  `}
-              >
+    ${selectedCategory === cat.name ? "ring-2 ring-orange-500" : ""}
+  `}>
                 {/* Texto (igual que antes) */}
                 <span className="relative z-10">{cat.name}</span>
               </button>
@@ -197,8 +193,7 @@ export default function GuestHomePage() {
                   setSearchTerm("");
                   setSelectedCategory("Todas");
                 }}
-                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
-              >
+                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold">
                 Limpiar filtros y ver todo
               </button>
             </div>

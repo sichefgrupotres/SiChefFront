@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRecipe } from "@/context/RecipeContext";
-import MyRecipesList from "@/components/MyRecipesList";
-import RecipeCard from "@/components/CardRecipe";
 
 export default function GuestHomePage() {
   const { recipes, fetchRecipes, loading, error } = useRecipe();
@@ -16,7 +14,6 @@ export default function GuestHomePage() {
 
   useEffect(() => {
     fetchRecipes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const categoriesList = [
@@ -32,21 +29,21 @@ export default function GuestHomePage() {
     selectedCategory === "Todas"
       ? recipes
       : recipes.filter((recipe) => {
-        let categoriesArray: string[] = [];
+          let categoriesArray: string[] = [];
 
-        if (Array.isArray(recipe.category)) {
-          categoriesArray = recipe.category;
-        } else if (typeof recipe.category === "string") {
-          try {
-            const parsed = JSON.parse(recipe.category);
-            categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
-          } catch {
-            categoriesArray = [recipe.category];
+          if (Array.isArray(recipe.category)) {
+            categoriesArray = recipe.category;
+          } else if (typeof recipe.category === "string") {
+            try {
+              const parsed = JSON.parse(recipe.category);
+              categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+            } catch {
+              categoriesArray = [recipe.category];
+            }
           }
-        }
 
-        return categoriesArray.includes(selectedCategory);
-      });
+          return categoriesArray.includes(selectedCategory);
+        });
 
   if (loading) {
     return (
@@ -133,35 +130,21 @@ export default function GuestHomePage() {
                 onClick={() => setSelectedCategory(cat.name)}
                 style={{ backgroundImage: `url(${cat.image})` }}
                 className={`
-    relative
-    overflow-hidden
-    bg-cover
-    bg-center
-    min-w-[140px]
-    h-24
-    rounded-xl
-    flex
-    items-center
-    justify-center
-    font-bold
-    text-lg
-    transition-all
-    transform
-    hover:scale-105
-    cursor-pointer
+                  relative overflow-hidden bg-cover bg-center
+                  min-w-[140px] h-24 rounded-xl
+                  flex items-center justify-center
+                  font-bold text-white
+                  transition-transform hover:scale-105
+                  cursor-pointer
 
-    after:absolute
-    after:inset-0
-    after:bg-black/50
-    after:content-['']
+                  after:absolute after:inset-0 after:bg-black/50 after:content-['']
 
-    ${selectedCategory === cat.name
-                    ? "ring-2 ring-orange-500"
-                    : ""
+                  ${
+                    selectedCategory === cat.name
+                      ? "ring-2 ring-orange-500"
+                      : ""
                   }
-  `}
-              >
-                {/* Texto (igual que antes) */}
+                `}>
                 <span className="relative z-10">{cat.name}</span>
               </button>
             ))}
@@ -173,35 +156,19 @@ export default function GuestHomePage() {
           <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
             Explorar Recetas
           </h2>
-          {filteredRecipes.length === 0 ? (
-            // Mensaje Estado Vacío
-            <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
-              <span className="text-6xl mb-4">🍽️</span>
-              <h3 className="text-xl text-white font-semibold">
-                No encontramos recetas
-              </h3>
-              <p className="text-gray-400 mt-2 max-w-md">
-                No hay resultados para "{searchTerm}" en la categoría "
-                {selectedCategory}".
+
+          {/* ✅ Usa filteredRecipes directamente */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+            {filteredRecipes.length === 0 ? (
+              <p className="text-white col-span-full text-center">
+                No hay recetas en esta categoría.
               </p>
-              <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("Todas");
-                }}
-                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
-              >
-                Limpiar filtros y ver todo
-              </button>
-            </div>
-          ) : (
-            // Grilla Responsive
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
-              {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} mode="guest"/>
-              ))}
-            </div>
-          )}
+            ) : (
+              filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))
+            )}
+          </div>
         </section>
       </main>
 

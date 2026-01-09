@@ -21,18 +21,14 @@ export default function NewRecipePage() {
     initialValues: initialValuesRecipe,
     validationSchema: RecipeSchema,
     onSubmit: async (values, { resetForm }) => {
+      if (status === "loading") {
+        return <p className="text-center p-4">Cargando sesión...</p>;
+      }
 
-      if (status === "loading") return;
-console.log("SESSION 👉", session);
+      if (!session) {
+        return <p className="text-center p-4">Debes iniciar sesión</p>;
+      }
 
-      if (!session?.backendToken) {
-    Swal.fire({
-      icon: "warning",
-      title: "Sesión no disponible",
-      text: "Por favor inicia sesión nuevamente",
-    });
-    return;
-  }
       if (loading) return;
       setLoading(true);
 
@@ -56,15 +52,13 @@ console.log("SESSION 👉", session);
           file: values.file,
           category: values.category,
         },
-        session
+        session.backendToken // 👈 PASA SOLO EL TOKEN
       );
 
       if (success) {
         Swal.fire({
           icon: "success",
           title: "Receta publicada",
-          text: "Tu receta se creó correctamente",
-          confirmButtonText: "Aceptar",
         }).then(() => {
           resetForm();
           setImagePreview(null);
@@ -193,8 +187,7 @@ console.log("SESSION 👉", session);
               (cat) => (
                 <label
                   key={cat}
-                  className="flex items-center gap-2 text-white cursor-pointer"
-                >
+                  className="flex items-center gap-2 text-white cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formik.values.category.includes(cat)}
@@ -232,8 +225,7 @@ console.log("SESSION 👉", session);
             name="difficulty"
             value={formik.values.difficulty}
             onChange={formik.handleChange}
-            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3"
-          >
+            className="w-full mt-1 rounded-lg bg-[#2a221b] border border-white/10 px-5 py-3">
             <option value="facil">Fácil</option>
             <option value="medio">Medio</option>
             <option value="dificil">Difícil</option>
@@ -266,11 +258,11 @@ console.log("SESSION 👉", session);
         <button
           type="submit"
           disabled={loading}
-          className={`mt-4 h-12 rounded-lg font-bold transition ${loading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
-            }`}
-        >
+          className={`mt-4 h-12 rounded-lg font-bold transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
+          }`}>
           {loading ? "Publicando..." : "Publicar receta"}
         </button>
       </form>
