@@ -5,12 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRecipe } from "@/context/RecipeContext";
+import RecipeCard from "@/components/CardRecipe";
 
 export default function GuestHomePage() {
   const { recipes, fetchRecipes, loading, error } = useRecipe();
 
   const [selectedCategory, setSelectedCategory] = useState("Todas");
- const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     fetchRecipes();
@@ -29,21 +30,21 @@ export default function GuestHomePage() {
     selectedCategory === "Todas"
       ? recipes
       : recipes.filter((recipe) => {
-          let categoriesArray: string[] = [];
+        let categoriesArray: string[] = [];
 
-          if (Array.isArray(recipe.category)) {
-            categoriesArray = recipe.category;
-          } else if (typeof recipe.category === "string") {
-            try {
-              const parsed = JSON.parse(recipe.category);
-              categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
-            } catch {
-              categoriesArray = [recipe.category];
-            }
+        if (Array.isArray(recipe.category)) {
+          categoriesArray = recipe.category;
+        } else if (typeof recipe.category === "string") {
+          try {
+            const parsed = JSON.parse(recipe.category);
+            categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+          } catch {
+            categoriesArray = [recipe.category];
           }
+        }
 
-          return categoriesArray.includes(selectedCategory);
-        });
+        return categoriesArray.includes(selectedCategory);
+      });
 
   if (loading) {
     return (
@@ -139,10 +140,9 @@ export default function GuestHomePage() {
 
                   after:absolute after:inset-0 after:bg-black/50 after:content-['']
 
-                  ${
-                    selectedCategory === cat.name
-                      ? "ring-2 ring-orange-500"
-                      : ""
+                  ${selectedCategory === cat.name
+                    ? "ring-2 ring-orange-500"
+                    : ""
                   }
                 `}>
                 <span className="relative z-10">{cat.name}</span>
