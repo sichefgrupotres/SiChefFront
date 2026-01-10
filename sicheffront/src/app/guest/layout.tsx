@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import NavBarGuest from "../../components/NavBars/NavBarGuest";
 
 export default function GuestLayout({
     children,
@@ -13,7 +12,7 @@ export default function GuestLayout({
     return (
         <div className="min-h-screen bg-[#181411] text-white">
 
-            {/* <NavBarGuest
+            {/* <NavBarAdmin
                 collapsed={collapsed}
                 setCollapsed={setCollapsed}
             /> */}
