@@ -4,6 +4,7 @@ export interface AuthSessionUser {
   name?: string;
   lastname?: string;
   roleId: "USER" | "CREATOR";
+  avatarUrl?: string;
 }
 
 export interface AuthSession {

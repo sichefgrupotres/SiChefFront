@@ -12,9 +12,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+        if (!credentials?.email || !credentials?.password) return null;
 
         const res = await fetch("http://localhost:3001/auth/signin", {
           method: "POST",
@@ -25,24 +23,19 @@ export const authOptions: NextAuthOptions = {
           }),
         });
 
-        if (!res.ok) {
-          console.error("Backend signin failed");
-          return null;
-        }
+        if (!res.ok) return null;
 
         const data = await res.json();
 
-        if (!data?.token || !data?.user?.id) {
-          console.error("Respuesta inválida del backend", data);
-          return null;
-        }
+        if (!data?.token || !data?.user?.id) return null;
 
         return {
-          id: String(data.user.id),
-          name: data.user.name ?? "",
+          id: data.user.id,
+          name: data.user.name,
           lastname: data.user.lastname,
           email: data.user.email,
           role: data.user.role,
+          avatarUrl: data.user.avatarUrl,
           token: data.token,
         };
       },
@@ -58,29 +51,16 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
 
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: false,
-      },
-    },
-  },
-
   callbacks: {
-    async jwt({ token, user, account, profile }) {
-      if (account?.provider === "credentials" && user) {
+    async jwt({ token, user, account, profile, trigger, session }) {
+      if (user) {
+        token.id = (user as any).id;
+        token.name = user.name;
+        token.lastname = (user as any).lastname;
+        token.email = user.email;
+        token.role = (user as any).role;
+        token.avatarUrl = (user as any).avatarUrl;
         token.backendToken = (user as any).token;
-        token.user = {
-          id: (user as any).id,
-          name: user.name,
-          lastname: (user as any).lastname,
-          email: user.email,
-          role: (user as any).role,
-        };
       }
 
       if (account?.provider === "google" && profile) {
@@ -92,6 +72,7 @@ export const authOptions: NextAuthOptions = {
             email: profile.email,
             name: profile.given_name,
             lastname: profile.family_name,
+            avatarUrl: profile.picture,
             roleId: "USER",
           }),
         });
@@ -99,13 +80,16 @@ export const authOptions: NextAuthOptions = {
         const data = await res.json();
 
         token.backendToken = data.token;
-        token.user = {
-          id: data.user.id,
-          name: data.user.name,
-          lastname: data.user.lastname ?? null, // ✅ TAMBIÉN AQUÍ
-          email: data.user.email,
-          role: data.user.role,
-        };
+        token.id = data.user.id;
+        token.name = data.user.name;
+        token.lastname = data.user.lastname;
+        token.email = data.user.email;
+        token.role = data.user.role;
+        token.avatarUrl = data.user.avatarUrl;
+      }
+
+      if (trigger === "update" && session?.user?.avatarUrl) {
+        token.avatarUrl = session.user.avatarUrl;
       }
 
       return token;
@@ -113,7 +97,16 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       session.backendToken = token.backendToken as string;
-      session.user = token.user as any;
+
+      session.user = {
+        id: token.id as string,
+        name: token.name as string,
+        lastname: token.lastname as string,
+        email: token.email as string,
+        role: token.role as string,
+        avatarUrl: token.avatarUrl as string,
+      };
+
       return session;
     },
   },
