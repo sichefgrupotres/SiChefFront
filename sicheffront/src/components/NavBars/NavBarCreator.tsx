@@ -11,7 +11,7 @@ interface Props {
 
 export default function NavBarCreator({ collapsed, setCollapsed }: Props) {
   const pathname = usePathname();
- const { logout } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <nav

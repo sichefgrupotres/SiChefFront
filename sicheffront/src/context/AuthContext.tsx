@@ -22,8 +22,8 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({
   dataUser: null,
-  setDataUser: () => { },
-  logout: () => { },
+  setDataUser: () => {},
+  logout: () => {},
   loading: true,
   isLoadingUser: true,
 });
@@ -42,18 +42,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (dataUser) {
       localStorage.setItem("userSession", JSON.stringify(dataUser));
     }
-    if (dataUser?.token) {
-      localStorage.setItem("token", dataUser.token);
-    }
   }, [dataUser]);
 
   useEffect(() => {
     //se encarga de extraer la informacion del localStorage cuando se recarga la pagina y almacenar en el estado
-    if (typeof window !== "undefined" && window.localStorage) {
-      const userInfo = localStorage.getItem("userSession");
-      if (userInfo) {
-        setDataUser(JSON.parse(userInfo));
-      }
+    const userInfo = localStorage.getItem("userSession");
+    if (userInfo && !dataUser) {
+      setDataUser(JSON.parse(userInfo));
     }
     setLoading(false);
     setIsLoadingUser(false);
@@ -67,7 +62,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await signOut({
       callbackUrl: "/login",
     });
-
   };
   return (
     <AuthContext.Provider
