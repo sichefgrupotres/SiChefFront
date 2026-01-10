@@ -67,7 +67,10 @@ export default function GuestRecipePage() {
 
   if (!recipe) return null;
 
-  const canViewFullRecipe = recipe.difficulty === "facil" && !recipe.isPremium;
+  const isPremium = recipe.isPremium;
+  const isEasy = recipe.difficulty === "facil";
+  const isMediumOrHard =
+    recipe.difficulty === "medio" || recipe.difficulty === "dificil";
 
   return (
     <div className="max-w-3xl mx-auto p-4">
@@ -107,47 +110,90 @@ export default function GuestRecipePage() {
         </div>
       </div>
 
-      {/* Ingredientes */}
-      <section className="mb-6 bg-[#2a221b] rounded-xl p-5 border border-white/10">
-        <h2 className="text-lg font-semibold mb-3 text-white">Ingredientes</h2>
-        <p className="text-white/80 whitespace-pre-line">
-          {recipe.ingredients}
-        </p>
-      </section>
+      {/* ================= CTA SUSCRIPCIÓN (SOLO PREMIUM) ================= */}
+      {isPremium && (
+        <section className="bg-[#2a221b] rounded-xl p-8 border border-[#F57C00]/40 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent" />
 
-      {/* Preparación difuminada */}
-      <section className="bg-[#2a221b] rounded-xl p-5 border border-white/10 relative">
-        <h2 className="text-lg font-semibold mb-3 text-white">
-          Pasos de preparación
-        </h2>
+          <div className="relative z-10 flex flex-col items-center gap-4">
+            <span className="flex items-center gap-2 text-[#F57C00] font-semibold text-sm">
+              <Crown size={18} />
+              Receta Premium
+            </span>
 
-        {canViewFullRecipe ? (
-          // ✅ SOLO FÁCIL Y NO PREMIUM
+            <h2 className="text-2xl font-bold text-white">
+              Desbloquea esta receta completa 🍽️
+            </h2>
+
+            <p className="text-white/80 max-w-md">
+              Accede a ingredientes detallados, pasos de preparación completos
+              y a todas nuestras recetas premium exclusivas.
+            </p>
+
+            <button
+              onClick={() => router.push("/subscription")}
+              className="px-6 py-3 rounded-full bg-[#F57C00] text-white font-semibold hover:bg-orange-600 transition shadow-md"
+            >
+              Suscribirme ahora
+            </button>
+
+            <span className="text-xs text-white/60">
+              Cancela cuando quieras
+            </span>
+          </div>
+        </section>
+      )}
+
+      {/* ================= INGREDIENTES (NO PREMIUM) ================= */}
+      {!isPremium && (
+        <section className="mb-6 bg-[#2a221b] rounded-xl p-5 border border-white/10">
+          <h2 className="text-lg font-semibold mb-3 text-white">
+            Ingredientes
+          </h2>
+          <p className="text-white/80 whitespace-pre-line">
+            {recipe.ingredients}
+          </p>
+        </section>
+      )}
+
+      {/* ================= PREPARACIÓN ================= */}
+      {!isPremium && isEasy && (
+        // ✅ FÁCIL: COMPLETA
+        <section className="bg-[#2a221b] rounded-xl p-5 border border-white/10">
+          <h2 className="text-lg font-semibold mb-3 text-white">
+            Pasos de preparación
+          </h2>
           <p className="text-white/80 whitespace-pre-line">
             {recipe.description}
           </p>
-        ) : (
-          // 🔒 MEDIA, DIFÍCIL O PREMIUM
-          <div className="relative">
-            <p className="text-white/80 whitespace-pre-line blur-sm select-none">
-              {recipe.description}
-            </p>
+        </section>
+      )}
 
-            <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center rounded-xl gap-3 p-4">
-              <span className="text-white text-sm text-center">
-                🔒 Receta completa disponible solo para usuarios registrados
-              </span>
+      {!isPremium && isMediumOrHard && (
+        // 🔒 MEDIA / DIFÍCIL: BLOQUEADA + REGISTRO
+        <section className="bg-[#2a221b] rounded-xl p-5 border border-white/10 relative">
+          <h2 className="text-lg font-semibold mb-3 text-white">
+            Pasos de preparación
+          </h2>
 
-              <button
-                className="px-4 py-2 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-sm font-semibold border border-[#F57C00]/50 hover:scale-105 transition"
-                onClick={() => router.push("/register")}
-              >
-                Regístrate gratis
-              </button>
-            </div>
+          <p className="text-white/80 whitespace-pre-line blur-sm select-none">
+            {recipe.description}
+          </p>
+
+          <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center rounded-xl gap-3 p-4">
+            <span className="text-white text-sm text-center">
+              🔒 Disponible solo para usuarios registrados
+            </span>
+
+            <button
+              onClick={() => router.push("/register")}
+              className="px-4 py-2 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-sm font-semibold border border-[#F57C00]/50 hover:scale-105 transition"
+            >
+              Regístrate gratis
+            </button>
           </div>
-        )}
-      </section>
+        </section>
+      )}
     </div>
   );
 }
