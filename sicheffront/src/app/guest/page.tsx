@@ -8,15 +8,81 @@ import { useRecipe } from "@/context/RecipeContext";
 import RecipeCard from "@/components/CardRecipe";
 
 export default function GuestHomePage() {
-  const { recipes, fetchRecipes, loading, error } = useRecipe();
+ const { recipes, fetchRecipes, loading, error } = useRecipe();
 
-  const [selectedCategory, setSelectedCategory] = useState("Todas");
+  // ================= ESTADOS =================
+  const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "none">("none");
 
+  // ================= EFFECT =================
   useEffect(() => {
     fetchRecipes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ================= BUSCADOR =================
+  const handleSearch = () => {
+    setSearchTerm(searchTerm.trim());
+  };
+
+  // ================= FILTRADO =================
+  const filteredRecipes = (recipes ?? [])
+    .filter((recipe) => {
+      // Normalizar categorías
+      let categoriesArray: string[] = [];
+
+      if (Array.isArray(recipe.category)) {
+        categoriesArray = recipe.category;
+      } else if (typeof recipe.category === "string") {
+        try {
+          const parsed = JSON.parse(recipe.category);
+          categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+        } catch {
+          categoriesArray = [recipe.category];
+        }
+      }
+
+      const matchesCategory =
+        selectedCategory === "Todas" ||
+        categoriesArray.includes(selectedCategory);
+
+      const title = recipe.title?.toLowerCase() ?? "";
+      const ingredients = recipe.ingredients?.toLowerCase() ?? "";
+      const search = searchTerm.toLowerCase();
+
+      const matchesSearch =
+        title.includes(search) || ingredients.includes(search);
+
+      return matchesCategory && matchesSearch;
+    })
+    // ================= ORDEN ALFABÉTICO =================
+    .sort((a, b) => {
+      if (sortOrder !== "asc") return 0;
+      return a.title.localeCompare(b.title, "es", {
+        sensitivity: "base",
+      });
+    });
+
+
+  // ================= ESTADOS UI =================
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <div className="animate-pulse">Cargando recetas deliciosas...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-400">
+        Error: {error}
+      </div>
+    );
+  }
+
+  // ================= CATEGORÍAS =================
   const categoriesList = [
     { name: "Todas", image: "/categories/todas.jpg" },
     { name: "Desayunos", image: "/categories/desayuno.jpg" },
@@ -25,42 +91,6 @@ export default function GuestHomePage() {
     { name: "Cenas", image: "/categories/cena.jpg" },
     { name: "Postres", image: "/categories/postres.jpg" },
   ];
-
-  const filteredRecipes =
-    selectedCategory === "Todas"
-      ? recipes
-      : recipes.filter((recipe) => {
-        let categoriesArray: string[] = [];
-
-        if (Array.isArray(recipe.category)) {
-          categoriesArray = recipe.category;
-        } else if (typeof recipe.category === "string") {
-          try {
-            const parsed = JSON.parse(recipe.category);
-            categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
-          } catch {
-            categoriesArray = [recipe.category];
-          }
-        }
-
-        return categoriesArray.includes(selectedCategory);
-      });
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Cargando recetas...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-400">
-        {error}
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -100,19 +130,29 @@ export default function GuestHomePage() {
           </div>
 
           {/* Buscador */}
-          <div className="flex w-full max-w-2xl">
-            <div className="flex items-center gap-2 w-full border border-gray-300 rounded-l-xl px-4 py-3 bg-white">
-              <span className="material-symbols-outlined text-gray-400">
+            <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-500">
+            <div className="flex items-center gap-2 w-full px-4 py-3 bg-white">
+               <span className="material-symbols-outlined text-gray-400">
                 search
               </span>
               <input
                 type="text"
-                placeholder="Busca por receta o ingredientes"
-                className="w-full outline-none text-sm text-black"
+                placeholder="¿Qué se te antoja hoy?"
+                className="w-full outline-none text-base text-gray-700 placeholder-gray-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
               />
             </div>
 
-            <button className="bg-orange-500 text-white px-8 rounded-r-xl text-sm font-semibold cursor-pointer">
+            <button
+              onClick={handleSearch}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors"
+            >
               Buscar
             </button>
           </div>
