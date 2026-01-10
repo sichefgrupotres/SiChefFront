@@ -1,6 +1,6 @@
 "use client";
 
-import { guestNavItems } from "@/utils/guestNavitems";
+import { adminNavItems } from "@/utils/adminNavitems";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +10,7 @@ interface Props {
   setCollapsed: (value: boolean) => void;
 }
 
-export default function NavBarGuest({ collapsed, setCollapsed }: Props) {
+export default function NavBarAdmin({ collapsed, setCollapsed }: Props) {
   const pathname = usePathname();
   const { logout } = useAuth();
 
@@ -39,7 +39,7 @@ export default function NavBarGuest({ collapsed, setCollapsed }: Props) {
 
       {/* NAV ITEMS */}
       <ul className="flex flex-col gap-2 px-3 text-sm">
-        {guestNavItems.map((item) => {
+        {adminNavItems.map((item) => {
           const active = pathname === item.href;
 
           return (
@@ -80,7 +80,7 @@ export default function NavBarGuest({ collapsed, setCollapsed }: Props) {
 
             {!collapsed && (
               <span className="font-medium">
-                Logout
+                Cerrar Sesion
               </span>
             )}
           </button>

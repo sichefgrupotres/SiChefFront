@@ -157,18 +157,35 @@ export default function GuestHomePage() {
             Explorar Recetas
           </h2>
 
-          {/* ✅ Usa filteredRecipes directamente */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
-            {filteredRecipes.length === 0 ? (
-              <p className="text-white col-span-full text-center">
-                No hay recetas en esta categoría.
+        {filteredRecipes.length === 0 ? (
+            // Mensaje Estado Vacío
+            <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
+              <span className="text-6xl mb-4">🍽️</span>
+              <h3 className="text-xl text-white font-semibold">
+                No encontramos recetas
+              </h3>
+              <p className="text-gray-400 mt-2 max-w-md">
+                No hay resultados para "{searchTerm}" en la categoría "
+                {selectedCategory}".
               </p>
-            ) : (
-              filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
-              ))
-            )}
-          </div>
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("Todas");
+                }}
+                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
+              >
+                Limpiar filtros y ver todo
+              </button>
+            </div>
+          ) : (
+            // Grilla Responsive
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} mode="guest"/>
+              ))}
+            </div>
+          )}
         </section>
       </main>
 

@@ -1,6 +1,6 @@
 export const creatorNavItems = [
     {
-        label: "Home",
+        label: "Inicio",
         href: "/creator",
         icon: "home",
     },

@@ -76,7 +76,7 @@ export default function NavBarCreator({ collapsed, setCollapsed }: Props) {
           >
             <span className="material-symbols-outlined text-lg">logout</span>
 
-            {!collapsed && <span className="font-medium">Logout</span>}
+            {!collapsed && <span className="font-medium">Cerrar sesion</span>}
           </button>
         </li>
       </ul>

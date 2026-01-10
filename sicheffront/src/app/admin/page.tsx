@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export default function AdminDashboard() {
@@ -8,26 +7,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-[#181411] text-[#e6e0db]">
-
-      {/* SIDEBAR */}
-      <aside className="hidden md:flex w-64 flex-col bg-[#1E1B18] border-r border-white/10">
-        <div className="p-6 flex items-center gap-3">
-          <div className="size-9 rounded-lg bg-[#F57C00] flex items-center justify-center">
-            <span className="material-symbols-outlined text-black">
-              restaurant_menu
-            </span>
-          </div>
-          <span className="text-xl font-bold">Si Chef!</span>
-        </div>
-
-        <nav className="flex-1 px-3 space-y-1">
-          <SidebarItem icon="dashboard" label="Dashboard" active />
-          <SidebarItem icon="group" label="Usuarios" />
-          <SidebarItem icon="menu_book" label="Contenido" />
-          <SidebarItem icon="payments" label="Suscripciones" />
-          <SidebarItem icon="admin_panel_settings" label="Administradores" />
-        </nav>
-      </aside>
 
       {/* MAIN */}
       <div className="flex-1 flex flex-col">
