@@ -10,7 +10,6 @@ export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
 
   const userInfo = dataUser?.user;
-  console.log("info que esta pidiendo orlando", userInfo);
   const fullName = userInfo
     ? `${userInfo.name} ${userInfo.lastname}`
     : "Chef Invitado";
