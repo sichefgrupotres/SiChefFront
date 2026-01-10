@@ -5,6 +5,7 @@ import { PATHROUTES } from "@/utils/PathRoutes";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import MyRecipesList from "@/components/MyRecipesList";
+import { useSession } from "next-auth/react";
 
 export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
@@ -14,15 +15,43 @@ export default function CreatorPage() {
     ? `${userInfo.name} ${userInfo.lastname}`
     : "Chef Invitado";
 
-  // 🔹 Imagen de perfil (preview)
-  const [avatar, setAvatar] = useState("/chef-avatar.jpg");
+  const [avatar, setAvatar] = useState(
+    dataUser?.user?.avatarUrl || "/chef-avatar.jpg"
+  );
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { data: session, update } = useSession();
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !session?.backendToken) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setAvatar(imageUrl);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("http://localhost:3001/users/avatar", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.backendToken}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      console.error("Error subiendo avatar");
+      return;
+    }
+
+    const data = await res.json();
+
+    setAvatar(data.avatarUrl);
+
+    await update({
+      ...session,
+      user: {
+        ...session.user,
+        avatarUrl: data.avatarUrl,
+      },
+    });
   };
 
   return (
@@ -33,9 +62,8 @@ export default function CreatorPage() {
         <div className="relative w-32 h-32">
           {/* Imagen */}
           <img
-            src={avatar}
-            alt="Avatar grande"
-            className="w-full h-full rounded-full object-cover border-4 border-[#F57C00] shadow-xl"
+            src={session?.user?.avatarUrl || "/chef-avatar.jpg"}
+            className="rounded-full"
           />
 
           {/* Botón cámara */}
