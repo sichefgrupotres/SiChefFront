@@ -71,7 +71,7 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      if (user) {
+      if (account?.provider === "credentials" && user) {
         token.backendToken = (user as any).token;
         token.user = {
           id: (user as any).id,
@@ -81,15 +81,15 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      if (account?.provider === "google") {
+      if (account?.provider === "google" && profile) {
         const res = await fetch("http://localhost:3001/auth/register-google", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            googleId: profile?.sub,
-            email: profile?.email,
-            name: profile?.given_name,
-            lastname: profile?.family_name,
+            googleId: profile.sub,
+            email: profile.email,
+            name: profile.given_name,
+            lastname: profile.family_name,
             roleId: "USER",
           }),
         });
