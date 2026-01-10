@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: String(data.user.id),
           name: data.user.name ?? "",
+          lastname: data.user.lastname,
           email: data.user.email,
           role: data.user.role,
           token: data.token,
@@ -76,6 +77,7 @@ export const authOptions: NextAuthOptions = {
         token.user = {
           id: (user as any).id,
           name: user.name,
+          lastname: (user as any).lastname,
           email: user.email,
           role: (user as any).role,
         };
@@ -97,7 +99,13 @@ export const authOptions: NextAuthOptions = {
         const data = await res.json();
 
         token.backendToken = data.token;
-        token.user = data.user;
+        token.user = {
+          id: data.user.id,
+          name: data.user.name,
+          lastname: data.user.lastname ?? null, // ✅ TAMBIÉN AQUÍ
+          email: data.user.email,
+          role: data.user.role,
+        };
       }
 
       return token;
@@ -116,5 +124,3 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
-

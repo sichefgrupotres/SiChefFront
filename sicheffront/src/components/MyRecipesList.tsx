@@ -3,20 +3,16 @@
 import { useEffect } from "react";
 import RecipeCard from "@/components/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
+import { useSession } from "next-auth/react";
 
 export default function MyRecipesList() {
   const { userRecipes, fetchMyRecipes, loading, error } = useRecipe();
-
+  const { status } = useSession();
   useEffect(() => {
-    console.log("🔍 MyRecipesList mounted, calling fetchMyRecipes");
-    fetchMyRecipes();
-  }, []);
-
-  console.log("🔍 MyRecipesList state:", {
-    userRecipesCount: userRecipes?.length,
-    loading,
-    error,
-  });
+    if (status === "authenticated") {
+      fetchMyRecipes();
+    }
+  }, [status]);
 
   if (loading) {
     return (
