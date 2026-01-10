@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { ArrowLeft, BarChart3, Crown, Link } from "lucide-react";
+import { ArrowLeft, BarChart3, Crown} from "lucide-react";
 
 interface Recipe {
   id: string;

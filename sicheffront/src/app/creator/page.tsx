@@ -5,63 +5,65 @@ import { useEffect, useState } from "react";
 import RecipeCard from "@/components/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 
-export default function GuestHomePage() {
-  // 1. Contexto: Traemos las recetas y funciones del backend
+export default function CreatorHomePage() {
   const { recipes, fetchRecipes, loading, error } = useRecipe();
 
-  // 2. Estados Locales: Para controlar qué está escribiendo o seleccionando el usuario
+  // ================= ESTADOS =================
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "none">("none");
 
-  // 3. Effect: Carga las recetas al entrar a la página
+  // ================= EFFECT =================
   useEffect(() => {
     fetchRecipes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // =========================================================
-  // 4. MOTOR DE FILTRADO (La parte más importante)
-  // =========================================================
-  const filteredRecipes = (recipes ?? []).filter((recipe) => {
-    // PASO A: Normalizar Categorías (Blindaje contra errores de datos)
-    // Si la receta no tiene categorías (undefined), usamos un array vacío [] para que no explote.
-    let categoriesArray: string[] = [];
+  // ================= BUSCADOR =================
+  const handleSearch = () => {
+    setSearchTerm(searchTerm.trim());
+  };
 
-    if (Array.isArray(recipe.category)) {
-      categoriesArray = recipe.category;
-    } else if (typeof recipe.category === "string") {
-      // Si viene como texto "['Cenas']", intentamos convertirlo a lista real
-      try {
-        const parsed = JSON.parse(recipe.category);
-        categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
-      } catch {
-        // Si es texto simple "Cenas", lo guardamos en una lista
-        categoriesArray = [recipe.category];
+  // ================= FILTRADO =================
+  const filteredRecipes = (recipes ?? [])
+    .filter((recipe) => {
+      // Normalizar categorías
+      let categoriesArray: string[] = [];
+
+      if (Array.isArray(recipe.category)) {
+        categoriesArray = recipe.category;
+      } else if (typeof recipe.category === "string") {
+        try {
+          const parsed = JSON.parse(recipe.category);
+          categoriesArray = Array.isArray(parsed) ? parsed : [parsed];
+        } catch {
+          categoriesArray = [recipe.category];
+        }
       }
-    }
 
-    // PASO B: Filtro por Categoría
-    // Si elegiste "Todas", pasa. Si no, revisamos si la lista de categorías incluye la seleccionada.
-    const matchesCategory =
-      selectedCategory === "Todas" ||
-      categoriesArray.includes(selectedCategory);
+      const matchesCategory =
+        selectedCategory === "Todas" ||
+        categoriesArray.includes(selectedCategory);
 
-    // PASO C: Filtro por Buscador (Título o Ingredientes)
-    // Usamos ?. para asegurar que existan antes de pasar a minúsculas
-    const title = recipe.title ? recipe.title.toLowerCase() : "";
-    const ingredients = recipe.ingredients
-      ? recipe.ingredients.toLowerCase()
-      : "";
-    const search = searchTerm.toLowerCase();
+      const title = recipe.title?.toLowerCase() ?? "";
+      const ingredients = recipe.ingredients?.toLowerCase() ?? "";
+      const search = searchTerm.toLowerCase();
 
-    const matchesSearch =
-      title.includes(search) || ingredients.includes(search);
+      const matchesSearch =
+        title.includes(search) || ingredients.includes(search);
 
-    // La receta se muestra solo si cumple AMBAS condiciones
-    return matchesCategory && matchesSearch;
-  });
+      return matchesCategory && matchesSearch;
+    })
+    // ================= ORDEN ALFABÉTICO =================
+    .sort((a, b) => {
+      if (sortOrder !== "asc") return 0;
+      return a.title.localeCompare(b.title, "es", {
+        sensitivity: "base",
+      });
+    });
 
-  // 5. Manejo de Carga y Errores
+
+  // ================= ESTADOS UI =================
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -78,7 +80,7 @@ export default function GuestHomePage() {
     );
   }
 
-  // Lista de categorías para generar los botones
+  // ================= CATEGORÍAS =================
   const categoriesList = [
     { name: "Todas", image: "/categories/todas.jpg" },
     { name: "Desayunos", image: "/categories/desayuno.jpg" },
@@ -109,9 +111,9 @@ export default function GuestHomePage() {
           </div>
 
           {/* Buscador Interactivo */}
-          <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden transition-all focus-within:ring-2 focus-within:ring-orange-500">
-            <div className="flex items-center gap-2 w-full border-none px-4 py-3 bg-white">
-              <span className="material-symbols-outlined text-gray-400">
+         <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-500">
+            <div className="flex items-center gap-2 w-full px-4 py-3 bg-white">
+               <span className="material-symbols-outlined text-gray-400">
                 search
               </span>
               <input
@@ -120,9 +122,18 @@ export default function GuestHomePage() {
                 className="w-full outline-none text-base text-gray-700 placeholder-gray-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
               />
             </div>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors">
+
+            <button
+              onClick={handleSearch}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors"
+            >
               Buscar
             </button>
           </div>
