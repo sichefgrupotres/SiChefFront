@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { BarChart3, Crown, Link } from "lucide-react";
+import { ArrowLeft, BarChart3, Crown, Link } from "lucide-react";
 
 interface Recipe {
   id: string;
@@ -67,8 +67,18 @@ export default function GuestRecipePage() {
 
   if (!recipe) return null;
 
+  const canViewFullRecipe = recipe.difficulty === "facil" && !recipe.isPremium;
+
   return (
     <div className="max-w-3xl mx-auto p-4">
+      {/* ===== BOTÓN VOLVER A HOME GUEST ===== */}
+      <button
+        onClick={() => router.push("/")}
+        className="flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 mb-4 transition"
+      >
+        <ArrowLeft size={16} />
+        Volver a recetas
+      </button>
       {/* Imagen */}
       <div className="w-full h-64 rounded-xl overflow-hidden mb-6">
         <img
@@ -110,24 +120,33 @@ export default function GuestRecipePage() {
         <h2 className="text-lg font-semibold mb-3 text-white">
           Pasos de preparación
         </h2>
-        <div className="relative">
-          <p className="text-white/80 whitespace-pre-line blur-sm select-none">
+
+        {canViewFullRecipe ? (
+          // ✅ SOLO FÁCIL Y NO PREMIUM
+          <p className="text-white/80 whitespace-pre-line">
             {recipe.description}
           </p>
-          {/* Capa opaca */}
-          <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center rounded-xl gap-3 p-4">
-            <span className="text-white text-sm text-center">
-              🔒 Contenido disponible solo para usuarios registrados
-            </span>
-            <button
-              type="button"
-              className="px-4 py-2 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-sm font-semibold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 cursor-pointer"
-              onClick={() => router.push("/register")}
-            >
-              Regístrate
-            </button>
+        ) : (
+          // 🔒 MEDIA, DIFÍCIL O PREMIUM
+          <div className="relative">
+            <p className="text-white/80 whitespace-pre-line blur-sm select-none">
+              {recipe.description}
+            </p>
+
+            <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center rounded-xl gap-3 p-4">
+              <span className="text-white text-sm text-center">
+                🔒 Receta completa disponible solo para usuarios registrados
+              </span>
+
+              <button
+                className="px-4 py-2 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-sm font-semibold border border-[#F57C00]/50 hover:scale-105 transition"
+                onClick={() => router.push("/register")}
+              >
+                Regístrate gratis
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   );
