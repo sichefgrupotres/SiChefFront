@@ -103,16 +103,29 @@ export default function GuestRecipePage() {
         <img
           src={recipe.imageUrl}
           alt={recipe.title}
-          className="max-w-full max-h-full object-contain rounded-2xl shadow-lg"
+          className="
+    max-w-full
+    max-h-full
+    object-scale-down
+    rounded-2xl
+    shadow-lg
+  "
         />
       </div>
 
       {/* ===== HEADER ===== */}
-      <div className="mb-10">
-        <div className="flex flex-wrap items-center gap-3 mb-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">
+      <div className="mb-10 text-center">
+        <div className="flex flex-wrap justify-center items-center gap-3 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#F57C00]">
             {recipe.title}
           </h1>
+        </div>
+
+        <div className="flex justify-center items-center gap-4 text-white/70">
+          <div className="flex items-center gap-2">
+            <BarChart3 size={16} />
+            <span className="capitalize">{recipe.difficulty}</span>
+          </div>
 
           {isPremium && (
             <span className="flex items-center gap-1 text-sm bg-[#F57C00] px-3 py-1 rounded-full text-white">
@@ -121,13 +134,7 @@ export default function GuestRecipePage() {
             </span>
           )}
         </div>
-
-        <div className="flex items-center gap-2 text-white/70">
-          <BarChart3 size={16} />
-          <span className="capitalize">{recipe.difficulty}</span>
-        </div>
       </div>
-
       {/* ===== GRID ===== */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* ================= INGREDIENTES ================= */}
@@ -144,7 +151,7 @@ export default function GuestRecipePage() {
 
             {/* Contenido */}
             <div className="relative z-10 p-6">
-              <h2 className="text-xl font-semibold mb-4 text-white">
+              <h2 className="text-xl font-semibold mb-4 text-[#F57C00]">
                 Ingredientes
               </h2>
 
@@ -163,7 +170,7 @@ export default function GuestRecipePage() {
         {/* ================= PREPARACIÓN ================= */}
         {!isPremium && isEasy && (
           <section className="bg-[#2a221b] rounded-xl p-6 border border-white/10">
-            <h2 className="text-xl font-semibold mb-4 text-white">
+            <h2 className="text-xl font-semibold mb-4 text-[#F57C00]">
               Preparación
             </h2>
             <p className="text-white/80 whitespace-pre-line">
@@ -174,7 +181,7 @@ export default function GuestRecipePage() {
 
         {!isPremium && isMediumOrHard && (
           <section className="bg-[#2a221b] rounded-xl p-6 border border-white/10 relative">
-            <h2 className="text-xl font-semibold mb-4 text-white">
+            <h2 className="text-xl font-semibold mb-4 text-[#F57C00]">
               Preparación
             </h2>
 
