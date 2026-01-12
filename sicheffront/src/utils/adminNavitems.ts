@@ -10,18 +10,18 @@ export const adminNavItems = [
     icon: "group",
   },
   {
-    label: "Contenido",
-    href: "/admin/content",
+    label: "Moderacion",
+    href: "/admin/modelations",
     icon: "menu_book",
   },
   {
-    label: "Suscripciones",
+    label: "Pagos",
     href: "/admin/payments",
     icon: "payments",
   },
   {
-    label: "Administradores",
-    href: "admin/createAdmin",
+    label: "Gestion de Administradores",
+    href: "/admin/createAdmin",
     icon: "admin_panel_settings",
   },
 ];

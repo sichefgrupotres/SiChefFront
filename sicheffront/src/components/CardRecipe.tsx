@@ -6,13 +6,16 @@ import { BarChart3, Crown, Heart } from "lucide-react";
 
 interface RecipeCardProps {
   recipe: RecipeInterface;
-  mode?: "creator" | "guest"; // 👈 nueva prop
+  mode?: "creator" | "guest" | "admin"; // Nueva opción para el admin
 }
 
 const RecipeCard = ({ recipe, mode = "creator" }: RecipeCardProps) => {
+  // Enlace para admins
   const href =
     mode === "creator"
-      ? `/creator/recipes/${recipe.id}`
+      ? `/creator/${recipe.id}`
+      : mode === "admin"
+      ? `/admin/content/${recipe.id}` // Redirigir a la página de receta admin
       : `/guest/recipes/${recipe.id}`;
 
   return (

@@ -1,4 +1,5 @@
 "use client";
+
 import { useFormik } from "formik";
 import {
   initialValuesLogin,
@@ -8,14 +9,30 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
 import { useAuth } from "@/context/AuthContext";
 
 const LoginForm = () => {
   const router = useRouter();
   const { setDataUser } = useAuth();
+  const { data: session, status } = useSession();
   const [showPassword, setShowPassword] = useState(false);
+
+  // ================= USEEFFECT PARA LA REDIRECCIÓN =================
+  useEffect(() => {
+    if (status === "authenticated") {
+      const userRole = session.user?.role;
+
+      if (userRole === "ADMIN") {
+        router.replace("/admin");
+      } else if (userRole === "CREATOR") {
+        router.replace("/creator");
+      } else {
+        router.replace("/");
+      }
+    }
+  }, [status, session, router]);
 
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
@@ -24,11 +41,10 @@ const LoginForm = () => {
       const result = await signIn("credentials", {
         email: values.email,
         password: values.password,
-        redirect: false,
+        redirect: false, // No redirigir automáticamente
       });
 
       if (result?.ok) {
-        router.push("/creator");
         resetForm();
       } else {
         console.error("Login inválido");
@@ -37,10 +53,9 @@ const LoginForm = () => {
   });
 
   const handleGoogleLogin = () => {
-    signIn("google", {
-      callbackUrl: "/creator",
-    });
+    signIn("google");
   };
+
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">

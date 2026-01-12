@@ -1,147 +1,161 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
+import { adminService } from "@/services/admin.services";
+import MetricCard from "@/components/admin/MetricCard";
+import QuickAccessCard from "@/components/admin/QuickAccessCard";
+import RevenueChart from "@/components/admin/RevenueChart";
+import ActivityItem from "@/components/admin/ActivityItem";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default function AdminDashboard() {
-  const { dataUser } = useAuth();
-
-  return (
-    <div className="flex min-h-screen bg-[#181411] text-[#e6e0db]">
-
-      {/* MAIN */}
-      <div className="flex-1 flex flex-col">
-
-        {/* HEADER */}
-        <header className="h-16 bg-[#1E1B18]/80 backdrop-blur border-b border-white/10 flex items-center justify-between px-6">
-          <h1 className="font-bold text-lg">Panel de Administración</h1>
-
-          <div className="flex items-center gap-4">
-            <button className="relative">
-              <span className="material-symbols-outlined text-white/60">
-                notifications
-              </span>
-              <span className="absolute top-0 right-0 size-2 bg-red-500 rounded-full" />
-            </button>
-
-            <div className="size-9 rounded-full bg-[#F57C00] text-black flex items-center justify-center font-bold">
-              {dataUser?.user?.name?.[0] ?? "A"}
-            </div>
-          </div>
-        </header>
-
-        {/* CONTENT */}
-        <main className="flex-1 overflow-y-auto p-6 space-y-10">
-
-          {/* STATS */}
-          <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard title="Usuarios" value="24.5k" icon="group" />
-            <StatCard title="Pendientes" value="18" icon="pending_actions" />
-            <StatCard title="Suscripciones" value="892" icon="workspace_premium" />
-            <StatCard title="Reportes" value="5" icon="report" alert />
-          </section>
-
-          {/* MODERACIÓN */}
-          <section className="bg-[#2a221b] rounded-xl p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#F57C00]">
-                  fact_check
-                </span>
-                Moderación Pendiente
-              </h2>
-              <button className="text-sm text-[#F57C00] hover:underline">
-                Ver todo
-              </button>
-            </div>
-
-            <ModerationItem
-              type="Receta"
-              title="Risotto de setas"
-              author="Chef Mario"
-              time="Hace 2h"
-            />
-
-            <ModerationItem
-              type="Tutorial"
-              title="Corte Julienne"
-              author="Ana Cocina"
-              time="Hace 4h"
-            />
-          </section>
-
-          {/* GESTIÓN */}
-          <section>
-            <h2 className="font-semibold mb-3">Gestión rápida</h2>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <QuickAction icon="manage_accounts" label="Usuarios" />
-              <QuickAction icon="payments" label="Pagos" />
-              <QuickAction icon="campaign" label="Comunicados" />
-            </div>
-          </section>
-        </main>
-      </div>
-    </div>
-  );
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  roleId: string;
+  blocked: boolean;
 }
 
-/* COMPONENTES */
+export default function AdminPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
-function SidebarItem({ icon, label, active = false }: any) {
-  return (
-    <button
-      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition
-      ${active ? "bg-[#F57C00]/20 text-[#F57C00]" : "text-white/60 hover:bg-white/5 hover:text-white"}`}
-    >
-      <span className="material-symbols-outlined">{icon}</span>
-      {label}
-    </button>
-  );
-}
+  // ================= FETCH USUARIOS =================
+  const fetchUsers = async () => {
+    if (!session?.backendToken) return;
+    setLoading(true);
+    try {
+      const data = await adminService.getAllUsers(session.backendToken);
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-function StatCard({ title, value, icon, alert }: any) {
-  return (
-    <div className="bg-[#2a221b] rounded-xl p-4 border border-white/10">
-      <div className="flex justify-between items-center">
-        <p className="text-sm text-white/60">{title}</p>
-        <span className={`material-symbols-outlined ${alert ? "text-red-400" : "text-[#F57C00]"}`}>
-          {icon}
-        </span>
-      </div>
-      <p className="text-2xl font-bold mt-2">{value}</p>
-    </div>
-  );
-}
+  useEffect(() => {
+    fetchUsers();
+  }, [session]);
 
-function ModerationItem({ type, title, author, time }: any) {
+  // ================= MÉTRICAS CALCULADAS =================
+  const totalUsers = users.length;
+  const blockedUsers = users.filter((u) => u.blocked).length;
+  const creators = users.filter((u) => u.roleId === "CREATOR").length;
+  const subscribers = users.filter((u) => u.roleId === "SUSCRIPTOR").length;
+
   return (
-    <div className="flex justify-between items-center py-3 border-t border-white/10">
-      <div>
-        <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs text-white/50">
-          {type} • {author} • {time}
+    <div className="flex flex-col gap-8 p-4 pb-28 bg-[#181411] min-h-screen px-4 sm:px-8 lg:px-16">
+      {/* HEADER */}
+      <section>
+        <h1 className="text-2xl font-bold text-white border-l-4 border-orange-500 pl-3">
+          Panel de Control
+        </h1>
+        <p className="text-sm text-white/60 mt-1 ml-4">
+          Resumen general de la plataforma
         </p>
-      </div>
+      </section>
 
-      <div className="flex gap-2">
-        <button className="p-2 rounded-lg hover:bg-green-500/20 text-green-500">
-          <span className="material-symbols-outlined">check</span>
-        </button>
-        <button className="p-2 rounded-lg hover:bg-red-500/20 text-red-500">
-          <span className="material-symbols-outlined">close</span>
-        </button>
-      </div>
+      {/* MÉTRICAS */}
+      <section>
+        <p className="text-sm text-white/60 mb-4">MÉTRICAS CLAVE</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            title="Usuarios"
+            value={totalUsers.toString()}
+            variation={`Bloqueados: ${blockedUsers}`}
+            icon="group"
+          />
+          <MetricCard
+            title="Creadores"
+            value={creators.toString()}
+            variation=""
+            icon="menu_book"
+          />
+          <MetricCard
+            title="Suscriptores"
+            value={subscribers.toString()}
+            variation=""
+            icon="payments"
+          />
+          <MetricCard
+            title="Reportes"
+            value="5" // Hardcode por ahora
+            icon="report"
+            alert
+          />
+        </div>
+      </section>
+
+      {/* GRÁFICA */}
+      <section>
+        <RevenueChart />
+      </section>
+
+      {/* ACCESOS DIRECTOS */}
+      <section>
+        <h2 className="text-2xl font-bold text-white border-l-4 border-orange-500 pl-3 mb-6">
+          Accesos Directos
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <QuickAccessCard
+            icon="group"
+            label="Usuarios"
+            onClick={() => router.push("/admin/users")}
+          />
+          <QuickAccessCard
+            icon="menu_book"
+            label="Contenido"
+            onClick={() => router.push("/admin/content")}
+          />
+          <QuickAccessCard
+            icon="rate_review"
+            label="Reseñas"
+            onClick={() => router.push("/admin/reports")}
+          />
+          <QuickAccessCard
+            icon="payments"
+            label="Pagos"
+            onClick={() => router.push("/admin/payments")}
+          />
+        </div>
+      </section>
+
+      {/* ACTIVIDAD RECIENTE */}
+      <section>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-white border-l-4 border-orange-500 pl-3">
+            Actividad Reciente
+          </h2>
+          <button
+            className="text-sm text-orange-400 hover:underline"
+            onClick={() => router.push("/admin/activity")}
+          >
+            Ver todo
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <ActivityItem
+            title="Nueva receta: Pasta Carbonara"
+            subtitle="Chef Marco • Hace 5m"
+            status="PENDIENTE"
+          />
+          <ActivityItem
+            title="Nuevo suscriptor Premium"
+            subtitle="Plan Anual"
+            status="COMPLETADO"
+          />
+          <ActivityItem
+            title="Reseña reportada"
+            subtitle="Tacos al Pastor"
+            status="URGENTE"
+          />
+        </div>
+      </section>
     </div>
-  );
-}
-
-function QuickAction({ icon, label }: any) {
-  return (
-    <button className="bg-[#2a221b] rounded-xl p-4 border border-white/10 flex items-center gap-4 hover:bg-white/5 transition">
-      <span className="material-symbols-outlined text-[#F57C00]">
-        {icon}
-      </span>
-      <span className="font-medium">{label}</span>
-    </button>
   );
 }
