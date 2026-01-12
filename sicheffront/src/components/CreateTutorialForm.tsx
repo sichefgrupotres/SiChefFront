@@ -1,10 +1,10 @@
 "use client";
 
-import { createPost } from "@/services/auth.services";
+import { createTutorial } from "@/services/tutorials.services";
 import {
-  TutorialFormValuesInterface,
+  TutorialFormValues,
   initialValuesTutorial,
-  TutorialSchema,
+  TutorialFormSchema,
 } from "@/validators/TutorialSchema";
 import { useFormik } from "formik";
 import { useSession } from "next-auth/react";
@@ -24,65 +24,75 @@ export default function NewTutorial() {
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [stepDraft, setStepDraft] = useState("");
 
-  const formik = useFormik<TutorialFormValuesInterface>({
+  const formik = useFormik<TutorialFormValues>({
     initialValues: initialValuesTutorial,
-    validationSchema: TutorialSchema,
-    // onSubmit: async (values, { resetForm }) => {
-    //   if (loading) return;
-    //   setLoading(true);
+    validationSchema: TutorialFormSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
+    validateOnMount: true,
 
-    //   if (!values.file) {
-    //     Swal.fire({
-    //       icon: "warning",
-    //       title: "Video requerido",
-    //       text: "Debes subir un video",
-    //     });
-    //     setLoading(false);
-    //     return;
-    //   }
-
-    //   const success = await createPost(
-    //     {
-    //       title: values.title,
-    //       description: values.description,
-    //       ingredients: values.ingredients,
-    //       steps: values.steps,
-    //       file: values.file,
-    //     },
-    //     session
-    //   );
-
-    //   if (success) {
-    //     Swal.fire({
-    //       icon: "success",
-    //       title: "Tutorial publicado",
-    //       text: "Tu tutorial se creó correctamente",
-    //     }).then(() => {
-    //       resetForm();
-    //       setVideoPreview(null);
-    //       router.push("/creator/recipes");
-    //     });
-    //   } else {
-    //     Swal.fire({
-    //       icon: "error",
-    //       title: "Error",
-    //       text: "No se pudo crear el tutorial",
-    //     });
-    //   }
-
-    //   setLoading(false);
-    // },
-
-    onSubmit: async (values, { resetForm }) => {
-      console.log("🚧 BACKEND SIN PREPARACION PARA ESTE FORMUALRIO");
-      console.log("Datos del formulario:", values);
-
-      Swal.fire({
-        icon: "info",
-        title: "Modo desarrollo",
-        text: "El backend aún no está disponible para este formuario.",
+    onSubmit: async (values, { resetForm, setTouched }) => {
+      setTouched({
+        title: true,
+        video: true,
+        description: true,
+        ingredients: [],
+        steps: [],
       });
-      resetForm();
+
+      if (loading) return;
+      setLoading(true);
+
+      if (!session?.backendToken) {
+        Swal.fire({
+          icon: "error",
+          title: "Sesión inválida",
+          text: "Debes iniciar sesión nuevamente",
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (!values.video) {
+        Swal.fire({
+          icon: "warning",
+          title: "Video requerido",
+          text: "Debes subir un video",
+        });
+        setLoading(false);
+        return;
+      }
+
+      const success = await createTutorial(
+        {
+          title: values.title,
+          description: values.description,
+          ingredients: values.ingredients,
+          steps: values.steps,
+          video: values.video,
+        },
+        session!.backendToken
+      );
+
+      if (success) {
+        Swal.fire({
+          icon: "success",
+          title: "Tutorial publicado",
+          text: "Tu tutorial se creó correctamente",
+        }).then(() => {
+          resetForm();
+          setVideoPreview(null);
+          router.push("/creator/tutorials");
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo crear el tutorial",
+        });
+      }
+
+      setLoading(false);
     },
   });
 
@@ -95,7 +105,13 @@ export default function NewTutorial() {
       return;
     }
 
-    formik.setFieldValue("file", file);
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+
+    formik.setFieldValue("video", file);
+    formik.setFieldTouched("video", true);
+
     setVideoPreview(URL.createObjectURL(file));
   };
 
@@ -175,6 +191,10 @@ export default function NewTutorial() {
           />
         </label>
 
+        {formik.touched.video && formik.errors.video && (
+          <p className="text-red-400 text-xs mt-1">{formik.errors.video}</p>
+        )}
+
         {/* TÍTULO */}
         <div>
           <label className="text-sm font-semibold">Título</label>
@@ -186,6 +206,10 @@ export default function NewTutorial() {
             onBlur={formik.handleBlur}
             className="w-full mt-1 rounded-xl bg-[#2a221b] border border-white/10 px-5 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none"
           />
+
+          {formik.touched.title && formik.errors.title && (
+            <p className="text-red-400 text-xs mt-1">{formik.errors.title}</p>
+          )}
         </div>
 
         {/* DESCRIPCIÓN DETALLADA */}
@@ -200,6 +224,12 @@ export default function NewTutorial() {
             rows={6}
             className="w-full mt-1 rounded-xl bg-[#2a221b] border border-white/10 px-5 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none"
           />
+
+          {formik.touched.description && formik.errors.description && (
+            <p className="text-red-400 text-xs mt-1">
+              {formik.errors.description}
+            </p>
+          )}
         </div>
 
         {/* INGREDIENTES */}
@@ -265,6 +295,12 @@ export default function NewTutorial() {
             <span className="text-lg">＋</span>
             Añadir Ingrediente
           </button>
+
+          {typeof formik.errors.ingredients === "string" && (
+            <p className="text-red-400 text-xs mt-1">
+              {formik.errors.ingredients}
+            </p>
+          )}
         </div>
 
         {/* PASOS */}
@@ -287,7 +323,7 @@ export default function NewTutorial() {
               {/* Contenido */}
               <div className="flex-1">
                 <p className="text-sm text-white line-clamp-2">
-                  {step || "Paso sin descripción"}
+                  {step.description || "Paso sin descripción"}
                 </p>
               </div>
 
@@ -297,7 +333,7 @@ export default function NewTutorial() {
                   type="button"
                   onClick={() => {
                     setEditingStepIndex(index);
-                    setStepDraft(step);
+                    setStepDraft(step.description);
                   }}
                   className="text-gray-400 hover:text-orange-400 cursor-pointer"
                 >
@@ -350,7 +386,10 @@ export default function NewTutorial() {
                   type="button"
                   onClick={() => {
                     const updatedSteps = [...formik.values.steps];
-                    updatedSteps[editingStepIndex] = stepDraft;
+                    updatedSteps[editingStepIndex] = {
+                      ...updatedSteps[editingStepIndex],
+                      description: stepDraft,
+                    };
                     formik.setFieldValue("steps", updatedSteps);
                     setEditingStepIndex(null);
                     setStepDraft("");
@@ -367,15 +406,20 @@ export default function NewTutorial() {
           <button
             type="button"
             onClick={() => {
-              setEditingStepIndex(formik.values.steps.length);
+              const newSteps = [...formik.values.steps, { description: "" }];
+              formik.setFieldValue("steps", newSteps);
+              setEditingStepIndex(newSteps.length - 1);
               setStepDraft("");
-              formik.setFieldValue("steps", [...formik.values.steps, ""]);
             }}
             className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/20 py-4 text-sm text-gray-300 hover:border-orange-400 hover:text-orange-400 transition"
           >
             <span className="text-lg">＋</span>
             Añadir Nuevo Paso
           </button>
+
+          {typeof formik.errors.steps === "string" && (
+            <p className="text-red-400 text-xs mt-1">{formik.errors.steps}</p>
+          )}
         </div>
 
         {/* SUBMIT */}
