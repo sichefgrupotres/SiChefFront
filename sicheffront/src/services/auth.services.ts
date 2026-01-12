@@ -119,3 +119,4 @@ export const createPost = async (data, token: string) => {
 
   return res.ok;
 };
+
