@@ -51,24 +51,50 @@ export const registerUserService = async (
       },
       body: JSON.stringify(userData),
     });
-    console.log(response);
 
-    if (response.ok) {
+    const data = await response.json();
+
+    if (response.status === 409) {
       Swal.fire({
-        icon: "success",
-        title: "Registro exitoso",
-        text: "Tu cuenta fue creada correctamente 🎉",
+        icon: "warning",
+        title: "Usuario ya registrado",
+        text: "Este correo ya está en uso. Intenta iniciar sesión.",
         showConfirmButton: false,
-        timer: 2000,
+        timer: 2500,
         timerProgressBar: true,
       });
-
-      const data = await response.json();
-      return data;
+      return null;
     }
+
+    if (!response.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Error en el registro",
+        text: data?.message || "No se pudo completar el registro",
+      });
+      return null;
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Registro exitoso",
+      text: "Tu cuenta fue creada correctamente 🎉",
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+
+    return data;
   } catch (error) {
     console.error("Registro no realizado", error);
-    throw error;
+
+    Swal.fire({
+      icon: "error",
+      title: "Error de conexión",
+      text: "No se pudo conectar con el servidor",
+    });
+
+    return null;
   }
 };
 
@@ -93,3 +119,4 @@ export const createPost = async (data, token: string) => {
 
   return res.ok;
 };
+
