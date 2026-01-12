@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import NavBarCreator from "../../components/NavBars/NavBarCreator";
+import NavBarUser from "../../components/NavBars/NavBarUser";
 
 export default function CreatorLayout({
     children,
@@ -14,7 +14,7 @@ export default function CreatorLayout({
         <div className="min-h-screen bg-[#181411] text-white">
 
             <main className={`p-4 pb-28 transition-all duration-300  ${collapsed ? "ml-20" : "ml-64"}`}>
-                <NavBarCreator
+                <NavBarUser
                     collapsed={collapsed}
                     setCollapsed={setCollapsed}
                 />
