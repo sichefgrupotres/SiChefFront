@@ -90,7 +90,7 @@ export default function CreatorRecipeDetailPage() {
     <div className="max-w-6xl mx-auto px-4 py-6">
        {/* ===== VOLVER ===== */}
       <button
-        onClick={() => router.push("/creator/profile")}
+        onClick={() => router.push("/creator")}
         className="flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 mb-6 transition"
       >
         <ArrowLeft size={16} />
