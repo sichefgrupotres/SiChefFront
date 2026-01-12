@@ -13,7 +13,7 @@ const RecipeCard = ({ recipe, mode = "creator" }: RecipeCardProps) => {
   // Enlace para admins
   const href =
     mode === "creator"
-      ? `/creator/${recipe.id}`
+      ? `/creator/recipes/${recipe.id}`
       : mode === "admin"
       ? `/admin/content/${recipe.id}` // Redirigir a la página de receta admin
       : `/guest/recipes/${recipe.id}`;
