@@ -2,6 +2,7 @@ import "./globals.css";
 import { Provider } from "./providers";
 import { RecipeProvider } from "@/context/RecipeContext";
 import { AuthBootstrap } from "@/components/AuthBootstrap";
+import { TutorialProvider } from "@/context/TutorialContext";
 
 export const metadata = {
   title: "Si Chef!",
@@ -24,10 +25,12 @@ export default function RootLayout({
         suppressHydrationWarning
         className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
         <Provider>
+          <TutorialProvider>
           <RecipeProvider>
             {/* <AuthBootstrap /> */}
             {children}
           </RecipeProvider>
+          </TutorialProvider>
         </Provider>
       </body>
     </html>
