@@ -52,7 +52,7 @@ export default function NewRecipePage() {
           file: values.file,
           category: values.category,
         },
-        session.backendToken // 👈 PASA SOLO EL TOKEN
+        session.backendToken || "" // 👈 PASA SOLO EL TOKEN
       );
 
       if (success) {
@@ -258,11 +258,10 @@ export default function NewRecipePage() {
         <button
           type="submit"
           disabled={loading}
-          className={`mt-4 h-12 rounded-lg font-bold transition ${
-            loading
+          className={`mt-4 h-12 rounded-lg font-bold transition ${loading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#F57C00] hover:bg-orange-500 cursor-pointer"
-          }`}>
+            }`}>
           {loading ? "Publicando..." : "Publicar receta"}
         </button>
       </form>
