@@ -14,4 +14,9 @@ export const userNavItems = [
         href: "/user/profile",
         icon: "person",
     },
+    {
+        label: "Favoritos",
+        href: "/user/favorites",
+        icon: "favorite",
+    },
 ];
