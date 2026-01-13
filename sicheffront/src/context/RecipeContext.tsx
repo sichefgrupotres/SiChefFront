@@ -42,7 +42,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("http://localhost:3001/posts");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
 
       if (!res.ok) {
         throw new Error(`Error ${res.status}`);
@@ -67,7 +67,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         throw new Error("No estás autenticado");
       }
 
-      const response = await fetch("http://localhost:3001/posts/my-posts", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       formData.append("file", data.file);
       formData.append("category", JSON.stringify(data.category));
 
-      const res = await fetch("http://localhost:3001/posts", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,7 +128,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
 
   const updateRecipe = async (id: string, data: Partial<RecipeInterface>) => {
     try {
-      const res = await fetch(`http://localhost:3001/posts/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -148,7 +148,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
 
   const deleteRecipe = async (id: string) => {
     try {
-      await fetch(`http://localhost:3001/posts/${id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

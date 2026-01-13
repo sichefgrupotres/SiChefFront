@@ -28,7 +28,7 @@ export default function GuestRecipePage() {
 
     const fetchRecipe = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/posts/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`);
         if (!res.ok) throw new Error();
         setRecipe(await res.json());
       } catch {

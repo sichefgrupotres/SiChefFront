@@ -44,7 +44,7 @@ export const registerUserService = async (
   userData: RegisterFormValuesInterface
 ) => {
   try {
-    const response = await fetch(`http://localhost:3001/users/register`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export const createPost = async (data, token: string) => {
     }
   });
 
-  const res = await fetch("http://localhost:3001/posts", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

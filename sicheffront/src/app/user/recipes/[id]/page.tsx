@@ -29,7 +29,7 @@ export default function UserRecipeDetailPage() {
 
         const fetchRecipe = async () => {
             try {
-                const res = await fetch(`http://localhost:3001/posts/${id}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`);
                 if (res.status === 404) {
                     // Si no existe, podrías redirigir al home o a una página 404
                     router.push("/home");

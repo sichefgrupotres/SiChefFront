@@ -42,7 +42,7 @@ export const TutorialProvider = ({ children }: TutorialProviderProps) => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("http://localhost:3001/tutorials", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tutorials`, {
         headers: token
           ? { Authorization: `Bearer ${token}` }
           : undefined,

@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const res = await fetch("http://localhost:3001/auth/signin", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
 
       if (account?.provider === "google" && profile) {
         const googleProfile = profile as GoogleProfile;
-        const res = await fetch("http://localhost:3001/auth/register-google", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register-google`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
