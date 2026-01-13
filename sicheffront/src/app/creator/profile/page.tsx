@@ -28,7 +28,7 @@ export default function CreatorPage() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("http://localhost:3001/users/avatar", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/avatar`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.backendToken}`,

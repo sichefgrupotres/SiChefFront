@@ -28,7 +28,7 @@ export default function CreatorRecipeDetailPage() {
 
     const fetchRecipe = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/posts/${id}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`);
         if (res.status === 404) {
           router.push("/404");
           return;

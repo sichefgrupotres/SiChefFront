@@ -13,7 +13,7 @@ export const createTutorial = async (
   formData.append("ingredients", JSON.stringify(data.ingredients));
   formData.append("steps", JSON.stringify(data.steps));
 
-  const res = await fetch("http://localhost:3001/tutorials", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tutorials`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
