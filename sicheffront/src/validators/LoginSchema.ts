@@ -28,7 +28,7 @@ export const LoginSchema = Yup.object({
     .required("La contraseña es un campo obligatorio")
     .min(8, "Debe contener al menos 8 caracteres")
     .max(15, "Debe contener como máximo 15 caracteres")
-    .matches(/[A-Z]/, "Debe contener al menos una letra MAYUSCULA")
+    // .matches(/[A-Z]/, "Debe contener al menos una letra MAYUSCULA")
     .matches(/[a-z]/, "Debe contener al menos una letra minúscula")
     .matches(/[0-9]/, "Debe contener al menos un número")
     .matches(

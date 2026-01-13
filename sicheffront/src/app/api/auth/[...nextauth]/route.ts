@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider, { GoogleProfile } from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -64,16 +64,17 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (account?.provider === "google" && profile) {
+        const googleProfile = profile as GoogleProfile;
         const res = await fetch("http://localhost:3001/auth/register-google", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            googleId: profile.sub,
-            email: profile.email,
-            name: profile.given_name,
-            lastname: profile.family_name,
-            avatarUrl: profile.picture,
-            roleId: "USER",
+            googleId: googleProfile.sub,
+            email: googleProfile.email,
+            name: googleProfile.given_name,
+            lastname: googleProfile.family_name,
+            avatarUrl: googleProfile.picture,
+            // roleId: "USER",
           }),
         });
 

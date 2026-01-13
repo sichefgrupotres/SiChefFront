@@ -3,7 +3,7 @@ export interface AuthSessionUser {
   email: string;
   name?: string;
   lastname?: string;
-  roleId: "USER" | "CREATOR";
+  role: "USER" | "CREATOR" | "ADMIN";
   avatarUrl?: string;
 }
 

@@ -10,30 +10,31 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
-import { useAuth } from "@/context/AuthContext";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const LoginForm = () => {
   const router = useRouter();
-  const { setDataUser } = useAuth();
   const { data: session, status } = useSession();
   const [showPassword, setShowPassword] = useState(false);
 
   // ================= USEEFFECT PARA LA REDIRECCIÓN =================
-  useEffect(() => {
-    if (status === "authenticated") {
-      const userRole = session.user?.role;
-
-      if (userRole === "ADMIN") {
+ useEffect(() => {
+  if (status === "authenticated" && session?.user) {
+    switch (session.user.role) {
+      case "ADMIN":
         router.replace("/admin");
-      } else if (userRole === "CREATOR") {
+        break;
+      case "CREATOR":
         router.replace("/creator");
-      } else {
-        router.replace("/");
-      }
+        break;
+      case "USER":
+        router.replace("/user");
+        break;
+      default:
+        signOut();
     }
-  }, [status, session, router]);
-
+  }
+}, [status, session]);
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
@@ -56,18 +57,29 @@ const LoginForm = () => {
     signIn("google");
   };
 
+  if (status === "loading") {
+  return (
+    <div className="flex items-center justify-center min-h-screen text-white">
+      Cargando...
+    </div>
+  );
+}
+
+if (status === "authenticated") {
+  // opcional, mientras redirige
+  return null;
+}
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">
       <Image
-        src="/Loginbackground.png" // Asegúrate de que el nombre coincida con el archivo en tu carpeta public
+        src="/Loginbackground.png" 
         alt="Background Kitchen"
         fill
         priority
         className="object-cover"
       />
 
-      {/* Overlay oscuro para legibilidad */}
       <div className="absolute inset-0 bg-black/25" />
 
       {/* Contenedor del Formulario */}
