@@ -27,7 +27,7 @@ export default function AdminRecipeDetailPage() {
 
     const fetchRecipe = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/posts/${recipeId}`); // Asegúrate de que `recipeId` se pase correctamente en la URL
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${recipeId}`); // Asegúrate de que `recipeId` se pase correctamente en la URL
         if (res.status === 404) {
           router.push("/404");
           return;
