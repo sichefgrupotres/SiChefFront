@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { Trash2 } from "lucide-react";
 
 export default function NewTutorial() {
   const router = useRouter();
@@ -18,11 +19,32 @@ export default function NewTutorial() {
 
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  
 
   const [ingredientTitle, setIngredientTitle] = useState("");
   const [ingredientDescription, setIngredientDescription] = useState("");
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [stepDraft, setStepDraft] = useState("");
+
+  const handleVideoDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
+      alert("Selecciona un archivo de video válido");
+      return;
+    }
+
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+
+    formik.setFieldValue("video", file);
+    formik.setFieldTouched("video", true);
+    setVideoPreview(URL.createObjectURL(file));
+  };
 
   const formik = useFormik<TutorialFormValues>({
     initialValues: initialValuesTutorial,
@@ -115,6 +137,27 @@ export default function NewTutorial() {
     setVideoPreview(URL.createObjectURL(file));
   };
 
+  const handleRemoveVideo = () => {
+    Swal.fire({
+      title: "¿Eliminar video?",
+      text: "Deberás subirlo nuevamente",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#555",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (videoPreview) {
+          URL.revokeObjectURL(videoPreview);
+        }
+        setVideoPreview(null);
+        formik.setFieldValue("video", null);
+        formik.setFieldTouched("video", true);
+      }
+    });
+  };
+
   const addIngredient = () => {
     if (!ingredientTitle.trim()) return;
 
@@ -147,30 +190,47 @@ export default function NewTutorial() {
         {/* VIDEO */}
         <label
           htmlFor="videoInput"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleVideoDrop}
           className="
-            cursor-pointer
-            flex flex-col items-center justify-center
-            w-full h-100
-            rounded-xl
-            border-2 border-dashed border-white/20
-            bg-[#2a221b]
-            p-6
-            hover:border-orange-400
-            transition
-            text-center
-            gap-2
-          "
+          flex flex-col items-center justify-center
+          w-full h-100
+          rounded-xl
+          border-2 border-dashed border-white/20
+        bg-[#2a221b]
+          p-6
+        hover:border-orange-400
+          transition
+          text-center
+          gap-2
+        "
         >
           {videoPreview ? (
-            <video
-              src={videoPreview}
-              className="w-full h-full rounded-lg object-cover"
-              controls
-            />
+            <div className="relative w-full h-full">
+              <button
+                type="button"
+                onClick={handleRemoveVideo}
+                className="
+                  absolute top-3 right-3 z-10
+                  bg-black/60 hover:bg-red-600
+                  text-white p-2 rounded-full
+                  transition
+                "
+                title="Eliminar video"
+              >
+                <Trash2 className="w-4 h-4 cursor-pointer" />
+              </button>
+
+              <video
+                src={videoPreview}
+                className="w-full h-full rounded-lg object-cover"
+                controls
+              />
+            </div>
           ) : (
             <>
-              <div className="w-14 h-14 rounded-full bg-orange-500/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-3xl text-orange-400">
+              <div className="w-14 h-14 rounded-full bg-orange-500/20 flex items-center justify-center cursor-pointer">
+                <span className="material-symbols-outlined text-3xl text-orange-400 ">
                   cloud_upload
                 </span>
               </div>
@@ -248,7 +308,8 @@ export default function NewTutorial() {
               className="flex items-center gap-3 rounded-xl bg-[#241c16] border border-white/10 px-4 py-3"
             >
               {/* Icono drag */}
-              <span className="text-gray-500 cursor-grab">⋮⋮</span>
+
+              <span className="text-gray-500 cursor-grab">●</span>
 
               {/* Texto */}
               <div className="flex-1">
@@ -306,7 +367,7 @@ export default function NewTutorial() {
         {/* PASOS */}
         <div className="space-y-4">
           <label className="text-sm font-semibold text-white flex items-center gap-2">
-            📋 Pasos del Tutorial
+            Pasos del Tutorial
           </label>
 
           {/* Lista de pasos */}

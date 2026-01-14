@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import RecipeCard from "@/components/CardRecipe";
+import RecipeCard from "@/components/Recipes/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 
 export default function CreatorHomePage() {
@@ -62,7 +62,6 @@ export default function CreatorHomePage() {
       });
     });
 
-
   // ================= ESTADOS UI =================
   if (loading) {
     return (
@@ -111,9 +110,9 @@ export default function CreatorHomePage() {
           </div>
 
           {/* Buscador Interactivo */}
-         <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-500">
+          <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-500">
             <div className="flex items-center gap-2 w-full px-4 py-3 bg-white">
-               <span className="material-symbols-outlined text-gray-400">
+              <span className="material-symbols-outlined text-gray-400">
                 search
               </span>
               <input
@@ -175,7 +174,8 @@ export default function CreatorHomePage() {
     after:content-['']
 
     ${selectedCategory === cat.name ? "ring-2 ring-orange-500" : ""}
-  `}>
+  `}
+              >
                 {/* Texto (igual que antes) */}
                 <span className="relative z-10">{cat.name}</span>
               </button>
@@ -204,7 +204,8 @@ export default function CreatorHomePage() {
                   setSearchTerm("");
                   setSelectedCategory("Todas");
                 }}
-                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold">
+                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
+              >
                 Limpiar filtros y ver todo
               </button>
             </div>
@@ -212,7 +213,7 @@ export default function CreatorHomePage() {
             // Grilla Responsive
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
               {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} mode="creator"/>
+                <RecipeCard key={recipe.id} recipe={recipe} mode="creator" />
               ))}
             </div>
           )}

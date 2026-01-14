@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import RecipeCard from "@/components/CardRecipe";
+import RecipeCard from "@/components/Recipes/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 import { useSession } from "next-auth/react";
 

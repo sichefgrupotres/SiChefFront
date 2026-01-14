@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import RecipeCard from "@/components/CardRecipe";
+import RecipeCard from "@/components/Recipes/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 import { adminService } from "@/services/admin.services";
 import { useSession } from "next-auth/react";
@@ -21,18 +21,18 @@ export default function AdminContentPage() {
   const [loadingTutorials, setLoadingTutorials] = useState(true);
 
   // ================= FETCH TUTORIALS =================
-//   const fetchTutorials = async () => {
-//     if (!session?.backendToken) return;
-//     setLoadingTutorials(true);
-//     try {
-//       const data = await adminService.getAllTutorials(session.backendToken);
-//       setTutorials(data);
-//     } catch (err) {
-//       console.error("Error al traer tutoriales:", err);
-//     } finally {
-//       setLoadingTutorials(false);
-//     }
-//   };
+  //   const fetchTutorials = async () => {
+  //     if (!session?.backendToken) return;
+  //     setLoadingTutorials(true);
+  //     try {
+  //       const data = await adminService.getAllTutorials(session.backendToken);
+  //       setTutorials(data);
+  //     } catch (err) {
+  //       console.error("Error al traer tutoriales:", err);
+  //     } finally {
+  //       setLoadingTutorials(false);
+  //     }
+  //   };
 
   useEffect(() => {
     fetchRecipes(); // Del contexto RecipeContext
@@ -62,7 +62,7 @@ export default function AdminContentPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} mode="admin"/>
+              <RecipeCard key={recipe.id} recipe={recipe} mode="admin" />
             ))}
           </div>
         )}
