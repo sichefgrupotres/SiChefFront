@@ -1,13 +1,5 @@
 import React from 'react';
 
-/**
- * PALETA APLICADA:
- * Fondo Principal: #181411 (Casi negro/marrón muy oscuro)
- * Fondo Tarjetas/Header: #2a221b (Marrón café profundo)
- * Acento Principal: #F57C00 (Naranja vibrante)
- * Texto/Superficies claras: #e6e0db (Hueso/Crema)
- */
-
 export default function CreatorProfile() {
     return (
         <div className="min-h-screen bg-[#181411] text-[#e6e0db] font-sans selection:bg-[#F57C00]/30">
@@ -15,9 +7,9 @@ export default function CreatorProfile() {
             <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
 
             {/* Header con el tono de elevación #2a221b */}
-            <header className="sticky top-0 z-50 w-full bg-[#2a221b]/90 backdrop-blur-xl border-b border-[#e6e0db]/10">
+            <header className="sticky top-0 z-50 w-full bg-[#181411]/90 backdrop-blur-xl border-b border-[#e6e0db]/10">
                 <div className="max-w-6xl mx-auto px-6 h-18 flex items-center justify-between">
-                    <button className="group flex items-center gap-2 text-[#e6e0db] hover:text-[#F57C00] transition-all">
+                    <button className="group flex items-center gap-2 text-[#e6e0db] hover:text-[#F57C00] transition-all cursor-pointer">
                         <span className="material-symbols-outlined transition-transform group-hover:-translate-x-1">arrow_back</span>
                         <span className="hidden sm:inline font-medium">Volver</span>
                     </button>
@@ -26,7 +18,7 @@ export default function CreatorProfile() {
                         <button className="p-2.5 rounded-xl bg-[#181411] border border-[#e6e0db]/5 hover:border-[#F57C00]/50 transition-colors">
                             <span className="material-symbols-outlined">share</span>
                         </button>
-                        <button className="flex items-center gap-2 bg-[#F57C00] text-[#181411] px-6 py-2.5 rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-[#F57C00]/20">
+                        <button className="flex items-center gap-2 bg-[#F57C00] text-[#181411] px-6 py-2.5 rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-[#F57C00]/20 cursor-pointer">
                             <span className="material-symbols-outlined text-[20px]">send</span>
                             <span>Mensaje</span>
                         </button>
@@ -42,15 +34,12 @@ export default function CreatorProfile() {
                         <div className="sticky top-28 flex flex-col items-center lg:items-start">
                             <div className="relative mb-8">
                                 <div
-                                    className="h-44 w-44 rounded-[2.5rem] rotate-3 shadow-2xl bg-cover bg-center ring-4 ring-[#2a221b] outline outline-1 outline-[#F57C00]/30"
-                                    style={{ backgroundImage: `url('https://images.unsplash.com/photo-1577214459173-938670172606?w=400')` }}
+                                    className="h-44 w-44 rounded-[2.5rem]  shadow-2xl bg-cover bg-center ring-4 ring-[#2a221b] outline outline-1 outline-[#F57C00]/30"
+                                    style={{ backgroundImage: `url('https://www.shutterstock.com/image-photo/restaurant-kitchen-portrait-confident-chef-600nw-2645077225.jpg')` }}
                                 />
-                                <div className="absolute -bottom-2 -right-2 bg-[#F57C00] text-[#181411] p-2 rounded-2xl border-4 border-[#181411] shadow-xl">
-                                    <span className="material-symbols-outlined text-[22px] font-bold block">check_circle</span>
-                                </div>
                             </div>
 
-                            <h1 className="text-4xl font-black text-[#e6e0db] mb-2 tracking-tight">Chef Maria</h1>
+                            <h1 className="text-4xl font-black text-[#e6e0db] mb-2 tracking-tight">Chef Juan</h1>
                             <p className="text-[#e6e0db]/60 text-lg mb-8 leading-relaxed max-w-sm">
                                 Especialista en técnica <span className="text-[#F57C00]">slow-food</span> y pastas artesanales.
                             </p>
@@ -74,13 +63,13 @@ export default function CreatorProfile() {
                     <section className="lg:w-2/3">
                         {/* Custom Tabs */}
                         <div className="flex gap-2 p-1.5 bg-[#2a221b] rounded-2xl mb-10 w-fit">
-                            <button className="px-8 py-3 rounded-xl bg-[#F57C00] text-[#e6e0db] font-bold shadow-lg">Recetas</button>
-                            <button className="px-8 py-3 rounded-xl text-[#e6e0db]/50 font-bold hover:text-[#e6e0db] transition-colors">Tutoriales</button>
+                            <button className="px-8 py-3 rounded-xl bg-[#F57C00] text-[#e6e0db] font-bold shadow-lg cursor-pointer">Recetas</button>
+                            <button className="px-8 py-3 rounded-xl text-[#e6e0db]/50 font-bold hover:text-[#e6e0db] transition-colors cursor-pointer">Tutoriales</button>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 cursor-pointer">
                             <RecipeCard
-                                title="Lasagna de la Nonna"
+                                title="Ensalada Tropical"
                                 time="45 min"
                                 level="Fácil"
                                 img="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400"
@@ -92,19 +81,6 @@ export default function CreatorProfile() {
                                 img="https://images.unsplash.com/photo-1473093226795-af9932fe5856?w=400"
                             />
 
-                            {/* Promo Card con el naranja como fondo */}
-                            <div className="col-span-full bg-gradient-to-br from-[#F57C00] to-[#ff9800] rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
-                                <div className="absolute right-0 top-0 opacity-10 group-hover:scale-110 transition-transform">
-                                    <span className="material-symbols-outlined text-[150px]">restaurant</span>
-                                </div>
-                                <div className="z-10">
-                                    <h3 className="text-[#181411] text-2xl font-black mb-2">Masterclass Presencial</h3>
-                                    <p className="text-[#181411]/80 font-medium">Aprende a dominar el fuego y la masa este sábado.</p>
-                                </div>
-                                <button className="z-10 bg-[#181411] text-[#e6e0db] px-8 py-4 rounded-2xl font-black hover:scale-105 transition-transform shadow-xl">
-                                    Reservar Lugar
-                                </button>
-                            </div>
                         </div>
                     </section>
                 </div>
