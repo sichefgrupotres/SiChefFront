@@ -6,9 +6,8 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import MyRecipesList from "@/components/Recipes/MyRecipesList";
 import { useSession } from "next-auth/react";
-import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
-// 👉 cuando tengas el componente
-// import MyTutorialsList from "@/components/MyTutorialsList";
+// import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
+
 
 export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
