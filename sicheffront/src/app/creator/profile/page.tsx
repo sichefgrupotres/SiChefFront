@@ -22,9 +22,6 @@ export default function CreatorPage() {
     dataUser?.user?.avatarUrl || "/chef-avatar.jpg"
   );
 
-  // 1. NUEVO: Estado para saber si se está subiendo la foto
-  const [uploading, setUploading] = useState(false);
-
   const { data: session, update } = useSession();
 
   const [activeTab, setActiveTab] = useState<"recipes" | "tutorials">(
@@ -35,75 +32,51 @@ export default function CreatorPage() {
     const file = e.target.files?.[0];
     if (!file || !session?.backendToken) return;
 
-    // 2. NUEVO: Activamos el spinner
-    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
 
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/avatar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.backendToken}`,
+      },
+      body: formData,
+    });
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/avatar`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.backendToken}`,
-        },
-        body: formData,
-      });
-
-      if (!res.ok) {
-        console.error("Error subiendo avatar");
-        return;
-      }
-
-      const data = await res.json();
-
-      setAvatar(data.avatarUrl);
-
-      await update({
-        ...session,
-        user: {
-          ...session.user,
-          avatarUrl: data.avatarUrl,
-        },
-      });
-    } catch (error) {
-      console.error("Error en la subida:", error);
-    } finally {
-      // 3. NUEVO: Desactivamos el spinner termine bien o mal
-      setUploading(false);
+    if (!res.ok) {
+      console.error("Error subiendo avatar");
+      return;
     }
+
+    const data = await res.json();
+
+    setAvatar(data.avatarUrl);
+
+    await update({
+      ...session,
+      user: {
+        ...session.user,
+        avatarUrl: data.avatarUrl,
+      },
+    });
   };
 
   return (
     <div className="flex flex-col gap-8 p-4 pb-28 bg-[#181411] min-h-screen px-4 sm:px-8 lg:px-16">
       <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-4 text-center">
         <div className="relative w-32 h-32">
-
-
           <img
             src={session?.user?.avatarUrl || "/chef-avatar.jpg"}
-            alt="Perfil"
-            className={`w-full h-full object-cover rounded-full shadow-sm transition-opacity duration-300 ${uploading ? "opacity-50" : "opacity-100"
-              }`}
+            className="rounded-full"
           />
 
-
-          {/* 4. NUEVO: El Spinner animado (solo aparece si uploading es true) */}
-          {uploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full z-10">
-              <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
-
-          {/* Botón cámara */}
           <label
-            className={`absolute bottom-0 right-0 translate-x-1 translate-y-1 
-            w-9 h-9 rounded-full bg-[#F57C00] flex items-center justify-center 
-            shadow-lg border-2 border-white transition 
-            ${uploading ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:scale-105 active:scale-95"}`}
+            className="absolute bottom-0 right-0 translate-x-1 translate-y-1 
+                        w-9 h-9 rounded-full bg-[#F57C00] flex items-center justify-center 
+                        cursor-pointer shadow-lg hover:scale-105 transition active:scale-95"
           >
             <span className="material-symbols-outlined text-white text-[20px]">
-              {uploading ? "hourglass_empty" : "photo_camera"}
+              photo_camera
             </span>
 
             <input
@@ -111,7 +84,6 @@ export default function CreatorPage() {
               accept="image/*"
               className="hidden"
               onChange={handleImageChange}
-              disabled={uploading} // Bloqueamos el input mientras carga
             />
           </label>
         </div>
