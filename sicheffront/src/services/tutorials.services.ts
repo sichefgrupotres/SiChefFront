@@ -8,6 +8,7 @@ export const createTutorial = async (
 
   formData.append("title", data.title);
   formData.append("description", data.description);
+  formData.append("recipeId", data.recipeId);
   formData.append("video", data.video!);
 
   formData.append("ingredients", JSON.stringify(data.ingredients));
