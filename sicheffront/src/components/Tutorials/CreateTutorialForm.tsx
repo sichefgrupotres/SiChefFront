@@ -12,19 +12,21 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { Trash2 } from "lucide-react";
+import { useRecipe } from "@/context/RecipeContext";
 
 export default function NewTutorial() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { userRecipes, loading: loadingRecipes } = useRecipe();
 
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
 
   const [ingredientTitle, setIngredientTitle] = useState("");
   const [ingredientDescription, setIngredientDescription] = useState("");
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [stepDraft, setStepDraft] = useState("");
+  const [openRecipes, setOpenRecipes] = useState(false);
 
   const handleVideoDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
@@ -41,17 +43,18 @@ export default function NewTutorial() {
       URL.revokeObjectURL(videoPreview);
     }
 
-    formik.setFieldValue("video", file);
-    formik.setFieldTouched("video", true);
+    formik.setFieldValue("video", file, false);
+    formik.setFieldTouched("video", true, false);
+    formik.setFieldError("video", undefined);
     setVideoPreview(URL.createObjectURL(file));
   };
 
   const formik = useFormik<TutorialFormValues>({
     initialValues: initialValuesTutorial,
     validationSchema: TutorialFormSchema,
-    validateOnChange: true,
-    validateOnBlur: true,
-    validateOnMount: true,
+    validateOnChange: false,
+    validateOnBlur: false,
+    validateOnMount: false,
 
     onSubmit: async (values, { resetForm, setTouched }) => {
       setTouched({
@@ -89,6 +92,7 @@ export default function NewTutorial() {
         {
           title: values.title,
           description: values.description,
+          recipeId: values.recipeId,
           ingredients: values.ingredients,
           steps: values.steps,
           video: values.video,
@@ -118,6 +122,15 @@ export default function NewTutorial() {
     },
   });
 
+  const isFormComplete =
+    !!formik.values.title?.trim() &&
+    !!formik.values.description?.trim() &&
+    !!formik.values.recipeId &&
+    !!formik.values.video &&
+    formik.values.ingredients.length > 0 &&
+    formik.values.steps.length > 0 &&
+    !loading;
+
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -131,8 +144,9 @@ export default function NewTutorial() {
       URL.revokeObjectURL(videoPreview);
     }
 
-    formik.setFieldValue("video", file);
-    formik.setFieldTouched("video", true);
+    formik.setFieldValue("video", file, false);
+    formik.setFieldTouched("video", true, false);
+    formik.setFieldError("video", undefined);
 
     setVideoPreview(URL.createObjectURL(file));
   };
@@ -254,6 +268,73 @@ export default function NewTutorial() {
         {formik.touched.video && formik.errors.video && (
           <p className="text-red-400 text-xs mt-1">{formik.errors.video}</p>
         )}
+
+        <div className="relative">
+          <label className="text-sm font-semibold">Receta relacionada</label>
+
+          {/* BOTÓN */}
+          <button
+            type="button"
+            onClick={() => setOpenRecipes(!openRecipes)}
+            className="w-full mt-1 flex items-center justify-between rounded-xl bg-[#2a221b] border border-white/10 px-5 py-3 text-sm text-white cursor-pointer focus:outline-none"
+          >
+            {formik.values.recipeId ? (
+              (() => {
+                const selected = userRecipes.find(
+                  (r) => r.id === formik.values.recipeId
+                );
+                return (
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={selected?.imageUrl}
+                      alt={selected?.title}
+                      className="w-8 h-8 rounded object-cover"
+                    />
+                    <span>{selected?.title}</span>
+                  </div>
+                );
+              })()
+            ) : (
+              <span className="text-gray-400">
+                {loadingRecipes
+                  ? "Cargando recetas..."
+                  : "Selecciona una receta"}
+              </span>
+            )}
+
+            <span>▾</span>
+          </button>
+
+          {/* LISTA */}
+          {openRecipes && (
+            <div className="absolute z-20 mt-2 w-full max-h-64 overflow-auto rounded-xl bg-[#2a221b] border border-white/10">
+              {userRecipes.map((recipe) => (
+                <button
+                  key={recipe.id}
+                  type="button"
+                  onClick={() => {
+                    formik.setFieldValue("recipeId", recipe.id);
+                    setOpenRecipes(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition"
+                >
+                  <img
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    className="w-10 h-10 rounded object-cover"
+                  />
+                  <span className="text-sm text-white">{recipe.title}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {formik.touched.recipeId && formik.errors.recipeId && (
+            <p className="text-red-400 text-xs mt-1">
+              {formik.errors.recipeId}
+            </p>
+          )}
+        </div>
 
         {/* TÍTULO */}
         <div>
@@ -486,10 +567,13 @@ export default function NewTutorial() {
         {/* SUBMIT */}
         <button
           type="submit"
-          disabled={loading}
-          className={`h-12 rounded-lg font-bold cursor-pointer ${
-            loading ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
-          }`}
+          disabled={loading || !isFormComplete}
+          className={`h-12 rounded-lg font-bold transition
+    ${
+      loading || !isFormComplete
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-orange-500 hover:bg-orange-600 cursor-pointer"
+    }`}
         >
           {loading ? "Publicando..." : "Publicar Tutorial"}
         </button>
