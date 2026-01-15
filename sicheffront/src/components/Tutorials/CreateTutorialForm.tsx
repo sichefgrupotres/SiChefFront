@@ -18,6 +18,7 @@ export default function NewTutorial() {
   const router = useRouter();
   const { data: session } = useSession();
   const { userRecipes, loading: loadingRecipes } = useRecipe();
+  
 
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -121,15 +122,6 @@ export default function NewTutorial() {
       setLoading(false);
     },
   });
-
-  const isFormComplete =
-    !!formik.values.title?.trim() &&
-    !!formik.values.description?.trim() &&
-    !!formik.values.recipeId &&
-    !!formik.values.video &&
-    formik.values.ingredients.length > 0 &&
-    formik.values.steps.length > 0 &&
-    !loading;
 
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -565,18 +557,18 @@ export default function NewTutorial() {
         </div>
 
         {/* SUBMIT */}
-        <button
-          type="submit"
-          disabled={loading || !isFormComplete}
-          className={`h-12 rounded-lg font-bold transition
+       <button
+  type="submit"
+  disabled={loading}
+  className={`h-12 rounded-lg font-bold transition
     ${
-      loading || !isFormComplete
+      loading
         ? "bg-gray-400 cursor-not-allowed"
         : "bg-orange-500 hover:bg-orange-600 cursor-pointer"
     }`}
-        >
-          {loading ? "Publicando..." : "Publicar Tutorial"}
-        </button>
+>
+  {loading ? "Publicando..." : "Publicar Tutorial"}
+</button>
       </form>
     </div>
   );
