@@ -4,6 +4,11 @@ export interface TutorialFormValues {
   title: string;
   video: File | null;
   description: string;
+  recipeId: string;
+  recipe?: {
+    id: string;
+    title: string;
+  };
   ingredients: {
     title: string;
     description?: string;
@@ -18,6 +23,7 @@ export const initialValuesTutorial: TutorialFormValues = {
   title: "",
   video: null,
   description: "",
+  recipeId: "",
   ingredients: [],
   steps: [],
 };
@@ -33,6 +39,8 @@ export const TutorialFormSchema = Yup.object({
       return ["video/mp4", "video/webm", "video/ogg"].includes(value.type);
     }),
   description: Yup.string().required("La descripción es obligatoria"),
+
+  recipeId: Yup.string().required("Debes seleccionar una receta"),
 
   ingredients: Yup.array()
     .of(
