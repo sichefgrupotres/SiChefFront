@@ -5,10 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRecipe } from "@/context/RecipeContext";
-import RecipeCard from "@/components/CardRecipe";
+import RecipeCard from "@/components/Recipes/CardRecipe";
 
 export default function GuestHomePage() {
- const { recipes, fetchRecipes, loading, error } = useRecipe();
+  const { recipes, fetchRecipes, loading, error } = useRecipe();
 
   // ================= ESTADOS =================
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
@@ -63,7 +63,6 @@ export default function GuestHomePage() {
         sensitivity: "base",
       });
     });
-
 
   // ================= ESTADOS UI =================
   if (loading) {
@@ -130,9 +129,9 @@ export default function GuestHomePage() {
           </div>
 
           {/* Buscador */}
-            <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-500">
+          <div className="flex w-full max-w-2xl shadow-lg rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-orange-500">
             <div className="flex items-center gap-2 w-full px-4 py-3 bg-white">
-               <span className="material-symbols-outlined text-gray-400">
+              <span className="material-symbols-outlined text-gray-400">
                 search
               </span>
               <input
@@ -180,11 +179,13 @@ export default function GuestHomePage() {
 
                   after:absolute after:inset-0 after:bg-black/50 after:content-['']
 
-                  ${selectedCategory === cat.name
-                    ? "ring-2 ring-orange-500"
-                    : ""
+                  ${
+                    selectedCategory === cat.name
+                      ? "ring-2 ring-orange-500"
+                      : ""
                   }
-                `}>
+                `}
+              >
                 <span className="relative z-10">{cat.name}</span>
               </button>
             ))}
@@ -197,7 +198,7 @@ export default function GuestHomePage() {
             Explorar Recetas
           </h2>
 
-        {filteredRecipes.length === 0 ? (
+          {filteredRecipes.length === 0 ? (
             // Mensaje Estado Vacío
             <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
               <span className="text-6xl mb-4">🍽️</span>
@@ -222,7 +223,7 @@ export default function GuestHomePage() {
             // Grilla Responsive
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
               {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} mode="guest"/>
+                <RecipeCard key={recipe.id} recipe={recipe} mode="guest" />
               ))}
             </div>
           )}

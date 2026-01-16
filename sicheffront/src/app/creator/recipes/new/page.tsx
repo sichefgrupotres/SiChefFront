@@ -1,5 +1,5 @@
 
-import NewRecipePage from "@/components/CreateRecipeForm";
+import NewRecipePage from "@/components/Recipes/CreateRecipeForm";
 
 const NewRecipe = () => {
   return (

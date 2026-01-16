@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { RecipeInterface, CreateRecipePayload } from "@/interfaces/IRecipe";
 import { useSession } from "next-auth/react";
 
@@ -29,13 +29,18 @@ interface RecipeProviderProps {
 }
 
 export const RecipeProvider = ({ children }: RecipeProviderProps) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const token = session?.backendToken;
 
   const [recipes, setRecipes] = useState<RecipeInterface[]>([]);
   const [userRecipes, setUserRecipes] = useState<RecipeInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (status === "authenticated" && token) {
+      fetchMyRecipes();
+    }
+  }, [status, token]);
 
   const fetchRecipes = async () => {
     try {
@@ -67,12 +72,15 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         throw new Error("No estás autenticado");
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error al cargar tus recetas");
@@ -128,14 +136,17 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
 
   const updateRecipe = async (id: string, data: Partial<RecipeInterface>) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!res.ok) throw new Error();
       await fetchRecipes();
@@ -175,7 +186,8 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         updateRecipe,
         deleteRecipe,
         getRecipeById,
-      }}>
+      }}
+    >
       {children}
     </RecipeContext.Provider>
   );

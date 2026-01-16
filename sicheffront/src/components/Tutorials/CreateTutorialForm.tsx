@@ -11,10 +11,14 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { Trash2 } from "lucide-react";
+import { useRecipe } from "@/context/RecipeContext";
 
 export default function NewTutorial() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { userRecipes, loading: loadingRecipes } = useRecipe();
+  
 
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,13 +27,35 @@ export default function NewTutorial() {
   const [ingredientDescription, setIngredientDescription] = useState("");
   const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
   const [stepDraft, setStepDraft] = useState("");
+  const [openRecipes, setOpenRecipes] = useState(false);
+
+  const handleVideoDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("video/")) {
+      alert("Selecciona un archivo de video válido");
+      return;
+    }
+
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+
+    formik.setFieldValue("video", file, false);
+    formik.setFieldTouched("video", true, false);
+    formik.setFieldError("video", undefined);
+    setVideoPreview(URL.createObjectURL(file));
+  };
 
   const formik = useFormik<TutorialFormValues>({
     initialValues: initialValuesTutorial,
     validationSchema: TutorialFormSchema,
-    validateOnChange: true,
-    validateOnBlur: true,
-    validateOnMount: true,
+    validateOnChange: false,
+    validateOnBlur: false,
+    validateOnMount: false,
 
     onSubmit: async (values, { resetForm, setTouched }) => {
       setTouched({
@@ -67,6 +93,7 @@ export default function NewTutorial() {
         {
           title: values.title,
           description: values.description,
+          recipeId: values.recipeId,
           ingredients: values.ingredients,
           steps: values.steps,
           video: values.video,
@@ -109,10 +136,32 @@ export default function NewTutorial() {
       URL.revokeObjectURL(videoPreview);
     }
 
-    formik.setFieldValue("video", file);
-    formik.setFieldTouched("video", true);
+    formik.setFieldValue("video", file, false);
+    formik.setFieldTouched("video", true, false);
+    formik.setFieldError("video", undefined);
 
     setVideoPreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveVideo = () => {
+    Swal.fire({
+      title: "¿Eliminar video?",
+      text: "Deberás subirlo nuevamente",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#555",
+      confirmButtonText: "Sí, eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (videoPreview) {
+          URL.revokeObjectURL(videoPreview);
+        }
+        setVideoPreview(null);
+        formik.setFieldValue("video", null);
+        formik.setFieldTouched("video", true);
+      }
+    });
   };
 
   const addIngredient = () => {
@@ -147,30 +196,47 @@ export default function NewTutorial() {
         {/* VIDEO */}
         <label
           htmlFor="videoInput"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleVideoDrop}
           className="
-            cursor-pointer
-            flex flex-col items-center justify-center
-            w-full h-100
-            rounded-xl
-            border-2 border-dashed border-white/20
-            bg-[#2a221b]
-            p-6
-            hover:border-orange-400
-            transition
-            text-center
-            gap-2
-          "
+          flex flex-col items-center justify-center
+          w-full h-100
+          rounded-xl
+          border-2 border-dashed border-white/20
+        bg-[#2a221b]
+          p-6
+        hover:border-orange-400
+          transition
+          text-center
+          gap-2
+        "
         >
           {videoPreview ? (
-            <video
-              src={videoPreview}
-              className="w-full h-full rounded-lg object-cover"
-              controls
-            />
+            <div className="relative w-full h-full">
+              <button
+                type="button"
+                onClick={handleRemoveVideo}
+                className="
+                  absolute top-3 right-3 z-10
+                  bg-black/60 hover:bg-red-600
+                  text-white p-2 rounded-full
+                  transition
+                "
+                title="Eliminar video"
+              >
+                <Trash2 className="w-4 h-4 cursor-pointer" />
+              </button>
+
+              <video
+                src={videoPreview}
+                className="w-full h-full rounded-lg object-cover"
+                controls
+              />
+            </div>
           ) : (
             <>
-              <div className="w-14 h-14 rounded-full bg-orange-500/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-3xl text-orange-400">
+              <div className="w-14 h-14 rounded-full bg-orange-500/20 flex items-center justify-center cursor-pointer">
+                <span className="material-symbols-outlined text-3xl text-orange-400 ">
                   cloud_upload
                 </span>
               </div>
@@ -194,6 +260,73 @@ export default function NewTutorial() {
         {formik.touched.video && formik.errors.video && (
           <p className="text-red-400 text-xs mt-1">{formik.errors.video}</p>
         )}
+
+        <div className="relative">
+          <label className="text-sm font-semibold">Receta relacionada</label>
+
+          {/* BOTÓN */}
+          <button
+            type="button"
+            onClick={() => setOpenRecipes(!openRecipes)}
+            className="w-full mt-1 flex items-center justify-between rounded-xl bg-[#2a221b] border border-white/10 px-5 py-3 text-sm text-white cursor-pointer focus:outline-none"
+          >
+            {formik.values.recipeId ? (
+              (() => {
+                const selected = userRecipes.find(
+                  (r) => r.id === formik.values.recipeId
+                );
+                return (
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={selected?.imageUrl}
+                      alt={selected?.title}
+                      className="w-8 h-8 rounded object-cover"
+                    />
+                    <span>{selected?.title}</span>
+                  </div>
+                );
+              })()
+            ) : (
+              <span className="text-gray-400">
+                {loadingRecipes
+                  ? "Cargando recetas..."
+                  : "Selecciona una receta"}
+              </span>
+            )}
+
+            <span>▾</span>
+          </button>
+
+          {/* LISTA */}
+          {openRecipes && (
+            <div className="absolute z-20 mt-2 w-full max-h-64 overflow-auto rounded-xl bg-[#2a221b] border border-white/10">
+              {userRecipes.map((recipe) => (
+                <button
+                  key={recipe.id}
+                  type="button"
+                  onClick={() => {
+                    formik.setFieldValue("recipeId", recipe.id);
+                    setOpenRecipes(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition"
+                >
+                  <img
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    className="w-10 h-10 rounded object-cover"
+                  />
+                  <span className="text-sm text-white">{recipe.title}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {formik.touched.recipeId && formik.errors.recipeId && (
+            <p className="text-red-400 text-xs mt-1">
+              {formik.errors.recipeId}
+            </p>
+          )}
+        </div>
 
         {/* TÍTULO */}
         <div>
@@ -248,7 +381,8 @@ export default function NewTutorial() {
               className="flex items-center gap-3 rounded-xl bg-[#241c16] border border-white/10 px-4 py-3"
             >
               {/* Icono drag */}
-              <span className="text-gray-500 cursor-grab">⋮⋮</span>
+
+              <span className="text-gray-500 cursor-grab">●</span>
 
               {/* Texto */}
               <div className="flex-1">
@@ -306,7 +440,7 @@ export default function NewTutorial() {
         {/* PASOS */}
         <div className="space-y-4">
           <label className="text-sm font-semibold text-white flex items-center gap-2">
-            📋 Pasos del Tutorial
+            Pasos del Tutorial
           </label>
 
           {/* Lista de pasos */}
@@ -423,15 +557,18 @@ export default function NewTutorial() {
         </div>
 
         {/* SUBMIT */}
-        <button
-          type="submit"
-          disabled={loading}
-          className={`h-12 rounded-lg font-bold cursor-pointer ${
-            loading ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
-          }`}
-        >
-          {loading ? "Publicando..." : "Publicar Tutorial"}
-        </button>
+       <button
+  type="submit"
+  disabled={loading}
+  className={`h-12 rounded-lg font-bold transition
+    ${
+      loading
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-orange-500 hover:bg-orange-600 cursor-pointer"
+    }`}
+>
+  {loading ? "Publicando..." : "Publicar Tutorial"}
+</button>
       </form>
     </div>
   );
