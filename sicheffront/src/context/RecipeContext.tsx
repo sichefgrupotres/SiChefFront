@@ -36,12 +36,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const [userRecipes, setUserRecipes] = useState<RecipeInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    if (status === "authenticated" && token) {
-      fetchMyRecipes();
-    }
-  }, [status, token]);
-
+  
   const fetchRecipes = async () => {
     try {
       setLoading(true);
