@@ -8,7 +8,6 @@ import MyRecipesList from "@/components/Recipes/MyRecipesList";
 import { useSession } from "next-auth/react";
 // import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
 
-
 export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
 
@@ -100,8 +99,7 @@ export default function CreatorPage() {
               uploading
                 ? "cursor-not-allowed opacity-70"
                 : "cursor-pointer hover:scale-105 active:scale-95"
-            }`}
-          >
+            }`}>
             <span className="material-symbols-outlined text-white text-[20px]">
               {uploading ? "hourglass_empty" : "photo_camera"}
             </span>
@@ -156,8 +154,7 @@ export default function CreatorPage() {
           href={PATHROUTES.NEWRECIPE}
           className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
                     flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95"
-        >
+                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95">
           <span className="material-symbols-outlined text-[26px]">
             restaurant_menu
           </span>
@@ -168,8 +165,7 @@ export default function CreatorPage() {
           <button
             className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
                     flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer"
-          >
+                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer">
             <span className="material-symbols-outlined text-[26px]">
               video_camera_front
             </span>
@@ -187,8 +183,7 @@ export default function CreatorPage() {
                 activeTab === "recipes"
                   ? "text-orange-500 border-b-2 border-orange-500"
                   : "text-gray-400 hover:text-white"
-              }`}
-          >
+              }`}>
             Mis Recetas
           </button>
 
@@ -199,8 +194,7 @@ export default function CreatorPage() {
                 activeTab === "tutorials"
                   ? "text-orange-500 border-b-2 border-orange-500"
                   : "text-gray-400 hover:text-white"
-              }`}
-          >
+              }`}>
             Mis Tutoriales
           </button>
         </div>

@@ -42,10 +42,8 @@ export const TutorialProvider = ({ children }: TutorialProviderProps) => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tutorials`, {
-        headers: token
-          ? { Authorization: `Bearer ${token}` }
-          : undefined,
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tutorial`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
 
       if (!res.ok) {
@@ -55,16 +53,14 @@ export const TutorialProvider = ({ children }: TutorialProviderProps) => {
       const json = await res.json();
       setTutorials(json.data ?? json);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Error desconocido"
-      );
+      setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
   }, [token]);
 
   const getTutorialById = useCallback(
-    (id: string) => tutorials.find(t => t.id === id),
+    (id: string) => tutorials.find((t) => t.id === id),
     [tutorials]
   );
 
@@ -77,8 +73,7 @@ export const TutorialProvider = ({ children }: TutorialProviderProps) => {
         error,
         addTutorials,
         getTutorialById,
-      }}
-    >
+      }}>
       {children}
     </TutorialContext.Provider>
   );
