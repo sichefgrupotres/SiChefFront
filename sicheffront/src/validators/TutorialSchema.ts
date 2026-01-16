@@ -39,7 +39,7 @@ export const TutorialFormSchema = Yup.object({
       return ["video/mp4", "video/webm", "video/ogg"].includes(value.type);
     }),
   description: Yup.string().required("La descripción es obligatoria"),
-  
+
   recipeId: Yup.string().required("Debes seleccionar una receta"),
 
   ingredients: Yup.array()
