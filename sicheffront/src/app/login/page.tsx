@@ -1,9 +1,12 @@
+
+
 import LoginForm from "@/components/auth/LoginForm";
+import { requireGuest } from "@/lib/requireGuest";
 
-const LoginPage = () => {
-  return (
-    <LoginForm />
-  )
-};
+export default async function LoginPage() {
+  // ❌ Si hay sesión activa → redirige
+  await requireGuest();
 
-export default LoginPage;
+  // ✅ Si NO hay sesión → muestra login
+  return <LoginForm />;
+}
