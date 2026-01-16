@@ -18,7 +18,6 @@ export default function NewTutorial() {
   const router = useRouter();
   const { data: session } = useSession();
   const { userRecipes, loading: loadingRecipes } = useRecipe();
-  
 
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -89,7 +88,7 @@ export default function NewTutorial() {
         return;
       }
 
-      const success = await createTutorial(
+      const result = await createTutorial(
         {
           title: values.title,
           description: values.description,
@@ -98,10 +97,10 @@ export default function NewTutorial() {
           steps: values.steps,
           video: values.video,
         },
-        session!.backendToken
+        session.backendToken
       );
 
-      if (success) {
+      if (result.ok) {
         Swal.fire({
           icon: "success",
           title: "Tutorial publicado",
@@ -114,8 +113,11 @@ export default function NewTutorial() {
       } else {
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: "No se pudo crear el tutorial",
+          title: "Error al crear tutorial",
+          text:
+            typeof result.message === "string"
+              ? result.message
+              : "No se pudo crear el tutorial",
         });
       }
 
@@ -209,8 +211,7 @@ export default function NewTutorial() {
           transition
           text-center
           gap-2
-        "
-        >
+        ">
           {videoPreview ? (
             <div className="relative w-full h-full">
               <button
@@ -222,8 +223,7 @@ export default function NewTutorial() {
                   text-white p-2 rounded-full
                   transition
                 "
-                title="Eliminar video"
-              >
+                title="Eliminar video">
                 <Trash2 className="w-4 h-4 cursor-pointer" />
               </button>
 
@@ -268,8 +268,7 @@ export default function NewTutorial() {
           <button
             type="button"
             onClick={() => setOpenRecipes(!openRecipes)}
-            className="w-full mt-1 flex items-center justify-between rounded-xl bg-[#2a221b] border border-white/10 px-5 py-3 text-sm text-white cursor-pointer focus:outline-none"
-          >
+            className="w-full mt-1 flex items-center justify-between rounded-xl bg-[#2a221b] border border-white/10 px-5 py-3 text-sm text-white cursor-pointer focus:outline-none">
             {formik.values.recipeId ? (
               (() => {
                 const selected = userRecipes.find(
@@ -308,8 +307,7 @@ export default function NewTutorial() {
                     formik.setFieldValue("recipeId", recipe.id);
                     setOpenRecipes(false);
                   }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition"
-                >
+                  className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/5 transition">
                   <img
                     src={recipe.imageUrl}
                     alt={recipe.title}
@@ -378,8 +376,7 @@ export default function NewTutorial() {
           {formik.values.ingredients.map((ing, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 rounded-xl bg-[#241c16] border border-white/10 px-4 py-3"
-            >
+              className="flex items-center gap-3 rounded-xl bg-[#241c16] border border-white/10 px-4 py-3">
               {/* Icono drag */}
 
               <span className="text-gray-500 cursor-grab">●</span>
@@ -396,8 +393,7 @@ export default function NewTutorial() {
               <button
                 type="button"
                 onClick={() => removeIngredient(index)}
-                className="text-gray-500 hover:text-red-400 transition cursor-pointer"
-              >
+                className="text-gray-500 hover:text-red-400 transition cursor-pointer">
                 ✕
               </button>
             </div>
@@ -424,8 +420,7 @@ export default function NewTutorial() {
           <button
             type="button"
             onClick={addIngredient}
-            className=" cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/20 py-4 text-sm text-gray-300 hover:border-orange-400 hover:text-orange-400 transition"
-          >
+            className=" cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/20 py-4 text-sm text-gray-300 hover:border-orange-400 hover:text-orange-400 transition">
             <span className="text-lg">＋</span>
             Añadir Ingrediente
           </button>
@@ -447,8 +442,7 @@ export default function NewTutorial() {
           {formik.values.steps.map((step, index) => (
             <div
               key={index}
-              className="flex items-start gap-3 rounded-xl bg-[#241c16] border border-white/10 px-4 py-4"
-            >
+              className="flex items-start gap-3 rounded-xl bg-[#241c16] border border-white/10 px-4 py-4">
               {/* Número */}
               <span className="text-xs font-bold text-orange-400 mt-1">
                 {index + 1}
@@ -469,8 +463,7 @@ export default function NewTutorial() {
                     setEditingStepIndex(index);
                     setStepDraft(step.description);
                   }}
-                  className="text-gray-400 hover:text-orange-400 cursor-pointer"
-                >
+                  className="text-gray-400 hover:text-orange-400 cursor-pointer">
                   ✎
                 </button>
 
@@ -482,8 +475,7 @@ export default function NewTutorial() {
                       formik.values.steps.filter((_, i) => i !== index)
                     )
                   }
-                  className="text-gray-400 hover:text-red-400 cursor-pointer"
-                >
+                  className="text-gray-400 hover:text-red-400 cursor-pointer">
                   ✕
                 </button>
               </div>
@@ -511,8 +503,7 @@ export default function NewTutorial() {
                     setEditingStepIndex(null);
                     setStepDraft("");
                   }}
-                  className="px-4 py-2 text-sm text-gray-400 hover:text-white cursor-pointer"
-                >
+                  className="px-4 py-2 text-sm text-gray-400 hover:text-white cursor-pointer">
                   Cancelar
                 </button>
 
@@ -528,8 +519,7 @@ export default function NewTutorial() {
                     setEditingStepIndex(null);
                     setStepDraft("");
                   }}
-                  className="px-4 py-2 text-sm font-semibold rounded-lg bg-orange-500 hover:bg-orange-600 cursor-pointer"
-                >
+                  className="px-4 py-2 text-sm font-semibold rounded-lg bg-orange-500 hover:bg-orange-600 cursor-pointer">
                   Guardar
                 </button>
               </div>
@@ -545,8 +535,7 @@ export default function NewTutorial() {
               setEditingStepIndex(newSteps.length - 1);
               setStepDraft("");
             }}
-            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/20 py-4 text-sm text-gray-300 hover:border-orange-400 hover:text-orange-400 transition"
-          >
+            className="cursor-pointer w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/20 py-4 text-sm text-gray-300 hover:border-orange-400 hover:text-orange-400 transition">
             <span className="text-lg">＋</span>
             Añadir Nuevo Paso
           </button>
@@ -555,20 +544,18 @@ export default function NewTutorial() {
             <p className="text-red-400 text-xs mt-1">{formik.errors.steps}</p>
           )}
         </div>
-
         {/* SUBMIT */}
-       <button
-  type="submit"
-  disabled={loading}
-  className={`h-12 rounded-lg font-bold transition
+        <button
+          type="submit"
+          disabled={loading}
+          className={`h-12 rounded-lg font-bold transition
     ${
       loading
         ? "bg-gray-400 cursor-not-allowed"
         : "bg-orange-500 hover:bg-orange-600 cursor-pointer"
-    }`}
->
-  {loading ? "Publicando..." : "Publicar Tutorial"}
-</button>
+    }`}>
+          {loading ? "Publicando..." : "Publicar Tutorial"}
+        </button>
       </form>
     </div>
   );

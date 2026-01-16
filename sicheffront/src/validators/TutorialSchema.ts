@@ -52,11 +52,10 @@ export const TutorialFormSchema = Yup.object({
     .min(1, "Agregá al menos un ingrediente"),
 
   steps: Yup.array()
+    .min(1, "Agrega al menos un paso")
     .of(
       Yup.object({
-        order: Yup.number().required(),
-        description: Yup.string().required("El paso no puede estar vacío"),
+        description: Yup.string().trim().required("El paso es obligatorio"),
       })
-    )
-    .min(1, "Agregá al menos un paso"),
+    ),
 });
