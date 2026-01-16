@@ -18,23 +18,23 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // ================= USEEFFECT PARA LA REDIRECCIÓN =================
- useEffect(() => {
-  if (status === "authenticated" && session?.user) {
-    switch (session.user.role) {
-      case "ADMIN":
-        router.replace("/admin");
-        break;
-      case "CREATOR":
-        router.replace("/creator");
-        break;
-      case "USER":
-        router.replace("/user");
-        break;
-      default:
-        signOut();
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    if (!session?.user?.role) return;
+
+    const role = session.user.role;
+
+    if (role === "ADMIN") {
+      router.replace("/admin");
+    } else if (role === "CREATOR") {
+      router.replace("/creator");
+    } else if (role === "USER") {
+      router.replace("/user");
+    } else {
+      signOut();
     }
-  }
-}, [status, session]);
+  }, [status, session?.user?.role]);
+
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
@@ -58,22 +58,17 @@ const LoginForm = () => {
   };
 
   if (status === "loading") {
-  return (
-    <div className="flex items-center justify-center min-h-screen text-white">
-      Cargando...
-    </div>
-  );
-}
-
-if (status === "authenticated") {
-  // opcional, mientras redirige
-  return null;
-}
+    return (
+      <div className="flex items-center justify-center min-h-screen text-white">
+        Cargando...
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">
       <Image
-        src="/Loginbackground.png" 
+        src="/Loginbackground.png"
         alt="Background Kitchen"
         fill
         priority
@@ -140,7 +135,8 @@ if (status === "authenticated") {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white">
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+              >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
@@ -167,7 +163,8 @@ if (status === "authenticated") {
                 !(formik.isValid && formik.dirty && !formik.isSubmitting)
                   ? "bg-[#F57C00]/50 cursor-not-allowed"
                   : "bg-[#F57C00] hover:scale-[1.02] active:scale-95 shadow-lg shadow-[#F57C00]/20 cursor-pointer"
-              }`}>
+              }`}
+          >
             {formik.isSubmitting ? "Iniciando Sesión..." : "Entrar"}
           </button>
         </form>
@@ -185,14 +182,17 @@ if (status === "authenticated") {
         <button
           type="button"
           className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 cursor-pointer"
-          onClick={() => router.push("/register")}>
+          onClick={() => router.push("/register")}
+        >
           Regístrate
         </button>
 
         {/* Divider Google */}
         <div className="relative flex items-center py-8">
           <div className="grow border-t border-white/10"></div>
-          <span className="shrink mx-4 text-white/60 text-sm">O continuar con</span>
+          <span className="shrink mx-4 text-white/60 text-sm">
+            O continuar con
+          </span>
           <div className="grow border-t border-white/10"></div>
         </div>
 
