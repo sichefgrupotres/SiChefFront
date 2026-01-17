@@ -36,6 +36,5 @@ export const createTutorial = async (
     ok: res.ok,
     status: res.status,
     data: body,
-    message: body?.message,
   };
 };
