@@ -43,13 +43,13 @@ export class AdminService {
     return res.json();
   }
 
-  //   async getAllTutorials(token: string) {
-  //   const res = await fetch(`${this.baseUrl}/tutorials`, {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   });
-  //   if (!res.ok) throw new Error("No se pudieron obtener los tutoriales");
-  //   return res.json();
-  // }
+  async getAllTutorials(token: string) {
+    const res = await fetch(`${this.baseUrl}/tutorials`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("No se pudieron obtener los tutoriales");
+    return res.json();
+  }
 }
 
 export const adminService = new AdminService();

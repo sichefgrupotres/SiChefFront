@@ -88,7 +88,7 @@ export default function NewTutorial() {
         return;
       }
 
-      const result = await createTutorial(
+      const success = await createTutorial(
         {
           title: values.title,
           description: values.description,
@@ -97,10 +97,10 @@ export default function NewTutorial() {
           steps: values.steps,
           video: values.video,
         },
-        session.backendToken
+        session!.backendToken
       );
 
-      if (result.ok) {
+      if (success) {
         Swal.fire({
           icon: "success",
           title: "Tutorial publicado",
@@ -113,11 +113,8 @@ export default function NewTutorial() {
       } else {
         Swal.fire({
           icon: "error",
-          title: "Error al crear tutorial",
-          text:
-            typeof result.message === "string"
-              ? result.message
-              : "No se pudo crear el tutorial",
+          title: "Error",
+          text: "No se pudo crear el tutorial",
         });
       }
 
@@ -544,6 +541,7 @@ export default function NewTutorial() {
             <p className="text-red-400 text-xs mt-1">{formik.errors.steps}</p>
           )}
         </div>
+
         {/* SUBMIT */}
         <button
           type="submit"

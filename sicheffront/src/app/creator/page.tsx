@@ -4,15 +4,26 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import RecipeCard from "@/components/Recipes/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
+import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
+import { useTutorial } from "@/context/TutorialContext";
 
 export default function CreatorHomePage() {
   const { recipes, fetchRecipes, loading, error } = useRecipe();
+  const { fetchMyTutorials } = useTutorial();
 
   // ================= ESTADOS =================
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "none">("none");
+  const [activeTab, setActiveTab] = useState<"recipes" | "tutorials">(
+    "recipes"
+  );
 
+  useEffect(() => {
+    if (activeTab === "tutorials") {
+      fetchMyTutorials();
+    }
+  }, [activeTab, fetchMyTutorials]);
   // ================= EFFECT =================
   useEffect(() => {
     fetchRecipes();
@@ -131,8 +142,7 @@ export default function CreatorHomePage() {
 
             <button
               onClick={handleSearch}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors"
-            >
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors">
               Buscar
             </button>
           </div>
@@ -151,72 +161,94 @@ export default function CreatorHomePage() {
                 onClick={() => setSelectedCategory(cat.name)}
                 style={{ backgroundImage: `url(${cat.image})` }}
                 className={`
-    relative
-    overflow-hidden
-    bg-cover
-    bg-center
-    min-w-[140px]
-    h-24
-    rounded-xl
-    flex
-    items-center
-    justify-center
-    font-bold
-    text-lg
-    transition-all
-    transform
-    hover:scale-105
-    cursor-pointer
-
-    after:absolute
-    after:inset-0
-    after:bg-black/50
-    after:content-['']
-
-    ${selectedCategory === cat.name ? "ring-2 ring-orange-500" : ""}
-  `}
-              >
-                {/* Texto (igual que antes) */}
+                  relative
+                  overflow-hidden
+                  bg-cover
+                  bg-center
+                  min-w-[140px]
+                  h-24
+                  rounded-xl
+                  flex
+                  items-center
+                  justify-center
+                  font-bold
+                  text-lg
+                  transition-all
+                  transform
+                  hover:scale-105
+                  cursor-pointer
+                  after:absolute
+                  after:inset-0
+                  after:bg-black/50
+                  after:content-['']
+                  ${
+                    selectedCategory === cat.name
+                      ? "ring-2 ring-orange-500"
+                      : ""
+                  }
+                `}>
                 <span className="relative z-10">{cat.name}</span>
               </button>
             ))}
           </div>
         </section>
 
-        {/* ================= GRID DE RECETAS ================= */}
-        <section className="px-4 md:px-8 pb-15">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
-            Explorar Recetas
-          </h2>
-          {filteredRecipes.length === 0 ? (
-            // Mensaje Estado Vacío
-            <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
-              <span className="text-6xl mb-4">🍽️</span>
-              <h3 className="text-xl text-white font-semibold">
-                No encontramos recetas
-              </h3>
-              <p className="text-gray-400 mt-2 max-w-md">
-                No hay resultados para "{searchTerm}" en la categoría "
-                {selectedCategory}".
-              </p>
-              <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("Todas");
-                }}
-                className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
-              >
-                Limpiar filtros y ver todo
-              </button>
-            </div>
-          ) : (
-            // Grilla Responsive
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
-              {filteredRecipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} mode="creator" />
-              ))}
-            </div>
-          )}
+        {/* ================= TABS ================= */}
+        <section className="px-4 md:px-8 pb-8 flex gap-6 border-b border-white/10">
+          <button
+            onClick={() => setActiveTab("recipes")}
+            className={`pb-3 font-semibold transition cursor-pointer
+              ${
+                activeTab === "recipes"
+                  ? "text-orange-500 border-b-2 border-orange-500"
+                  : "text-gray-400 hover:text-white"
+              }`}>
+            Mis Recetas
+          </button>
+
+          <button
+            onClick={() => setActiveTab("tutorials")}
+            className={`pb-3 font-semibold transition cursor-pointer
+              ${
+                activeTab === "tutorials"
+                  ? "text-orange-500 border-b-2 border-orange-500"
+                  : "text-gray-400 hover:text-white"
+              }`}>
+            Mis Tutoriales
+          </button>
+        </section>
+
+        {/* ================= GRID DE RECETAS / LISTA DE TUTORIALES ================= */}
+        <section className="px-4 md:px-8 py-16 bg-[#181411]">
+          {activeTab === "recipes" &&
+            (filteredRecipes.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
+                <span className="text-6xl mb-4">🍽️</span>
+                <h3 className="text-xl text-white font-semibold">
+                  No encontramos recetas
+                </h3>
+                <p className="text-gray-400 mt-2 max-w-md">
+                  No hay resultados para "{searchTerm}" en la categoría "
+                  {selectedCategory}".
+                </p>
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("Todas");
+                  }}
+                  className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold">
+                  Limpiar filtros y ver todo
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+                {filteredRecipes.map((recipe) => (
+                  <RecipeCard key={recipe.id} recipe={recipe} mode="creator" />
+                ))}
+              </div>
+            ))}
+
+          {activeTab === "tutorials" && <MyTutorialsList />}
         </section>
       </main>
 
