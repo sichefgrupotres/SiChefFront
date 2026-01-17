@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+export type SubscriptionStatus = "FREE" | "SUBSCRIBER" | "EXPIRED";
 
 declare module "next-auth" {
   interface Session {
@@ -22,6 +23,17 @@ declare module "next-auth" {
     token: string;
     avatarUrl?: string;
   }
+}
+
+export interface UserSuscript {
+  id: string;
+  name: string;
+  email: string;
+  roleId: string;
+  blocked: boolean;
+  status: string;
+  subscriptionStatus: SubscriptionStatus;
+  subscriptionUntil?: string;
 }
 
 declare module "next-auth/jwt" {

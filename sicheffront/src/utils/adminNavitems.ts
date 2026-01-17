@@ -19,9 +19,4 @@ export const adminNavItems = [
     href: "/admin/payments",
     icon: "payments",
   },
-  {
-    label: "Gestion de Administradores",
-    href: "/admin/createAdmin",
-    icon: "admin_panel_settings",
-  },
 ];
