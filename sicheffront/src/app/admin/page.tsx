@@ -102,19 +102,9 @@ export default function AdminPage() {
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <QuickAccessCard
-            icon="group"
-            label="Usuarios"
-            onClick={() => router.push("/admin/users")}
-          />
-          <QuickAccessCard
             icon="menu_book"
             label="Contenido"
             onClick={() => router.push("/admin/content")}
-          />
-          <QuickAccessCard
-            icon="rate_review"
-            label="Reseñas"
-            onClick={() => router.push("/admin/reports")}
           />
           <QuickAccessCard
             icon="payments"

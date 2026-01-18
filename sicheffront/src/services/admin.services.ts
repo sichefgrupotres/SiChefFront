@@ -1,3 +1,5 @@
+import { SubscriptionStatus } from "@/types/next-auth";
+
 export class AdminService {
   private baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/admin`; // Ajusta si tu backend tiene otra URL
 
@@ -43,7 +45,33 @@ export class AdminService {
     return res.json();
   }
 
-  async getAllTutorials(token: string) {
+//   export const adminService = {
+//   async updateUserSubscription(
+//     userId: string,
+//     status: SubscriptionStatus,
+//     token: string
+//   ) {
+//     const res = await fetch(
+//       `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/subscription`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({ status }),
+//       }
+//     );
+
+//     if (!res.ok) {
+//       throw new Error("Error al actualizar suscripción");
+//     }
+
+//     return res.json();
+//   },
+// };
+
+    async getAllTutorials(token: string) {
     const res = await fetch(`${this.baseUrl}/tutorials`, {
       headers: { Authorization: `Bearer ${token}` },
     });

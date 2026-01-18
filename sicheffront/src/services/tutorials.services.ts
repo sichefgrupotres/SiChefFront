@@ -38,17 +38,9 @@ export const createTutorial = async (
     try {
     } catch (e) {}
 
-    return {
-      ok: res.ok,
-      status: res.status,
-      data: body,
-      message: body?.message,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      status: 500,
-      message: error instanceof Error ? error.message : "Error desconocido",
-    };
-  }
+  return {
+    ok: res.ok,
+    status: res.status,
+    data: body,
+  };
 };
