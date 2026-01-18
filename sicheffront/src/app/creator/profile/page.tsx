@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import MyRecipesList from "@/components/Recipes/MyRecipesList";
 import { useSession } from "next-auth/react";
-// import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
+import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
 
 export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
@@ -203,11 +203,7 @@ export default function CreatorPage() {
       <section className="px-4 md:px-8 pb-16 bg-[#181411]">
         {activeTab === "recipes" && <MyRecipesList />}
 
-        {activeTab === "tutorials" && (
-          <div className="text-gray-400 text-center py-16">
-            Aún no tienes tutoriales publicados
-          </div>
-        )}
+        {activeTab === "tutorials" && <MyTutorialsList />}
       </section>
     </div>
   );

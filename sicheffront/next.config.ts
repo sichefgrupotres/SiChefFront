@@ -3,18 +3,19 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/guest',
+        source: "/",
+        destination: "/guest",
         permanent: false,
       },
-    ]
+    ];
   },
   images: {
     domains: [
       "lh3.googleusercontent.com",
-      "images.unsplash.com"
+      "images.unsplash.com",
+      "res.cloudinary.com",
     ],
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
