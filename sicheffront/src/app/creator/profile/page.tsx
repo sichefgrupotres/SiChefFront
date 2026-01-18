@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PATHROUTES } from "@/utils/PathRoutes";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -10,6 +10,7 @@ import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
 
 export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
+  const { data: session, update } = useSession();
 
   const userInfo = dataUser?.user;
   const fullName = userInfo
@@ -19,15 +20,56 @@ export default function CreatorPage() {
   const [avatar, setAvatar] = useState(
     dataUser?.user?.avatarUrl || "/chef-avatar.jpg"
   );
-
   const [uploading, setUploading] = useState(false);
-
-  const { data: session, update } = useSession();
 
   const [activeTab, setActiveTab] = useState<"recipes" | "tutorials">(
     "recipes"
   );
 
+  // ================= CONTEO REAL (MISMO PATRÓN ADMIN) =================
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [tutorials, setTutorials] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!session?.backendToken) return;
+
+    const fetchData = async () => {
+      try {
+        const recipesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.backendToken}`,
+            },
+          }
+        );
+
+        const tutorialsRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/tutorials/my-tutorials`,
+          {
+            headers: {
+              Authorization: `Bearer ${session.backendToken}`,
+            },
+          }
+        );
+
+        const recipesData = await recipesRes.json();
+        const tutorialsData = await tutorialsRes.json();
+
+        setRecipes(recipesData.data ?? recipesData);
+        setTutorials(tutorialsData.data ?? tutorialsData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [session]);
+
+  const recipesCount = recipes.length;
+  const tutorialsCount = tutorials.length;
+
+  // ================= AVATAR =================
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !session?.backendToken) return;
@@ -49,10 +91,7 @@ export default function CreatorPage() {
         }
       );
 
-      if (!res.ok) {
-        console.error("Error subiendo avatar");
-        return;
-      }
+      if (!res.ok) return;
 
       const data = await res.json();
 
@@ -68,7 +107,6 @@ export default function CreatorPage() {
     } catch (error) {
       console.error("Error en la subida:", error);
     } finally {
-      // 3. NUEVO: Desactivamos el spinner termine bien o mal
       setUploading(false);
     }
   };
@@ -78,7 +116,7 @@ export default function CreatorPage() {
       <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-4 text-center">
         <div className="relative w-32 h-32">
           <img
-            src={session?.user?.avatarUrl || "/chef-avatar.jpg"}
+            src={session?.user?.avatarUrl || avatar}
             alt="Perfil"
             className={`w-full h-full object-cover rounded-full shadow-sm transition-opacity duration-300 ${
               uploading ? "opacity-50" : "opacity-100"
@@ -99,7 +137,8 @@ export default function CreatorPage() {
               uploading
                 ? "cursor-not-allowed opacity-70"
                 : "cursor-pointer hover:scale-105 active:scale-95"
-            }`}>
+            }`}
+          >
             <span className="material-symbols-outlined text-white text-[20px]">
               {uploading ? "hourglass_empty" : "photo_camera"}
             </span>
@@ -109,7 +148,7 @@ export default function CreatorPage() {
               accept="image/*"
               className="hidden"
               onChange={handleImageChange}
-              disabled={uploading} // Bloqueamos el input mientras carga
+              disabled={uploading}
             />
           </label>
         </div>
@@ -132,29 +171,28 @@ export default function CreatorPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-[#2a221b] rounded-xl p-4">
-            <p className="text-sm text-white/60">Vistas</p>
-            <p className="text-xl font-semibold text-[#e6e0db]">12.5k</p>
+            <p className="text-sm text-white/60">Recetas</p>
+            <p className="text-xl font-semibold text-[#e6e0db]">
+              {recipesCount}
+            </p>
           </div>
 
           <div className="bg-[#2a221b] rounded-xl p-4">
-            <p className="text-sm text-white/60">Seguidores</p>
-            <p className="text-xl font-semibold text-[#e6e0db]">850</p>
-          </div>
-
-          <div className="bg-[#2a221b] rounded-xl p-4">
-            <p className="text-sm text-white/60">Calificación</p>
-            <p className="text-xl font-semibold text-[#e6e0db]">4.8</p>
+            <p className="text-sm text-white/60">Tutoriales</p>
+            <p className="text-xl font-semibold text-[#e6e0db]">
+              {tutorialsCount}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ACTIONS */}
       <section className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
         <Link
           href={PATHROUTES.NEWRECIPE}
           className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
-                    flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95">
+          flex items-center justify-center gap-2
+          hover:bg-[#F57C00] hover:text-white transition-all active:scale-95"
+        >
           <span className="material-symbols-outlined text-[26px]">
             restaurant_menu
           </span>
@@ -164,8 +202,9 @@ export default function CreatorPage() {
         <Link href={PATHROUTES.NEWTUTORIAL}>
           <button
             className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
-                    flex items-center justify-center gap-2
-                    hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer">
+            flex items-center justify-center gap-2
+            hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer"
+          >
             <span className="material-symbols-outlined text-[26px]">
               video_camera_front
             </span>
@@ -183,7 +222,8 @@ export default function CreatorPage() {
                 activeTab === "recipes"
                   ? "text-orange-500 border-b-2 border-orange-500"
                   : "text-gray-400 hover:text-white"
-              }`}>
+              }`}
+          >
             Mis Recetas
           </button>
 
@@ -194,7 +234,8 @@ export default function CreatorPage() {
                 activeTab === "tutorials"
                   ? "text-orange-500 border-b-2 border-orange-500"
                   : "text-gray-400 hover:text-white"
-              }`}>
+              }`}
+          >
             Mis Tutoriales
           </button>
         </div>
@@ -202,7 +243,6 @@ export default function CreatorPage() {
 
       <section className="px-4 md:px-8 pb-16 bg-[#181411]">
         {activeTab === "recipes" && <MyRecipesList />}
-
         {activeTab === "tutorials" && <MyTutorialsList />}
       </section>
     </div>
