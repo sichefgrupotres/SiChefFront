@@ -7,14 +7,15 @@ import UserFilters from "@/components/admin/users/UserFilters";
 import UserCard from "@/components/admin/users/UserCard";
 import { adminService } from "@/services/admin.services";
 import { SubscriptionStatus } from "@/types/next-auth";
-
+type RoleId = "USER" | "CREATOR" | "ADMIN" | "SUSCRIPTOR";
 interface User {
   id: string;
   name: string;
   email: string;
-  roleId: string;
+  roleId: RoleId
   blocked: boolean;
   status: string;
+  avatarUrl: string;
 }
 
 export default function AdminUsersPage() {
@@ -23,7 +24,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchEmail, setSearchEmail] = useState("");
   const [filter, setFilter] = useState<
-    "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR"
+    "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR" | "ADMIN"
   >("Todos");
 
   const fetchUsers = async () => {
@@ -48,7 +49,7 @@ export default function AdminUsersPage() {
     try {
       await adminService.updateUserRole(userId, newRole, session.backendToken);
       setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, roleId: newRole } : u))
+        prev.map((u) => (u.id === userId ? { ...u, roleId: newRole as RoleId } : u)),
       );
     } catch (err) {
       console.error(err);
@@ -60,7 +61,7 @@ export default function AdminUsersPage() {
     try {
       await adminService.blockUser(userId, blocked, session.backendToken);
       setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, blocked } : u))
+        prev.map((u) => (u.id === userId ? { ...u, blocked } : u)),
       );
     } catch (err) {
       console.error(err);
@@ -71,7 +72,7 @@ export default function AdminUsersPage() {
     .filter((u) =>
       searchEmail
         ? u.email.toLowerCase().includes(searchEmail.toLowerCase())
-        : true
+        : true,
     )
     .filter((u) => (filter === "Todos" ? true : u.roleId === filter))
     .sort((a, b) => {
@@ -81,11 +82,9 @@ export default function AdminUsersPage() {
       }
 
       // Orden alfabético ASCENDENTE (A → Z)
-      return a.name
-        .toLowerCase()
-        .localeCompare(b.name.toLowerCase(), "es", {
-          sensitivity: "base",
-        });
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase(), "es", {
+        sensitivity: "base",
+      });
     });
 
   const handleSearch = (e?: React.FormEvent) => {
@@ -93,28 +92,28 @@ export default function AdminUsersPage() {
     if (!searchEmail) setSearchEmail("");
   };
 
-//   const handleSubscriptionChange = async (
-//   userId: string,
-//   status: SubscriptionStatus
-// ) => {
-//   if (!session?.backendToken) return;
+    const handleSubscriptionChange = async (
+    userId: string,
+    status: SubscriptionStatus
+  ) => {
+    if (!session?.backendToken) return;
 
-//   try {
-//     await adminService.updateUserSubscription(
-//       userId,
-//       status,
-//       session.backendToken
-//     );
+    try {
+      await adminService.updateUserSubscription(
+        userId,
+        status,
+        session.backendToken
+      );
 
-//     setUsers((prev) =>
-//       prev.map((u) =>
-//         u.id === userId ? { ...u, subscriptionStatus: status } : u
-//       )
-//     );
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId ? { ...u, subscriptionStatus: status } : u
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-8 p-4 pb-28 bg-[#181411] min-h-screen px-4 sm:px-8 lg:px-16">
@@ -148,14 +147,11 @@ export default function AdminUsersPage() {
               name={user.name}
               email={user.email}
               role={user.roleId}
+              avatarUrl={user.avatarUrl}
               status={user.blocked ? "BLOQUEADO" : "ACTIVO"}
               blocked={user.blocked}
-              onRoleChange={(newRole) =>
-                handleRoleChange(user.id, newRole)
-              }
-              onBlockToggle={(blocked) =>
-                handleBlockToggle(user.id, blocked)
-              }
+              onRoleChange={(newRole) => handleRoleChange(user.id, newRole)}
+              onBlockToggle={(blocked) => handleBlockToggle(user.id, blocked)}
             />
           ))
         )}

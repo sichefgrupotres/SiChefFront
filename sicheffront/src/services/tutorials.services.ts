@@ -91,12 +91,13 @@ export const createTutorial = async (
       ok: res.ok,
       status: res.status,
       data: body,
+      message: body.message,
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       ok: false,
       status: 500,
-      message: "Error al crear el tutorial",
+      message: error?.message || "Error al crear tutorial",
     };
   }
 };
