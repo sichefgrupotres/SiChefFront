@@ -35,12 +35,18 @@ export const createTutorial = async (
     });
 
     const body: ApiResponse = await res.json();
-    try {
-    } catch (e) {}
 
-  return {
-    ok: res.ok,
-    status: res.status,
-    data: body,
-  };
+    return {
+      ok: res.ok,
+      status: res.status,
+      data: body,
+      message: body.message,
+    };
+  } catch (error: any) {
+    return {
+      ok: false,
+      status: 500,
+      message: error?.message || "Error al crear tutorial",
+    };
+  }
 };

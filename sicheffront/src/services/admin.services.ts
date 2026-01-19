@@ -45,33 +45,31 @@ export class AdminService {
     return res.json();
   }
 
-//   export const adminService = {
-//   async updateUserSubscription(
-//     userId: string,
-//     status: SubscriptionStatus,
-//     token: string
-//   ) {
-//     const res = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/subscription`,
-//       {
-//         method: "PATCH",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify({ status }),
-//       }
-//     );
+  async updateUserSubscription(
+    userId: string,
+    status: SubscriptionStatus,
+    token: string,
+  ) {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/subscription`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      },
+    );
 
-//     if (!res.ok) {
-//       throw new Error("Error al actualizar suscripción");
-//     }
+    if (!res.ok) {
+      throw new Error("Error al actualizar suscripción");
+    }
 
-//     return res.json();
-//   },
-// };
+    return res.json();
+  }
 
-    async getAllTutorials(token: string) {
+  async getAllTutorials(token: string) {
     const res = await fetch(`${this.baseUrl}/tutorials`, {
       headers: { Authorization: `Bearer ${token}` },
     });

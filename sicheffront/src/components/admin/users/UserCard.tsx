@@ -1,16 +1,21 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import Link from "next/link";
+import Image from "next/image";
 
 interface UserCardProps {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: "USER" | "CREATOR" | "ADMIN" | "SUSCRIPTOR";
   status: string;
+  createdAt?: string;
+  avatarUrl?: string;
+  blocked?: boolean;
   onRoleChange: (newRole: string) => void;
   onBlockToggle: (blocked: boolean) => void;
-  blocked?: boolean;
 }
 
 export default function UserCard({
@@ -19,9 +24,11 @@ export default function UserCard({
   email,
   role,
   status,
+  createdAt,
+  avatarUrl,
+  blocked = false,
   onRoleChange,
   onBlockToggle,
-  blocked = false,
 }: UserCardProps) {
   const [isBlocked, setIsBlocked] = useState(blocked);
 
@@ -73,57 +80,81 @@ export default function UserCard({
     onRoleChange(newRole);
   };
 
-  // 🔹 SOLO ESTILOS: color según rol
   const roleColorClass =
     role === "ADMIN"
       ? "text-orange-600"
       : role === "CREATOR"
-      ? "text-orange-400"
-      : "text-orange-300";
+        ? "text-orange-400"
+        : role === "SUSCRIPTOR"
+          ? "text-orange-500"
+          : "text-orange-300";
 
-  const profilePathByRole = () => {
-    switch (role) {
-      case "ADMIN":
-        return `/admin/users/${id}`;
-      case "CREATOR":
-        return `/admin/creators/${id}`;
-      default:
-        return `/admin/clients/${id}`;
-    }
-  };
+  // MODIFICACIÓN: El administrador siempre va a la ruta de gestión de usuarios
+  // sin importar el rol del usuario que esté mirando.
+  const adminDetailPath = `/admin/users/${id}`;
 
   return (
     <div
       className="
         flex flex-col justify-between h-full w-full items-center text-center
-        bg-[#2a221b] rounded-xl p-5
+        bg-[#2a221b] rounded-3xl p-6
         border border-orange-500/60
         hover:border-orange-500
         shadow-md hover:shadow-orange-500/30
         transition
       "
     >
-      {/* INFO USUARIO */}
-      <div className="mb-4">
-        <Link href={profilePathByRole()}>
-          <h3 className="text-orange-500 font-bold text-lg cursor-pointer hover:underline mb-2">
+      {/* FOTO + INFO */}
+      <div className="flex flex-col items-center text-center mb-4">
+        <div className="relative mb-4 w-20 h-20 rounded-full border-4 border-[#F57C00] overflow-hidden">
+          <Image
+            src={avatarUrl || "/chef-avatar.jpg"}
+            alt={name}
+            fill
+            className="object-cover"
+          />
+        </div>
+
+        {/* CLICK EN EL NOMBRE LLEVA AL PERFIL DE GESTIÓN */}
+        <Link href={adminDetailPath}>
+          <h3 className="text-orange-500 font-bold text-base cursor-pointer hover:underline transition-all hover:scale-105">
             {name}
           </h3>
         </Link>
 
-        <p className="text-white/60 text-sm">
-          <span className="font-bold text-white">Email:</span> {email}
-        </p>
-        <p className="text-white/60 text-sm">
-          <span className="font-bold text-white">Rol:</span> {role}
-        </p>
-        <p className="text-white/60 text-sm">
-          <span className="font-bold text-white">Estado:</span> {status}
-        </p>
+        <p className="text-white/60 text-xs">{email}</p>
+      </div>
+
+      {/* MÉTRICAS */}
+      <div className="flex gap-2 w-full mb-2">
+        <div className="bg-[#181411] rounded-xl p-2 text-center flex-1">
+          <p className="text-[10px] text-white/50">ESTADO</p>
+          <p
+            className={`text-sm font-semibold ${
+              isBlocked ? "text-red-400" : "text-green-400"
+            }`}
+          >
+            {isBlocked ? "BLOQUEADO" : "ACTIVO"}
+          </p>
+        </div>
+
+        {createdAt && (
+          <div className="bg-[#181411] rounded-xl p-2 text-center flex-1">
+            <p className="text-[10px] text-white/50">REGISTRO</p>
+            <p className="text-sm font-semibold text-white/80">
+              {new Date(createdAt).toLocaleDateString()}
+            </p>
+          </div>
+        )}
+
+        <div className="bg-[#181411] rounded-xl p-2 text-center flex-1">
+          <p className="text-[10px] text-white/50">ROL</p>
+          <p className={`text-sm font-semibold ${roleColorClass}`}>{role}</p>
+        </div>
       </div>
 
       {/* ACCIONES */}
-      <div className="flex gap-2 w-full">
+      <div className="flex flex-row gap-2 w-full mt-2">
         <select
           value={role}
           onChange={handleRoleChange}
@@ -131,35 +162,34 @@ export default function UserCard({
             flex-1
             bg-[#181411]
             ${roleColorClass}
-            px-3 py-2
+            px-2 py-1
             rounded
-            text-sm
+            text-xs
             font-semibold
             border border-white/10
             focus:outline-none
             focus:border-orange-500
+            cursor-pointer
           `}
         >
-          <option value="USER" className="text-orange-300">
-            USER
-          </option>
-          <option value="CREATOR" className="text-orange-400">
-            CREATOR
-          </option>
-          <option value="ADMIN" className="text-orange-600">
-            ADMIN
-          </option>
+          <option value="USER">USER</option>
+          <option value="CREATOR">CREATOR</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="SUSCRIPTOR">SUSCRIPTOR</option>
         </select>
 
         <button
           style={{ backgroundColor: isBlocked ? "#28af23" : "#bd0707" }}
           className="
-            flex-3
-            px-3 py-2
+            flex-1
+            px-2 py-1
             rounded
             text-white
             font-semibold
-            text-sm
+            text-xs
+            transition-all
+            hover:opacity-90
+            active:scale-95
           "
           onClick={handleBlockToggle}
         >
@@ -169,7 +199,3 @@ export default function UserCard({
     </div>
   );
 }
-
-
-
-
