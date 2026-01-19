@@ -24,3 +24,23 @@ export interface TutorialInterface {
   createdAt?: string;
   updatedAt?: string;
 }
+
+
+export interface IModalTutorial {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;  
+  recipe?: {
+    id: string;
+    title: string;
+  };
+  ingredients: {
+    title: string;
+    description?: string;
+  }[];
+  steps: {
+    order: number;
+    description: string;
+  }[];
+}
