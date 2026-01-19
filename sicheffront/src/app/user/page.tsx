@@ -78,7 +78,7 @@ export default function CreatorHomePage() {
       </div>
     );
   }
-
+  
   // ================= CATEGORÍAS =================
   const categoriesList = [
     { name: "Todas", image: "/categories/todas.jpg" },
@@ -92,7 +92,7 @@ export default function CreatorHomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* ================= MAIN ================= */}
-      <main className="max-w-7xl mx-auto w-full flex-grow">
+      <main className="max-w-7xl mx-auto w-full grow">
         {/* ================= HEADER & SEARCH ================= */}
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-4 animate-fade-in-down">
@@ -155,7 +155,7 @@ export default function CreatorHomePage() {
     overflow-hidden
     bg-cover
     bg-center
-    min-w-[140px]
+    min-w-35
     h-24
     rounded-xl
     flex
@@ -210,7 +210,7 @@ export default function CreatorHomePage() {
               </button>
             </div>
           ) : (
-            // Grilla Responsive
+            // Grilla Responsiva de Recetas
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
               {filteredRecipes.map((recipe) => (
                 <RecipeCard key={recipe.id} recipe={recipe} mode="user" />

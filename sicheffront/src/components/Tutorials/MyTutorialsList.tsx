@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useTutorial } from "@/context/TutorialContext";
 import TutorialCard from "./CardTutorial";
 
+
 export default function MyTutorialsList() {
   const { userTutorials, fetchMyTutorials, loading, error } = useTutorial();
 
@@ -39,7 +40,7 @@ export default function MyTutorialsList() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10 w-full">
       {userTutorials.map((tutorial) => (
         <TutorialCard key={tutorial.id} tutorial={tutorial} mode="creator" />
       ))}

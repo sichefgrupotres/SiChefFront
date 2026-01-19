@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import MyRecipesList from "@/components/Recipes/MyRecipesList";
 import { useSession } from "next-auth/react";
 import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
+import { useSearchParams } from "next/navigation";
 
 export default function CreatorPage() {
   const { dataUser, isLoadingUser } = useAuth();
@@ -18,13 +19,22 @@ export default function CreatorPage() {
     : "Chef Invitado";
 
   const [avatar, setAvatar] = useState(
-    dataUser?.user?.avatarUrl || "/chef-avatar.jpg"
+    dataUser?.user?.avatarUrl || "/chef-avatar.jpg",
   );
   const [uploading, setUploading] = useState(false);
 
   const [activeTab, setActiveTab] = useState<"recipes" | "tutorials">(
-    "recipes"
+    "recipes",
   );
+
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab");
+
+  useEffect(() => {
+    if (tab === "tutorials") {
+      setActiveTab("tutorials");
+    }
+  }, [tab]);
 
   // ================= CONTEO REAL (MISMO PATRÓN ADMIN) =================
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -41,7 +51,7 @@ export default function CreatorPage() {
             headers: {
               Authorization: `Bearer ${session.backendToken}`,
             },
-          }
+          },
         );
 
         const tutorialsRes = await fetch(
@@ -50,7 +60,7 @@ export default function CreatorPage() {
             headers: {
               Authorization: `Bearer ${session.backendToken}`,
             },
-          }
+          },
         );
 
         const recipesData = await recipesRes.json();
@@ -88,7 +98,7 @@ export default function CreatorPage() {
             Authorization: `Bearer ${session.backendToken}`,
           },
           body: formData,
-        }
+        },
       );
 
       if (!res.ok) return;
