@@ -1,3 +1,51 @@
+// import { TutorialFormValues } from "@/validators/TutorialSchema";
+
+// interface ApiResponse<T = any> {
+//   message?: string;
+//   data?: T;
+// }
+
+// export interface CreateTutorialResult {
+//   ok: boolean;
+//   status: number;
+//   data?: any;
+//   message?: string;
+// }
+
+// export const createTutorial = async (
+//   data: TutorialFormValues,
+//   token: string
+// ): Promise<CreateTutorialResult> => {
+//   try {
+//     const formData = new FormData();
+
+//     formData.append("title", data.title);
+//     formData.append("description", data.description);
+//     formData.append("recipeId", data.recipeId);
+//     formData.append("video", data.video!);
+//     formData.append("ingredients", JSON.stringify(data.ingredients));
+//     formData.append("steps", JSON.stringify(data.steps));
+
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tutorials`, {
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: formData,
+//     });
+
+//     const body: ApiResponse = await res.json();
+//     try {
+//     } catch (e) {}
+
+//   return {
+//     ok: res.ok,
+//     status: res.status,
+//     data: body,
+//   };
+// };
+
+
 import { TutorialFormValues } from "@/validators/TutorialSchema";
 
 interface ApiResponse<T = any> {
@@ -26,13 +74,16 @@ export const createTutorial = async (
     formData.append("ingredients", JSON.stringify(data.ingredients));
     formData.append("steps", JSON.stringify(data.steps));
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tutorials`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/tutorials`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
 
     const body: ApiResponse = await res.json();
 

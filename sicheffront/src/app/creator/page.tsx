@@ -16,7 +16,7 @@ export default function CreatorHomePage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "none">("none");
   const [activeTab, setActiveTab] = useState<"recipes" | "tutorials">(
-    "recipes"
+    "recipes",
   );
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function CreatorHomePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* ================= MAIN ================= */}
-      <main className="max-w-7xl mx-auto w-full flex-grow">
+      <main className="max-w-7xl mx-auto w-full grow">
         {/* ================= HEADER & SEARCH ================= */}
         <section className="px-4 md:px-8 py-16 flex flex-col items-center gap-8 text-center">
           <div className="flex items-center gap-4 animate-fade-in-down">
@@ -142,7 +142,8 @@ export default function CreatorHomePage() {
 
             <button
               onClick={handleSearch}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors">
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 font-bold transition-colors"
+            >
               Buscar
             </button>
           </div>
@@ -165,7 +166,7 @@ export default function CreatorHomePage() {
                   overflow-hidden
                   bg-cover
                   bg-center
-                  min-w-[140px]
+                  min-w-35
                   h-24
                   rounded-xl
                   flex
@@ -186,7 +187,8 @@ export default function CreatorHomePage() {
                       ? "ring-2 ring-orange-500"
                       : ""
                   }
-                `}>
+                `}
+              >
                 <span className="relative z-10">{cat.name}</span>
               </button>
             ))}
@@ -202,7 +204,8 @@ export default function CreatorHomePage() {
                 activeTab === "recipes"
                   ? "text-orange-500 border-b-2 border-orange-500"
                   : "text-gray-400 hover:text-white"
-              }`}>
+              }`}
+          >
             Mis Recetas
           </button>
 
@@ -213,7 +216,8 @@ export default function CreatorHomePage() {
                 activeTab === "tutorials"
                   ? "text-orange-500 border-b-2 border-orange-500"
                   : "text-gray-400 hover:text-white"
-              }`}>
+              }`}
+          >
             Mis Tutoriales
           </button>
         </section>
@@ -236,7 +240,8 @@ export default function CreatorHomePage() {
                     setSearchTerm("");
                     setSelectedCategory("Todas");
                   }}
-                  className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold">
+                  className="mt-6 text-orange-500 hover:text-orange-400 underline font-semibold"
+                >
                   Limpiar filtros y ver todo
                 </button>
               </div>
