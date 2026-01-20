@@ -252,7 +252,7 @@ export default function CreatorHomePage() {
                 : "text-gray-400 hover:text-white"
               }`}
           >
-            Mis Recetas
+            Recetas
           </button>
 
           <button
@@ -263,7 +263,7 @@ export default function CreatorHomePage() {
                 : "text-gray-400 hover:text-white"
               }`}
           >
-            Mis Tutoriales
+            Tutoriales
           </button>
         </section>
 

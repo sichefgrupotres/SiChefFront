@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-// Eliminamos import de sonner
 
 interface FavoriteButtonProps {
     recipeId: string | number;
@@ -24,7 +23,6 @@ export default function FavoriteButton({
     const [loading, setLoading] = useState(false);
     const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
 
-    // Sincronizar estado si cambia la prop inicial
     useEffect(() => {
         setIsFavorite(initialIsFavorite);
     }, [initialIsFavorite]);
@@ -39,17 +37,12 @@ export default function FavoriteButton({
             return;
         }
 
-        // 👇 TRUCO PARA EVITAR ERRORES DE TYPESCRIPT Y ENCONTRAR EL TOKEN
         const sessionData = session as any;
         const userData = session.user as any;
-
-        // Buscamos el token en ambos lugares por seguridad
         const token = userData.backendToken || sessionData.backendToken;
-        const userRole = userData.role || userData.roleId; // Por si se llama distinto
+        const userRole = userData.role || userData.roleId;
         const userIsPremium = userData.isPremium;
 
-        // 👇 LÓGICA DE PERMISOS (INCLUYE CREADORES)
-        // Si la receta es Premium... Y el usuario NO es Premium... Y NO es Admin/Creador... -> Bloqueamos
         const isSpecialUser = userRole === "admin" || userRole === "creator" || userRole === "CREATOR";
 
         if (isPremiumRecipe && !userIsPremium && !isSpecialUser) {
@@ -58,12 +51,12 @@ export default function FavoriteButton({
         }
 
         if (!token) {
-            console.error("❌ No se encontró el token de autenticación en la sesión.");
-            alert("Error de sesión: No se encontró tu token. Intenta reloguearte.");
+            console.error("❌ No se encontró el token.");
+            alert("Error de sesión: No se encontró tu token.");
             return;
         }
 
-        // Optimistic UI (Cambio visual inmediato)
+        // Optimistic UI
         const previousState = isFavorite;
         const newState = !isFavorite;
         setIsFavorite(newState);
@@ -78,30 +71,44 @@ export default function FavoriteButton({
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`, // Enviamos el token encontrado
+                        "Authorization": `Bearer ${token}`,
                     },
                 }
             );
 
+            // 👇 LEEMOS LA RESPUESTA PARA VER SI HAY ERROR
+            const data = await res.json();
+
             if (!res.ok) {
-                if (res.status === 401) {
-                    throw new Error("No autorizado (Token inválido o expirado)");
+                // Si el backend dice "Límite", mostramos alerta y lanzamos error
+                if (data.message && data.message.includes("Límite")) {
+                    alert("🛑 ¡LÍMITE DE 5 FAVORITOS ALCANZADO!\n\nElimina una receta de tus favoritos o pásate a Premium para guardar sin límites. ⭐");
                 }
-                throw new Error("Error al actualizar favorito");
+                else if (res.status === 401) {
+                    throw new Error("No autorizado");
+                } else {
+                    // Otros errores
+                    throw new Error(data.message || "Error al actualizar");
+                }
+
+                // Forzamos el catch
+                throw new Error("Action blocked");
             }
 
-            console.log("✅ Favorito actualizado correctamente");
+            console.log("✅ Favorito actualizado");
 
-        } catch (error) {
-            console.error("Error al dar like:", error);
-            // Revertimos cambio visual si falló
+        } catch (error: any) {
+            // Solo logueamos si no fue el error de bloqueo que ya manejamos con el alert
+            if (error.message !== "Action blocked") {
+                console.error("Error al dar like:", error);
+                if (error.message.includes("No autorizado")) {
+                    alert("Tu sesión ha expirado.");
+                }
+            }
+
+            // 👇 REVERTIMOS EL CAMBIO VISUAL (El corazón se apaga)
             setIsFavorite(previousState);
             if (onToggle) onToggle(previousState);
-
-            // Mensaje amigable si es 401
-            if (error instanceof Error && error.message.includes("No autorizado")) {
-                alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
-            }
         } finally {
             setLoading(false);
         }
