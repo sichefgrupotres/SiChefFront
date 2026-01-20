@@ -1,18 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { Crown, Check, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation"; // 👈 Importamos router
+import { Crown, Check, Loader2, ArrowLeft } from "lucide-react"; // 👈 Importamos icono flecha
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
+
 type PlanConfig = {
   label: string;
   price: number;
   description: string;
-  badge?: string; // 👈 opcional
+  badge?: string;
 };
 type Plan = "monthly" | "yearly";
 
 export default function SubscriptionPage() {
+  const router = useRouter(); // 👈 Inicializamos router
   const { data: session, status } = useSession();
   const [plan, setPlan] = useState<Plan>("monthly");
   const [loading, setLoading] = useState(false);
@@ -64,7 +67,7 @@ export default function SubscriptionPage() {
             Authorization: `Bearer ${session.backendToken}`,
           },
           body: JSON.stringify({
-            plan, // 👈 monthly | yearly
+            plan,
             successUrl: `${window.location.origin}/subscription/success`,
             cancelUrl: `${window.location.origin}/subscription/cancel`,
           }),
@@ -91,7 +94,17 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#181411] text-white px-4 py-16 flex justify-center">
+    <div className="min-h-screen bg-[#181411] text-white px-4 py-16 flex justify-center relative">
+
+      {/* 👇 BOTÓN VOLVER ATRÁS */}
+      <button
+        onClick={() => router.back()}
+        className="absolute top-6 left-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-orange/80 hover:text-orange-500 cursor-pointer"
+        title="Volver atrás"
+      >
+        <ArrowLeft size={24} />
+      </button>
+
       <div className="w-full max-w-4xl">
         {/* HEADER */}
         <div className="text-center mb-12">
@@ -123,13 +136,13 @@ export default function SubscriptionPage() {
                   relative
                   rounded-2xl
                   border
+                  cursor-pointer
                   p-6
                   text-left
                   transition-all
-                  ${
-                    active
-                      ? "border-orange-500 bg-orange-500/10 shadow-lg"
-                      : "border-white/10 bg-[#2a221b] hover:border-orange-500/40"
+                  ${active
+                    ? "border-orange-500 bg-orange-500/10 shadow-lg"
+                    : "border-white/10 bg-[#2a221b] hover:border-orange-500/40"
                   }
                 `}
               >
@@ -188,6 +201,7 @@ export default function SubscriptionPage() {
               transition
               shadow-xl
               disabled:opacity-70
+              cursor-pointer
             "
           >
             {loading ? (

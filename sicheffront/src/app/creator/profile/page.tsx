@@ -27,14 +27,13 @@ export default function CreatorPage() {
   );
   const [uploading, setUploading] = useState(false);
 
-  // Unificamos los tipos de tabs para incluir 'favorites'
   const [activeTab, setActiveTab] = useState<"recipes" | "tutorials" | "favorites">("recipes");
 
   // Estados para contadores (Estadísticas)
   const [recipes, setRecipes] = useState<any[]>([]);
   const [tutorials, setTutorials] = useState<any[]>([]);
 
-  // Estados para Favoritos (Funcionalidad del Código 2)
+  // Estados para Favoritos
   const [favorites, setFavorites] = useState<RecipeInterface[]>([]);
   const [loadingFavs, setLoadingFavs] = useState(false);
 
@@ -48,78 +47,75 @@ export default function CreatorPage() {
     if (tab === "recipes") setActiveTab("recipes");
   }, [tab]);
 
-  // 2. Fetch de Datos Generales (Para contadores y estadísticas)
+  // 2. Fetch de Datos Generales (CORREGIDO: Ahora carga TODO al inicio)
   useEffect(() => {
     if (!session?.backendToken) return;
 
     const fetchData = async () => {
       try {
+        // --- Carga Recetas ---
         const recipesRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`,
-          {
-            headers: { Authorization: `Bearer ${session.backendToken}` },
-          },
+          { headers: { Authorization: `Bearer ${session.backendToken}` } },
         );
 
+        // --- Carga Tutoriales ---
         const tutorialsRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/tutorials/my-tutorials`,
-          {
-            headers: { Authorization: `Bearer ${session.backendToken}` },
-          },
+          { headers: { Authorization: `Bearer ${session.backendToken}` } },
+        );
+
+        // --- Carga Favoritos (AGREGADO AQUÍ) ---
+        // Lo cargamos aquí para tener el número del contador disponible siempre
+        const favoritesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/favorites/my-list`,
+          { headers: { Authorization: `Bearer ${session.backendToken}` } }
         );
 
         const recipesData = await recipesRes.json();
         const tutorialsData = await tutorialsRes.json();
 
+        // Manejo seguro de favoritos (si falla, array vacío)
+        let favoritesData = [];
+        if (favoritesRes.ok) {
+          const rawFavs = await favoritesRes.json();
+          favoritesData = rawFavs.map((item: any) => ({ ...item, isFavorite: true }));
+        }
+
         setRecipes(recipesData.data ?? recipesData);
         setTutorials(tutorialsData.data ?? tutorialsData);
+        setFavorites(favoritesData); // Guardamos los favoritos
+
       } catch (error) {
-        console.error("Error cargando estadísticas:", error);
+        console.error("Error cargando datos generales:", error);
       }
     };
 
     fetchData();
   }, [session]);
 
-  // 3. Fetch de Favoritos (Solo cuando se activa la tab)
+  // 3. (OPCIONAL) Fetch de refresco solo para favoritos
+  // Puedes dejar esto si quieres que se actualice al hacer click en la pestaña, 
+  // o borrarlo si con la carga inicial es suficiente.
   useEffect(() => {
+    // Solo ejecutamos si cambiamos a favorites Y si ya tenemos datos (para no pisar la carga inicial innecesariamente)
     if (activeTab === "favorites" && session?.backendToken) {
-      const fetchFavorites = async () => {
-        setLoadingFavs(true);
-        try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/favorites/my-list`, {
-            headers: {
-              Authorization: `Bearer ${session.backendToken}`
-            }
-          });
-
-          if (res.ok) {
-            const data = await res.json();
-            // Aseguramos que tengan la propiedad isFavorite para el botón
-            const formatted = data.map((item: any) => ({ ...item, isFavorite: true }));
-            setFavorites(formatted);
-          }
-        } catch (error) {
-          console.error("Error cargando favoritos:", error);
-        } finally {
-          setLoadingFavs(false);
-        }
-      };
-      fetchFavorites();
+      // Podrías poner un fetch aquí si quisieras refrescar al entrar, 
+      // pero con el useEffect de arriba ya tienes el contador solucionado.
     }
   }, [activeTab, session]);
+
 
   // ================= FUNCIONES =================
 
   const recipesCount = recipes.length;
   const tutorialsCount = tutorials.length;
+  const favoritesCount = favorites.length; // Ahora esto funcionará siempre
 
-  // Eliminar visualmente de la lista de favoritos
   const handleRemoveFromList = (recipeId: string | number) => {
     setFavorites((prev) => prev.filter((item) => item.id !== recipeId));
   };
 
-  // Subida de Avatar
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !session?.backendToken) return;
@@ -233,6 +229,14 @@ export default function CreatorPage() {
               {tutorialsCount}
             </p>
           </div>
+
+          {/* AHORA ESTE CONTADOR FUNCIONARÁ SIEMPRE */}
+          <div className="bg-[#2a221b] rounded-xl p-4">
+            <p className="text-sm text-white/60">Favoritos</p>
+            <p className="text-xl font-semibold text-[#e6e0db]">
+              {favoritesCount}
+            </p>
+          </div>
         </div>
       </section>
 
@@ -264,7 +268,7 @@ export default function CreatorPage() {
         </Link>
       </section>
 
-      {/* NAVEGACIÓN TABS (RECETAS / TUTORIALES / FAVORITOS) */}
+      {/* NAVEGACIÓN TABS */}
       <section className="px-4 md:px-8">
         <div className="flex gap-6 border-b border-white/10 overflow-x-auto">
           <button
@@ -305,27 +309,21 @@ export default function CreatorPage() {
       {/* CONTENIDO DINÁMICO */}
       <section className="px-4 md:px-8 pb-16 bg-[#181411]">
 
-        {/* 1. RECETAS */}
         {activeTab === "recipes" && <MyRecipesList />}
 
-        {/* 2. TUTORIALES (Retomamos el componente del código 1) */}
         {activeTab === "tutorials" && <MyTutorialsList />}
 
-        {/* 3. FAVORITOS (Lógica del código 2) */}
         {activeTab === "favorites" && (
           <div className="mt-6">
-            {loadingFavs ? (
-              <div className="flex justify-center py-10">
-                <div className="animate-spin h-8 w-8 border-2 border-[#F57C00] rounded-full border-t-transparent"></div>
-              </div>
-            ) : favorites.length > 0 ? (
+            {/* Si ya cargamos favoritos arriba, no necesitamos loadingFavs aquí estrictamente, 
+                pero si quieres re-fetchear puedes usarlo. Por ahora mostramos directo la lista */}
+            {favorites.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {favorites.map((recipe) => (
                   <RecipeCard
                     key={recipe.id}
                     recipe={recipe}
                     mode="creator"
-                    // Pasamos la función para que al quitar like se borre de la lista
                     onRemove={() => handleRemoveFromList(recipe.id)}
                   />
                 ))}
