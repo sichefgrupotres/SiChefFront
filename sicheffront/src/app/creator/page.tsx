@@ -1,17 +1,22 @@
 "use client";
-
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import RecipeCard from "@/components/Recipes/CardRecipe";
-import { useRecipe } from "@/context/RecipeContext";
 import MyTutorialsList from "@/components/Tutorials/MyTutorialsList";
 import { useTutorial } from "@/context/TutorialContext";
+import { useSession } from "next-auth/react";
+// 👈 Lo comentamos por ahora para usar la lógica local con token
 
 export default function CreatorHomePage() {
-  const { recipes, fetchRecipes, loading, error } = useRecipe();
   const { fetchMyTutorials } = useTutorial();
 
-  // ================= ESTADOS =================
+  // 👇 2. Estados locales para manejar la data con el token
+  const { data: session } = useSession();
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // ================= ESTADOS FILTROS =================
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "none">("none");
@@ -25,10 +30,48 @@ export default function CreatorHomePage() {
     }
   }, [activeTab, fetchMyTutorials]);
   // ================= EFFECT =================
+  // ================= EFFECT =================
   useEffect(() => {
-    fetchRecipes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const fetchRecipesWithToken = async () => {
+      setLoading(true);
+      try {
+        const headers: HeadersInit = {
+          "Content-Type": "application/json",
+        };
+
+        // 👇 MEJORA ROBUSTA: Buscamos el token en ambos lugares
+        const sessionData = session as any;
+        const userData = session?.user as any;
+
+        // Si existe en user.backendToken O en session.backendToken
+        const token = userData?.backendToken || sessionData?.backendToken;
+
+        if (token) {
+          // console.log("🟢 Token encontrado en Home, enviando..."); // Descomenta si quieres depurar
+          headers["Authorization"] = `Bearer ${token}`;
+        } else {
+          // console.log("🟠 No hay token, cargando como invitado");
+        }
+
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+          headers: headers,
+        });
+
+        if (!res.ok) throw new Error("Error al cargar recetas");
+
+        const data = await res.json();
+        setRecipes(data.data || []);
+
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipesWithToken();
+  }, [session]); // Se ejecuta cada vez que la sesión cambia (ej. al loguearse)
 
   // ================= BUSCADOR =================
   const handleSearch = () => {
@@ -76,15 +119,18 @@ export default function CreatorHomePage() {
   // ================= ESTADOS UI =================
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        <div className="animate-pulse">Cargando recetas deliciosas...</div>
+      <div className="min-h-screen flex items-center justify-center text-white bg-[#181411]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#F57C00] border-t-transparent rounded-full animate-spin"></div>
+          <p className="animate-pulse">Cargando recetas deliciosas...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-400">
+      <div className="min-h-screen flex items-center justify-center text-red-400 bg-[#181411]">
         Error: {error}
       </div>
     );
@@ -101,7 +147,7 @@ export default function CreatorHomePage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#181411]">
       {/* ================= MAIN ================= */}
       <main className="max-w-7xl mx-auto w-full grow">
         {/* ================= HEADER & SEARCH ================= */}
@@ -182,28 +228,28 @@ export default function CreatorHomePage() {
                   after:inset-0
                   after:bg-black/50
                   after:content-['']
-                  ${
-                    selectedCategory === cat.name
-                      ? "ring-2 ring-orange-500"
-                      : ""
+                  ${selectedCategory === cat.name
+                    ? "ring-2 ring-orange-500"
+                    : ""
                   }
                 `}
               >
-                <span className="relative z-10">{cat.name}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+                {/* Texto (igual que antes) */}
+                <span className="relative z-10 text-white">{cat.name}</span>
+              </button >
+            ))
+            }
+          </div >
+        </section >
 
         {/* ================= TABS ================= */}
-        <section className="px-4 md:px-8 pb-8 flex gap-6 border-b border-white/10">
+        <section className="px-4 md:px-8 pb-8 flex gap-6 border-b border-white/10" >
           <button
             onClick={() => setActiveTab("recipes")}
             className={`pb-3 font-semibold transition cursor-pointer
-              ${
-                activeTab === "recipes"
-                  ? "text-orange-500 border-b-2 border-orange-500"
-                  : "text-gray-400 hover:text-white"
+              ${activeTab === "recipes"
+                ? "text-orange-500 border-b-2 border-orange-500"
+                : "text-gray-400 hover:text-white"
               }`}
           >
             Mis Recetas
@@ -212,10 +258,9 @@ export default function CreatorHomePage() {
           <button
             onClick={() => setActiveTab("tutorials")}
             className={`pb-3 font-semibold transition cursor-pointer
-              ${
-                activeTab === "tutorials"
-                  ? "text-orange-500 border-b-2 border-orange-500"
-                  : "text-gray-400 hover:text-white"
+              ${activeTab === "tutorials"
+                ? "text-orange-500 border-b-2 border-orange-500"
+                : "text-gray-400 hover:text-white"
               }`}
           >
             Mis Tutoriales
@@ -223,7 +268,7 @@ export default function CreatorHomePage() {
         </section>
 
         {/* ================= GRID DE RECETAS / LISTA DE TUTORIALES ================= */}
-        <section className="px-4 md:px-8 py-16 bg-[#181411]">
+        < section className="px-4 md:px-8 py-16 bg-[#181411]" >
           {activeTab === "recipes" &&
             (filteredRecipes.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center opacity-80">
@@ -254,13 +299,13 @@ export default function CreatorHomePage() {
             ))}
 
           {activeTab === "tutorials" && <MyTutorialsList />}
-        </section>
-      </main>
+        </section >
+      </main >
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 py-8 text-center text-sm text-gray-500 ">
+      <footer className="border-t border-white/10 py-8 text-center text-sm text-gray-500 " >
         <p>© 2025 SiChef! · Cocinando con amor 🧡</p>
-      </footer>
-    </div>
-  );
-}
+      </footer >
+    </div >
+  )
+};
