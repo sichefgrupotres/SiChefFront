@@ -1,10 +1,9 @@
 "use client";
 
-import { ArrowLeft, BarChart3, Crown } from "lucide-react";
+import { ArrowLeft, BarChart3, Crown, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react"
-
+import { useState } from "react";
 
 export interface Recipe {
   id: string;
@@ -27,10 +26,8 @@ export default function RecipeDetail({
   recipe,
   showBackButton = true,
   backLabel = "Volver",
-
 }: Props) {
   const router = useRouter();
-
 
   /* ================= INGREDIENTES COMO LISTA ================= */
   const ingredientsList = recipe.ingredients
@@ -67,13 +64,25 @@ export default function RecipeDetail({
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* ===== VOLVER ===== */}
       {showBackButton && (
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 mb-6 transition cursor-pointer"
-        >
-          <ArrowLeft size={16} />
-          {backLabel}
-        </button>
+        <div className="relative mb-6">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 transition cursor-pointer absolute left-0 top-0"
+          >
+            <ArrowLeft size={16} />
+            {backLabel}
+          </button>
+
+          {/* BOTÓN DERECHA */}
+          <Link
+            href={`/creator/tutorials/by-recipe/${recipe.id}`}
+            scroll={false}
+            className="flex items-center gap-2 text-sm bg-[#F57C00] hover:bg-orange-500 text-white px-4 py-2 rounded-full transition cursor-pointer absolute right-0 top-0"
+          >
+             <PlayCircle size={18} />
+            Ver tutorial
+          </Link>
+        </div>
       )}
 
       {/* ===== IMAGEN HERO ===== */}
@@ -110,7 +119,6 @@ export default function RecipeDetail({
 
       {/* ===== GRID ===== */}
 
-      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* INGREDIENTES */}
         <section className="relative rounded-xl overflow-hidden border border-white/10">
