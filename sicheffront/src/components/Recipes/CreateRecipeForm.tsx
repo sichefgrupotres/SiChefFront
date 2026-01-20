@@ -7,6 +7,7 @@ import {
   RecipeSchema,
 } from "@/validators/RecipeSchema";
 import { useFormik } from "formik";
+import { ArrowLeft, ArrowLeftCircle, ArrowLeftCircleIcon, ArrowLeftIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -86,6 +87,20 @@ export default function NewRecipePage() {
   };
 
   return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="
+      absolute top-0 left-0
+      flex items-center gap-2
+      text-gray-400 hover:text-orange-400
+      transition cursor-pointer
+    "
+      >
+        <ArrowLeftCircleIcon className="w-5 h-5" />
+        <span className="text-sm">Volver</span>
+      </button>
     <div className="p-4 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-center">
         Crear nueva receta
@@ -265,6 +280,7 @@ export default function NewRecipePage() {
           {loading ? "Publicando..." : "Publicar receta"}
         </button>
       </form>
+      </div>
     </div>
   );
 }

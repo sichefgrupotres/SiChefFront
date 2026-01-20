@@ -3,6 +3,7 @@ import { Provider } from "./providers";
 import { RecipeProvider } from "@/context/RecipeContext";
 import { AuthBootstrap } from "@/components/AuthBootstrap";
 import { TutorialProvider } from "@/context/TutorialContext";
+import { ChatProvider } from "@/context/ChatProvider";
 
 export const metadata = {
   title: "Si Chef!",
@@ -13,6 +14,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="es" className="dark" suppressHydrationWarning>
       <head>
@@ -25,14 +27,16 @@ export default function RootLayout({
         suppressHydrationWarning
         className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
         <Provider>
-          <TutorialProvider>
-          <RecipeProvider>
-            {/* <AuthBootstrap /> */}
-            {children}
-          </RecipeProvider>
-          </TutorialProvider>
+          <ChatProvider>
+            <TutorialProvider>
+              <RecipeProvider>
+                {/* <AuthBootstrap /> */}
+                {children}
+              </RecipeProvider>
+            </TutorialProvider>
+          </ChatProvider>
         </Provider>
       </body>
-    </html>
+    </html >
   );
 }

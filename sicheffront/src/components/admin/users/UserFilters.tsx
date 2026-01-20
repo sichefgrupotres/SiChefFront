@@ -1,8 +1,8 @@
 "use client";
 
 interface UserFiltersProps {
-  filter: "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR";
-  setFilter: (value: "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR") => void;
+  filter: "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR"| "ADMIN";
+  setFilter: (value: "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR"| "ADMIN") => void;
 }
 
 export default function UserFilters({ filter, setFilter }: UserFiltersProps) {

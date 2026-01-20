@@ -1,26 +1,12 @@
-"use client";
+import AdminClientLayout from "./AdminClientLayout";
+import { requireRole } from "@/lib/requireRole";
 
-import { useState } from "react";
-import NavBarUser from "../../components/NavBars/NavBarUser";
-
-export default function CreatorLayout({
-    children,
+export default async function AdminLayout({
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    const [collapsed, setCollapsed] = useState(false);
+  await requireRole(["USER", "ADMIN"]);
 
-    return (
-        <div className="min-h-screen bg-[#181411] text-white">
-
-            <main className={`p-4 pb-28 transition-all duration-300  ${collapsed ? "ml-20" : "ml-64"}`}>
-                <NavBarUser
-                    collapsed={collapsed}
-                    setCollapsed={setCollapsed}
-                />
-                {children}
-            </main>
-
-        </div>
-    );
+  return <AdminClientLayout>{children}</AdminClientLayout>;
 }

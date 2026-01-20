@@ -1,12 +1,11 @@
-
-import NewTutorial from "@/components/CreateTutorialForm";
+import NewTutorial from "@/components/Tutorials/CreateTutorialForm";
 
 const NewTutorialPage = () => {
   return (
     <>
-    <NewTutorial />
+      <NewTutorial />
     </>
-  )
+  );
 };
 
 export default NewTutorialPage;

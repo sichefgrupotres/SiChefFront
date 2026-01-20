@@ -2,24 +2,25 @@
 
 import Link from "next/link";
 import { RecipeInterface } from "@/interfaces/IRecipe";
-import { BarChart3, Crown, Heart } from "lucide-react";
+import { BarChart3, Crown } from "lucide-react"; // Quité Heart porque ya está en el botón
+import FavoriteButton from "../FavoriteButton";
 
 interface RecipeCardProps {
   recipe: RecipeInterface;
-  // 1. Agregamos "user" a las opciones permitidas
   mode?: "creator" | "guest" | "admin" | "user";
+  // 👇 NUEVA PROP: Función opcional para ejecutar cuando se quita el like
+  onRemove?: () => void;
 }
 
-const RecipeCard = ({ recipe, mode = "creator" }: RecipeCardProps) => {
+const RecipeCard = ({ recipe, mode = "creator", onRemove }: RecipeCardProps) => {
 
-  // 2. Actualizamos la lógica de redirección
   const href =
     mode === "creator"
       ? `/creator/recipes/${recipe.id}`
       : mode === "admin"
         ? `/admin/content/${recipe.id}`
         : mode === "user"
-          ? `/user/recipes/${recipe.id}` // <--- Ruta para el usuario logueado (ajusta si es /user/recipes/)
+          ? `/user/recipes/${recipe.id}`
           : `/guest/recipes/${recipe.id}`;
 
   return (
@@ -32,13 +33,21 @@ const RecipeCard = ({ recipe, mode = "creator" }: RecipeCardProps) => {
           className="w-full h-full object-cover"
         />
 
-        {/* Favorito */}
-        <button className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm p-2 rounded-full hover:bg-black/70 transition">
-          <Heart
-            size={18}
-            className="text-white hover:fill-red-500 hover:text-red-500 transition cursor-pointer"
+        <div className="absolute top-3 right-3 z-10">
+          <FavoriteButton
+            recipeId={recipe.id}
+            isPremiumRecipe={!!recipe.isPremium}
+            initialIsFavorite={recipe.isFavorite}
+            // 👇 AQUÍ CONECTAMOS EL CABLE
+            onToggle={(isNowFavorite) => {
+              // Si el usuario quitó el like (false) Y tenemos una función de remover...
+              if (!isNowFavorite && onRemove) {
+                onRemove(); // ...ejecutamos la orden de borrar visualmente
+              }
+            }}
           />
-        </button>
+        </div>
+
       </div>
 
       {/* Contenido */}

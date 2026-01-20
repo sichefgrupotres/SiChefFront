@@ -1,0 +1,21 @@
+{
+    "name": "SiChef",
+    "short_name": "SiChef",
+    "description": "Chat de SiChef",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#181411",
+    "theme_color": "#F57C00",
+    "icons": [
+        {
+            "src": "/chef-avatar.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg"
+        },
+        {
+            "src": "/chef-avatar.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ]
+}

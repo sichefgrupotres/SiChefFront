@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import RecipeCard from "@/components/CardRecipe";
+import RecipeCard from "@/components/Recipes/CardRecipe";
 import { useRecipe } from "@/context/RecipeContext";
 import { adminService } from "@/services/admin.services";
 import { useSession } from "next-auth/react";
-import NewTutorial from "@/components/CreateTutorialForm";
+import NewTutorial from "@/components/Tutorials/CreateTutorialForm";
 
 // Componente para mostrar tutoriales existentes
 interface Tutorial {
