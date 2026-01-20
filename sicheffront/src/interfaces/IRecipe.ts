@@ -9,6 +9,7 @@ export interface RecipeInterface {
   difficulty: Difficulty;
   isPremium: boolean;
   category: string[];
+  isFavorite?: boolean;
 }
 export interface CreateRecipePayload {
   title: string;
