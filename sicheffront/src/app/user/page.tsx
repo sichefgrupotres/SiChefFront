@@ -5,14 +5,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import RecipeCard from "@/components/Recipes/CardRecipe";
-// Mantenemos useRecipe por si usas otras cosas del contexto, pero no para el fetch inicial
 import { useRecipe } from "@/context/RecipeContext";
 import { Crown } from "lucide-react";
 
 export default function UserHomePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  
 
   // Usamos estados locales para tener control total de los datos con Token
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -24,8 +22,9 @@ export default function UserHomePage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "none">("none");
 
-  // Verificar Premium
-  const isPremium = session?.user?.role === "PREMIUM"
+  // 👇 CORRECCIÓN: Estandarizamos la lógica Premium aquí
+  const user = session?.user as any;
+  const isPremium = user?.isPremium === true || user?.role === "PREMIUM";
 
   // ================= EFFECT: CARGAR RECETAS CON TOKEN =================
   useEffect(() => {
@@ -36,7 +35,7 @@ export default function UserHomePage() {
           "Content-Type": "application/json",
         };
 
-        // 👇 LA CLAVE: Buscamos el token donde sea que esté
+        // 👇 Buscamos el token donde sea que esté
         const sessionData = session as any;
         const userData = session?.user as any;
         const token = userData?.backendToken || sessionData?.backendToken;
@@ -52,7 +51,6 @@ export default function UserHomePage() {
         if (!res.ok) throw new Error("Error al cargar recetas");
 
         const data = await res.json();
-        // El backend devuelve paginado { data: [], meta: {} } o directo []
         const recipesData = data.data || data || [];
 
         setRecipes(recipesData);
@@ -65,7 +63,6 @@ export default function UserHomePage() {
       }
     };
 
-    // Ejecutamos siempre, pero si hay sesión, esperará a tener el token
     if (status === "loading") return;
     fetchRecipesWithToken();
 

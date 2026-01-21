@@ -17,8 +17,9 @@ export default function UserPage() {
         ? `${userInfo.name} ${userInfo.lastname}`
         : "Chef Invitado";
 
-    // Verificación de Rol
-    const isPremium = session?.user?.role === "PREMIUM"
+    // 👇 CORRECCIÓN: Estandarizamos la lógica Premium aquí
+    const user = session?.user as any;
+    const isPremium = user?.isPremium === true || user?.role === "PREMIUM";
 
     const [favorites, setFavorites] = useState<RecipeInterface[]>([]);
     const [loadingFavs, setLoadingFavs] = useState(true);
