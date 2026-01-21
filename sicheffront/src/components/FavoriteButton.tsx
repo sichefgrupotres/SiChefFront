@@ -5,6 +5,8 @@ import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+// 👇 1. Importamos tu Modal
+import PremiumModal from "./PremiumModal";
 
 interface FavoriteButtonProps {
   recipeId: string | number;
@@ -23,6 +25,9 @@ export default function FavoriteButton({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+
+  // 👇 2. Estado para controlar tu Modal
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   useEffect(() => {
     setIsFavorite(initialIsFavorite);
@@ -53,21 +58,16 @@ export default function FavoriteButton({
     const isSpecialUser =
       userRole === "admin" || userRole === "creator" || userRole === "CREATOR";
 
+    // 👇👇 CAMBIO AQUÍ: Si es premium y el usuario no, abrimos TU MODAL 👇👇
     if (isPremiumRecipe && !userIsPremium && !isSpecialUser) {
-      Swal.fire({
-        title: "Suscribete",
-        text: "Esta receta es exclusiva para usuarios Premium ⭐",
-        icon: "warning",
-        confirmButtonColor: "#F57C00",
-      }).then(() => {
-        router.push("/subscription");
-      });
-      return;
+      // QUITAMOS EL SWAL.FIRE DE AQUÍ
+      setShowPremiumModal(true);
+      return; // Detenemos la ejecución
     }
+    // 👆👆 FIN DEL CAMBIO 👆👆
 
     if (!token) {
       console.error("❌ No se encontró el token.");
-      alert();
 
       Swal.fire({
         title: "Error",
@@ -100,11 +100,9 @@ export default function FavoriteButton({
         },
       );
 
-      // 👇 LEEMOS LA RESPUESTA PARA VER SI HAY ERROR
       const data = await res.json();
 
       if (!res.ok) {
-        // Si el backend dice "Límite", mostramos alerta y lanzamos error
         if (data.message && data.message.includes("Límite")) {
           alert(
             "🛑 ¡LÍMITE DE 5 FAVORITOS ALCANZADO!\n\nElimina una receta de tus favoritos o pásate a Premium para guardar sin límites. ⭐",
@@ -112,17 +110,14 @@ export default function FavoriteButton({
         } else if (res.status === 401) {
           throw new Error("No autorizado");
         } else {
-          // Otros errores
           throw new Error(data.message || "Error al actualizar");
         }
 
-        // Forzamos el catch
         throw new Error("Action blocked");
       }
 
       console.log("✅ Favorito actualizado");
     } catch (error: any) {
-      // Solo logueamos si no fue el error de bloqueo que ya manejamos con el alert
       if (error.message !== "Action blocked") {
         console.error("Error al dar like:", error);
         if (error.message.includes("No autorizado")) {
@@ -130,7 +125,6 @@ export default function FavoriteButton({
         }
       }
 
-      // 👇 REVERTIMOS EL CAMBIO VISUAL (El corazón se apaga)
       setIsFavorite(previousState);
       if (onToggle) onToggle(previousState);
     } finally {
@@ -138,25 +132,32 @@ export default function FavoriteButton({
     }
   };
 
+  // 👇 3. Renderizamos el botón Y el modal condicionalmente
   return (
-    <button
-      onClick={toggleFavorite}
-      disabled={loading}
-      className={`p-2 rounded-full transition-all duration-300 shadow-md flex items-center justify-center group
-        ${
-          isFavorite
+    <>
+      <button
+        onClick={toggleFavorite}
+        disabled={loading}
+        className={`cursor-pointer p-2 rounded-full transition-all duration-300 shadow-md flex items-center justify-center group
+        ${isFavorite
             ? "bg-white text-red-500 hover:bg-red-50"
             : "bg-black/40 text-white hover:bg-red-500 hover:text-white backdrop-blur-sm"
-        }
+          }
       `}
-      title={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
-    >
-      <Heart
-        size={20}
-        className={`transition-all duration-300 ${
-          isFavorite ? "fill-current scale-110" : "group-hover:scale-110"
-        }`}
+        title={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+      >
+        <Heart
+          size={20}
+          className={`transition-all duration-300 ${isFavorite ? "fill-current scale-110" : "group-hover:scale-110"
+            }`}
+        />
+      </button>
+
+      {/* MODAL PREMIUM */}
+      <PremiumModal
+        isOpen={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
       />
-    </button>
+    </>
   );
 }
