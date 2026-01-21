@@ -128,7 +128,7 @@ export default function FavoriteButton({
         >
             <Heart
                 size={20}
-                className={`transition-all duration-300 ${isFavorite ? "fill-current scale-110" : "group-hover:scale-110"
+                className={` cursor-pointer transition-all duration-300 ${isFavorite ? "fill-current scale-110" : "group-hover:scale-110"
                     }`}
             />
         </button>
