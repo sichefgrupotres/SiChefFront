@@ -12,6 +12,7 @@ import { Crown } from "lucide-react";
 export default function UserHomePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
+  
 
   // Usamos estados locales para tener control total de los datos con Token
   const [recipes, setRecipes] = useState<any[]>([]);

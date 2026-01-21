@@ -41,6 +41,8 @@ export default function SubscriptionPage() {
         text: "Debes iniciar sesión para suscribirte",
         icon: "warning",
         confirmButtonColor: "#F57C00",
+      }).then(() => {
+        router.push("/login");
       });
       return;
     }
@@ -95,7 +97,6 @@ export default function SubscriptionPage() {
 
   return (
     <div className="min-h-screen bg-[#181411] text-white px-4 py-16 flex justify-center relative">
-
       {/* 👇 BOTÓN VOLVER ATRÁS */}
       <button
         onClick={() => router.back()}
@@ -140,9 +141,10 @@ export default function SubscriptionPage() {
                   p-6
                   text-left
                   transition-all
-                  ${active
-                    ? "border-orange-500 bg-orange-500/10 shadow-lg"
-                    : "border-white/10 bg-[#2a221b] hover:border-orange-500/40"
+                  ${
+                    active
+                      ? "border-orange-500 bg-orange-500/10 shadow-lg"
+                      : "border-white/10 bg-[#2a221b] hover:border-orange-500/40"
                   }
                 `}
               >
