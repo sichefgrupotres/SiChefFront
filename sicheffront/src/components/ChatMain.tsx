@@ -2,7 +2,7 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useChat } from "@/context/ChatProvider";
 import { useSession } from "next-auth/react";
-import PremiumModal from "@/components/PremiumModal"; // Ajusta la ruta si es necesario
+import PremiumModal from "@/components/PremiumModal";
 
 export default function ChatMain() {
     // 1. TODOS LOS HOOKS (Siempre arriba)
@@ -53,7 +53,9 @@ export default function ChatMain() {
     const userRole = user?.role?.toLowerCase();
 
     const isCreator = userRole === "creator" || userRole === "chef";
-    const isPremium = user?.isPremium === true || user?.plan === "premium";
+
+    // 👇 CORRECCIÓN: Estandarizamos la lógica Premium aquí
+    const isPremium = user?.isPremium === true || user?.role === "PREMIUM";
 
     // 3. RETORNO CONDICIONAL (Seguridad)
     if (!isCreator && !isPremium) {
@@ -67,7 +69,6 @@ export default function ChatMain() {
 
     // 4. RENDERIZADO DEL CHAT
     return (
-        // 👇 CAMBIO: fixed con left para ocupar todo el espacio disponible
         <div className="fixed top-0 bottom-0 right-0 left-20 lg:left-64 bg-[#181411] flex overflow-hidden transition-all duration-300">
             {/* SIDEBAR */}
             <aside className="hidden md:flex flex-col w-2/5 border-r border-gray-800 bg-[#1f1a16]">

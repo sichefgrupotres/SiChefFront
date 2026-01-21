@@ -29,6 +29,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!data?.token || !data?.user?.id) return null;
 
+        // Retornamos el objeto completo incluyendo isPremium
         return {
           id: data.user.id,
           name: data.user.name,
@@ -36,6 +37,7 @@ export const authOptions: NextAuthOptions = {
           email: data.user.email,
           role: data.user.role,
           avatarUrl: data.user.avatarUrl,
+          isPremium: data.user.isPremium, // 👈 CAPTURAMOS DEL BACK
           token: data.token,
         };
       },
@@ -53,6 +55,7 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user, account, profile, trigger, session }) {
+      // 1. Login Inicial (Credenciales)
       if (user) {
         token.id = (user as any).id;
         token.name = user.name;
@@ -60,9 +63,11 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.role = (user as any).role;
         token.avatarUrl = (user as any).avatarUrl;
+        token.isPremium = (user as any).isPremium; // 👈 GUARDAMOS EN TOKEN
         token.backendToken = (user as any).token;
       }
 
+      // 2. Login con Google
       if (account?.provider === "google" && profile) {
         const googleProfile = profile as GoogleProfile;
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register-google`, {
@@ -87,10 +92,29 @@ export const authOptions: NextAuthOptions = {
         token.email = data.user.email;
         token.role = data.user.role;
         token.avatarUrl = data.user.avatarUrl;
+        token.isPremium = data.user.isPremium; // 👈 GUARDAMOS EN TOKEN
       }
 
-      if (trigger === "update" && session?.user?.avatarUrl) {
-        token.avatarUrl = session.user.avatarUrl;
+      // 3. Manejo de Trigger Update (Para refrescar premium sin reloguear)
+      // Cuando llamas a await update() desde el front, entra aquí
+      if (trigger === "update" && token.backendToken) {
+        try {
+          // Asumimos que tienes un endpoint para obtener tu propio perfil
+          // Si no lo tienes, puedes comentar este bloque, pero el usuario tendrá que reloguear.
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, { // O la ruta donde obtienes tus datos
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token.backendToken}` }
+          });
+
+          if (res.ok) {
+            const userData = await res.json();
+            // Actualizamos los datos del token con lo fresco de la BD
+            token.isPremium = userData.isPremium;
+            token.role = userData.roleId || userData.role;
+          }
+        } catch (error) {
+          console.error("Error actualizando token de sesión", error);
+        }
       }
 
       return token;
@@ -99,6 +123,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.backendToken = token.backendToken as string;
 
+      // Pasamos todo al frontend
       session.user = {
         id: token.id as string,
         name: token.name as string,
@@ -106,7 +131,8 @@ export const authOptions: NextAuthOptions = {
         email: token.email as string,
         role: token.role as string,
         avatarUrl: token.avatarUrl as string,
-      };
+        isPremium: token.isPremium as boolean, // 👈 EXPONEMOS AL FRONT
+      } as any;
 
       return session;
     },
