@@ -27,7 +27,7 @@ export default function CloseModalButton() {
   cursor-pointer
 "
     >
-      <X className="h-5 w-5" />
+      <X className="h-5 w-5 cursor-pointer" />
     </button>
   );
 }
