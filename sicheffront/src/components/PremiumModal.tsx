@@ -80,7 +80,7 @@ const PremiumModal = ({ isOpen, onClose }: PremiumModalProps) => {
                         </Link>
 
                         <button
-                            onClick={() => router.push("/")}
+                            onClick={() => router.back()}
                             className="text-white text-sm font-medium hover:text-white/50 transition cursor-pointer underline"
                         >
                             Tal vez más tarde
