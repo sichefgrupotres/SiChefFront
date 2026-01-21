@@ -108,16 +108,21 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       setError("No autorizado");
       return false;
     }
+
     if (!data.file) {
       setError("Debes seleccionar una imagen");
       return false;
     }
+
     try {
       const formData = new FormData();
 
       formData.append("title", data.title);
       formData.append("description", data.description);
-      formData.append("ingredients", data.ingredients);
+
+      // 🔥 CLAVE
+      formData.append("ingredients", JSON.stringify(data.ingredients));
+
       formData.append("difficulty", data.difficulty);
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
@@ -140,7 +145,6 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       return false;
     }
   };
-
   const updateRecipe = async (id: string, data: Partial<RecipeInterface>) => {
     try {
       const res = await fetch(
