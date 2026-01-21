@@ -5,7 +5,6 @@ import { Heart } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-// 👇 1. Importamos tu Modal
 import PremiumModal from "./PremiumModal";
 
 interface FavoriteButtonProps {
@@ -25,8 +24,6 @@ export default function FavoriteButton({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
-
-  // 👇 2. Estado para controlar tu Modal
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   useEffect(() => {
@@ -53,22 +50,21 @@ export default function FavoriteButton({
     const userData = session.user as any;
     const token = userData.backendToken || sessionData.backendToken;
     const userRole = userData.role || userData.roleId;
-    const userIsPremium = userData.isPremium;
+
+    // 👇 CORRECCIÓN: Aplicamos la misma lógica universal que en el resto de la app
+    const userIsPremium = userData?.isPremium === true || userRole === "PREMIUM";
 
     const isSpecialUser =
       userRole === "admin" || userRole === "creator" || userRole === "CREATOR";
 
-    // 👇👇 CAMBIO AQUÍ: Si es premium y el usuario no, abrimos TU MODAL 👇👇
+    // Lógica de bloqueo
     if (isPremiumRecipe && !userIsPremium && !isSpecialUser) {
-      // QUITAMOS EL SWAL.FIRE DE AQUÍ
       setShowPremiumModal(true);
-      return; // Detenemos la ejecución
+      return;
     }
-    // 👆👆 FIN DEL CAMBIO 👆👆
 
     if (!token) {
       console.error("❌ No se encontró el token.");
-
       Swal.fire({
         title: "Error",
         text: "Error de sesión: No se encontró tu token.",
@@ -104,6 +100,7 @@ export default function FavoriteButton({
 
       if (!res.ok) {
         if (data.message && data.message.includes("Límite")) {
+          // Mensaje nativo si el backend rechaza por límite (usuario free)
           alert(
             "🛑 ¡LÍMITE DE 5 FAVORITOS ALCANZADO!\n\nElimina una receta de tus favoritos o pásate a Premium para guardar sin límites. ⭐",
           );
@@ -132,7 +129,6 @@ export default function FavoriteButton({
     }
   };
 
-  // 👇 3. Renderizamos el botón Y el modal condicionalmente
   return (
     <>
       <button
@@ -153,7 +149,6 @@ export default function FavoriteButton({
         />
       </button>
 
-      {/* MODAL PREMIUM */}
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={() => setShowPremiumModal(false)}
