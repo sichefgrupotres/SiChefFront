@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "2": "^3.0.0",
+    "canvas-confetti": "^1.9.4",
     "cookies-next": "^6.1.1",
     "formik": "^2.4.9",
     "lucide-react": "^0.562.0",

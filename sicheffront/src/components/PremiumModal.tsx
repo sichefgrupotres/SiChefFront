@@ -72,14 +72,14 @@ const PremiumModal = ({ isOpen, onClose }: PremiumModalProps) => {
 
                     {/* Acciones */}
                     <div className="space-y-4">
-                        <Link href="/pricing" className="block w-full">
+                        <Link href="/subscription" className="block w-full">
                             <button className="w-full bg-[#F57C00] hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] active:scale-95 cursor-pointer">
                                 HACERME PREMIUM
                             </button>
                         </Link>
 
                         <button
-                            onClick={() => router.push("/")}
+                            onClick={() => router.back()}
                             className="text-white text-sm font-medium hover:text-white/50 transition cursor-pointer underline"
                         >
                             Tal vez más tarde
