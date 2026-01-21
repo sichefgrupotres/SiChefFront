@@ -36,13 +36,25 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const [userRecipes, setUserRecipes] = useState<RecipeInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const fetchRecipes = async () => {
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchMyRecipes();
+    }
+  }, [token]);
+
+  const fetchRecipes = async (page = 1, limit = 5) => {
     try {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts?page=${page}&limit=${limit}`
+      );
 
       if (!res.ok) {
         throw new Error(`Error ${res.status}`);
@@ -58,7 +70,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
     }
   };
 
-  const fetchMyRecipes = async () => {
+  const fetchMyRecipes = async (page = 1, limit = 5) => {
     try {
       setLoading(true);
       setError(null);
@@ -68,7 +80,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`,
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts?page=${page}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -181,8 +193,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         updateRecipe,
         deleteRecipe,
         getRecipeById,
-      }}
-    >
+      }}>
       {children}
     </RecipeContext.Provider>
   );
