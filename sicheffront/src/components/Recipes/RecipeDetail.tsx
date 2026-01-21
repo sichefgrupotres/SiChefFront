@@ -316,6 +316,7 @@ export default function RecipeDetail({
   }, [activeTab, recipe.id]);
 
   // ===== INGREDIENTES =====
+
   const ingredientsList = recipe.ingredients
     .split(",")
     .map((item) => item.trim())
@@ -437,7 +438,6 @@ export default function RecipeDetail({
               <h2 className="text-xl font-semibold mb-4 text-[#F57C00]">
                 Ingredientes
               </h2>
-
               <ul className="space-y-2 text-white/90">
                 {ingredientsList.map((ingredient, index) => (
                   <li key={index} className="flex gap-2">
