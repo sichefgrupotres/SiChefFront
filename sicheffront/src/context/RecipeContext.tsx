@@ -36,13 +36,25 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
   const [userRecipes, setUserRecipes] = useState<RecipeInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const fetchRecipes = async () => {
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchMyRecipes();
+    }
+  }, [token]);
+
+  const fetchRecipes = async (page = 1, limit = 5) => {
     try {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts?page=${page}&limit=${limit}`
+      );
 
       if (!res.ok) {
         throw new Error(`Error ${res.status}`);
@@ -58,7 +70,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
     }
   };
 
-  const fetchMyRecipes = async () => {
+  const fetchMyRecipes = async (page = 1, limit = 5) => {
     try {
       setLoading(true);
       setError(null);
@@ -68,7 +80,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`,
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts?page=${page}&limit=${limit}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -96,16 +108,21 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       setError("No autorizado");
       return false;
     }
+
     if (!data.file) {
       setError("Debes seleccionar una imagen");
       return false;
     }
+
     try {
       const formData = new FormData();
 
       formData.append("title", data.title);
       formData.append("description", data.description);
-      formData.append("ingredients", data.ingredients);
+
+      // 🔥 CLAVE
+      formData.append("ingredients", JSON.stringify(data.ingredients));
+
       formData.append("difficulty", data.difficulty);
       formData.append("isPremium", String(data.isPremium));
       formData.append("file", data.file);
@@ -128,7 +145,6 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       return false;
     }
   };
-
   const updateRecipe = async (id: string, data: Partial<RecipeInterface>) => {
     try {
       const res = await fetch(
@@ -181,8 +197,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
         updateRecipe,
         deleteRecipe,
         getRecipeById,
-      }}
-    >
+      }}>
       {children}
     </RecipeContext.Provider>
   );
