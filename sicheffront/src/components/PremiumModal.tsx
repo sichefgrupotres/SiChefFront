@@ -1,4 +1,5 @@
 "use client";
+import { PATHROUTES } from "@/utils/PathRoutes";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -72,7 +73,7 @@ const PremiumModal = ({ isOpen, onClose }: PremiumModalProps) => {
 
                     {/* Acciones */}
                     <div className="space-y-4">
-                        <Link href="/subscription" className="block w-full">
+                        <Link href={"/subscription"} className="block w-full">
                             <button className="w-full bg-[#F57C00] hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] active:scale-95 cursor-pointer">
                                 HACERME PREMIUM
                             </button>

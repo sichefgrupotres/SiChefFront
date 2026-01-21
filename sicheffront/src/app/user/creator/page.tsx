@@ -111,7 +111,7 @@ export default function CreatorProfile() {
               />
 
               {/* Promo Card con el naranja como fondo */}
-              <div className="col-span-full bg-gradient-to-br from-[#F57C00] to-[#ff9800] rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
+              <div className="col-span-full bg-linear-to-br from-[#F57C00] to-[#ff9800] rounded-45xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative group">
                 <div className="absolute right-0 top-0 opacity-10 group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-[150px]">
                     restaurant
