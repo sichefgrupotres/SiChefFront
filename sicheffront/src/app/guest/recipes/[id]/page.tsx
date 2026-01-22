@@ -221,10 +221,10 @@ export default function GuestRecipePage() {
               </p>
 
               <button
-                onClick={() => router.push("/subscription")}
+                onClick={() => router.push("/register")}
                 className="px-8 py-3 rounded-full bg-[#F57C00] text-white font-semibold hover:bg-orange-600 transition shadow-lg"
               >
-                Suscribirme ahora
+                Registrate ahora!
               </button>
 
               <span className="text-xs text-white/60">
