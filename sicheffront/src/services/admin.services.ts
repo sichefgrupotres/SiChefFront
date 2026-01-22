@@ -1,8 +1,9 @@
 import { SubscriptionStatus } from "@/types/next-auth";
 
 export class AdminService {
-  private baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/admin`; // Ajusta si tu backend tiene otra URL
+  private baseUrl = `${process.env.NEXT_PUBLIC_API_URL}/admin`;
 
+  // =================== USUARIOS ===================
   async getAllUsers(token: string) {
     const res = await fetch(`${this.baseUrl}/users`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -48,27 +49,21 @@ export class AdminService {
   async updateUserSubscription(
     userId: string,
     status: SubscriptionStatus,
-    token: string,
+    token: string
   ) {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/admin/users/${userId}/subscription`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
+    const res = await fetch(`${this.baseUrl}/users/${userId}/subscriptions`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    );
-
-    if (!res.ok) {
-      throw new Error("Error al actualizar suscripción");
-    }
-
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) throw new Error("Error al actualizar suscripción");
     return res.json();
   }
 
+  // =================== TUTORIALES ===================
   async getAllTutorials(token: string) {
     const res = await fetch(`${this.baseUrl}/tutorials`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -76,6 +71,16 @@ export class AdminService {
     if (!res.ok) throw new Error("No se pudieron obtener los tutoriales");
     return res.json();
   }
+
+  // =================== RECETAS / POSTS ===================
+  async getAllRecipes(token: string) {
+    const res = await fetch(`${this.baseUrl}/posts`, { // <-- cambiar a /posts
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Error al obtener recetas");
+    return res.json();
+  }
 }
 
 export const adminService = new AdminService();
+
