@@ -41,16 +41,19 @@ export const loginUserService = async (data: LoginFormValuesInterface) => {
 };
 
 export const registerUserService = async (
-  userData: RegisterFormValuesInterface
+  userData: RegisterFormValuesInterface,
 ) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
       },
-      body: JSON.stringify(userData),
-    });
+    );
 
     const data = await response.json();
 
@@ -117,6 +120,39 @@ export const createPost = async (data, token: string) => {
     body: formData,
   });
 
-  return res.ok;
+  // 🔥 NUEVO — leer respuesta del backend
+  const responseData = await res.json();
+
+  console.log("📦 BACKEND RESPONSE:", responseData);
+
+  if (responseData.post) {
+    responseData.post.statusPost = responseData.statusPost;
+  }
+
+  return {
+    ok: res.ok,
+    ...responseData, // statusPost, alertMessage, results
+  };
 };
 
+// export const createPost = async (data, token: string) => {
+//   const formData = new FormData();
+
+//   Object.entries(data).forEach(([key, value]) => {
+//     if (Array.isArray(value)) {
+//       value.forEach((v) => formData.append(key, v));
+//     } else {
+//       formData.append(key, value as any);
+//     }
+//   });
+
+//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+//     method: "POST",
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//     body: formData,
+//   });
+
+//   return res.ok;
+// };

@@ -145,6 +145,7 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       return false;
     }
   };
+
   const updateRecipe = async (id: string, data: Partial<RecipeInterface>) => {
     try {
       const res = await fetch(
