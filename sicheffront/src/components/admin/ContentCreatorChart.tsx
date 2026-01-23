@@ -118,15 +118,6 @@ export default function CreatorsActivityChart({ token }: Props) {
 
   return (
     <section className="bg-[#2a221b] rounded-2xl p-6 border border-white/10 shadow-xl">
-      <header className="mb-6">
-        <h3 className="text-lg font-semibold text-white">
-          Evolución de Creadores
-        </h3>
-        <p className="text-sm text-white/50">
-          Cantidad de publicaciones por día
-        </p>
-      </header>
-
       {/* BUSCADOR Y SELECCIÓN */}
       <div className="mb-4 flex flex-col md:flex-row md:items-center gap-4">
         <input
@@ -165,12 +156,12 @@ export default function CreatorsActivityChart({ token }: Props) {
           <LineChart data={chartData}>
             <XAxis
               dataKey="date"
-              tick={{ fill: "#FFB74D", fontSize: 12, fontWeight: 600 }}
+              tick={{ fill: "#FFB74D", fontSize: 11, fontWeight: 600 }}
               tickLine={false}
               axisLine={{ stroke: "#FFF" }}
             />
             <YAxis
-              tick={{ fill: "#FFF", fontSize: 12 }}
+              tick={{ fill: "#FFF", fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "#FFF" }}
               allowDecimals={false} // solo enteros
@@ -185,7 +176,7 @@ export default function CreatorsActivityChart({ token }: Props) {
               }}
             />
             <Legend
-              wrapperStyle={{ color: "#FFF", fontSize: 12 }}
+              wrapperStyle={{ color: "#FFF", fontSize: 10 }}
               layout="horizontal"
               verticalAlign="top"
             />
@@ -197,7 +188,7 @@ export default function CreatorsActivityChart({ token }: Props) {
                   type="monotone"
                   dataKey={creator.username}
                   stroke={colors[index % colors.length]}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   dot={{ r: 3 }}
                   activeDot={{ r: 5 }}
                 />
