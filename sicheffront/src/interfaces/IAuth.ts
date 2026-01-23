@@ -5,6 +5,7 @@ export interface AuthSessionUser {
   lastname?: string;
   role: "USER" | "CREATOR" | "ADMIN";
   avatarUrl?: string;
+  isPremium: boolean;
 }
 
 export interface AuthSession {
