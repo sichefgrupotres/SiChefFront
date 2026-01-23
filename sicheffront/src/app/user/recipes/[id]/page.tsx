@@ -111,7 +111,7 @@ export default function GuestRecipePage() {
         onClick={() => router.push("/user")}
         className="flex items-center gap-2 text-sm text-orange-400 hover:text-orange-300 mb-6 transition"
       >
-        <ArrowLeft size={16} />
+        <ArrowLeft size={16} className="cursor-pointer" />
         Volver a recetas
       </button>
 
