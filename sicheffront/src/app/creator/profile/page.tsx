@@ -23,12 +23,13 @@ export default function CreatorPage() {
     : "Chef Invitado";
 
   const [avatar, setAvatar] = useState(
-    dataUser?.user?.avatarUrl || "/chef-avatar.jpg",
+    dataUser?.user?.avatarUrl || "/chef-avatar.jpg"
   );
   const [uploading, setUploading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"recipes" | "tutorials" | "favorites">("recipes");
-  
+  const [activeTab, setActiveTab] = useState<
+    "recipes" | "tutorials" | "favorites"
+  >("recipes");
 
   // Estados para contadores (Estadísticas)
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -57,13 +58,13 @@ export default function CreatorPage() {
         // --- Carga Recetas ---
         const recipesRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/posts/my-posts`,
-          { headers: { Authorization: `Bearer ${session.backendToken}` } },
+          { headers: { Authorization: `Bearer ${session.backendToken}` } }
         );
 
         // --- Carga Tutoriales ---
         const tutorialsRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/tutorials/my-tutorials`,
-          { headers: { Authorization: `Bearer ${session.backendToken}` } },
+          { headers: { Authorization: `Bearer ${session.backendToken}` } }
         );
 
         // --- Carga Favoritos (AGREGADO AQUÍ) ---
@@ -80,13 +81,15 @@ export default function CreatorPage() {
         let favoritesData = [];
         if (favoritesRes.ok) {
           const rawFavs = await favoritesRes.json();
-          favoritesData = rawFavs.map((item: any) => ({ ...item, isFavorite: true }));
+          favoritesData = rawFavs.map((item: any) => ({
+            ...item,
+            isFavorite: true,
+          }));
         }
 
         setRecipes(recipesData.data ?? recipesData);
         setTutorials(tutorialsData.data ?? tutorialsData);
         setFavorites(favoritesData); // Guardamos los favoritos
-
       } catch (error) {
         console.error("Error cargando datos generales:", error);
       }
@@ -96,16 +99,15 @@ export default function CreatorPage() {
   }, [session]);
 
   // 3. (OPCIONAL) Fetch de refresco solo para favoritos
-  // Puedes dejar esto si quieres que se actualice al hacer click en la pestaña, 
+  // Puedes dejar esto si quieres que se actualice al hacer click en la pestaña,
   // o borrarlo si con la carga inicial es suficiente.
   useEffect(() => {
     // Solo ejecutamos si cambiamos a favorites Y si ya tenemos datos (para no pisar la carga inicial innecesariamente)
     if (activeTab === "favorites" && session?.backendToken) {
-      // Podrías poner un fetch aquí si quisieras refrescar al entrar, 
+      // Podrías poner un fetch aquí si quisieras refrescar al entrar,
       // pero con el useEffect de arriba ya tienes el contador solucionado.
     }
   }, [activeTab, session]);
-
 
   // ================= FUNCIONES =================
 
@@ -135,7 +137,7 @@ export default function CreatorPage() {
             Authorization: `Bearer ${session.backendToken}`,
           },
           body: formData,
-        },
+        }
       );
 
       if (!res.ok) return;
@@ -166,8 +168,9 @@ export default function CreatorPage() {
           <img
             src={session?.user?.avatarUrl || avatar}
             alt="Perfil"
-            className={`w-full h-full object-cover rounded-full shadow-sm transition-opacity duration-300 ${uploading ? "opacity-50" : "opacity-100"
-              }`}
+            className={`w-full h-full object-cover rounded-full shadow-sm transition-opacity duration-300 ${
+              uploading ? "opacity-50" : "opacity-100"
+            }`}
           />
 
           {uploading && (
@@ -180,11 +183,11 @@ export default function CreatorPage() {
             className={`absolute bottom-0 right-0 translate-x-1 translate-y-1 
             w-9 h-9 rounded-full bg-[#F57C00] flex items-center justify-center 
             shadow-lg border-2 border-white transition 
-            ${uploading
+            ${
+              uploading
                 ? "cursor-not-allowed opacity-70"
                 : "cursor-pointer hover:scale-105 active:scale-95"
-              }`}
-          >
+            }`}>
             <span className="material-symbols-outlined text-white text-[20px]">
               {uploading ? "hourglass_empty" : "photo_camera"}
             </span>
@@ -247,8 +250,7 @@ export default function CreatorPage() {
           href={PATHROUTES.NEWRECIPE}
           className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
           flex items-center justify-center gap-2
-          hover:bg-[#F57C00] hover:text-white transition-all active:scale-95"
-        >
+          hover:bg-[#F57C00] hover:text-white transition-all active:scale-95">
           <span className="material-symbols-outlined text-[26px]">
             restaurant_menu
           </span>
@@ -259,8 +261,7 @@ export default function CreatorPage() {
           <button
             className="w-full sm:w-48 py-3 rounded-lg bg-orange-500/20 text-[#F57C00] font-semibold
             flex items-center justify-center gap-2
-            hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer"
-          >
+            hover:bg-[#F57C00] hover:text-white transition-all active:scale-95 cursor-pointer">
             <span className="material-symbols-outlined text-[26px]">
               video_camera_front
             </span>
@@ -275,33 +276,33 @@ export default function CreatorPage() {
           <button
             onClick={() => setActiveTab("recipes")}
             className={`pb-3 font-semibold transition cursor-pointer whitespace-nowrap
-              ${activeTab === "recipes"
-                ? "text-orange-500 border-b-2 border-orange-500"
-                : "text-gray-400 hover:text-white"
-              }`}
-          >
+              ${
+                activeTab === "recipes"
+                  ? "text-orange-500 border-b-2 border-orange-500"
+                  : "text-gray-400 hover:text-white"
+              }`}>
             Mis Recetas
           </button>
 
           <button
             onClick={() => setActiveTab("tutorials")}
             className={`pb-3 font-semibold transition cursor-pointer whitespace-nowrap
-              ${activeTab === "tutorials"
-                ? "text-orange-500 border-b-2 border-orange-500"
-                : "text-gray-400 hover:text-white"
-              }`}
-          >
+              ${
+                activeTab === "tutorials"
+                  ? "text-orange-500 border-b-2 border-orange-500"
+                  : "text-gray-400 hover:text-white"
+              }`}>
             Mis Tutoriales
           </button>
 
           <button
             onClick={() => setActiveTab("favorites")}
             className={`pb-3 font-semibold transition cursor-pointer whitespace-nowrap
-              ${activeTab === "favorites"
-                ? "text-orange-500 border-b-2 border-orange-500"
-                : "text-gray-400 hover:text-white"
-              }`}
-          >
+              ${
+                activeTab === "favorites"
+                  ? "text-orange-500 border-b-2 border-orange-500"
+                  : "text-gray-400 hover:text-white"
+              }`}>
             Favoritos
           </button>
         </div>
@@ -309,7 +310,6 @@ export default function CreatorPage() {
 
       {/* CONTENIDO DINÁMICO */}
       <section className="px-4 md:px-8 pb-16 bg-[#181411]">
-
         {activeTab === "recipes" && <MyRecipesList />}
 
         {activeTab === "tutorials" && <MyTutorialsList />}
@@ -340,7 +340,6 @@ export default function CreatorPage() {
     </div>
   );
 }
-
 
 // "use client";
 
@@ -531,9 +530,9 @@ export default function CreatorPage() {
 //           )}
 
 //           <label
-//             className={`absolute bottom-0 right-0 translate-x-1 translate-y-1 
-//             w-9 h-9 rounded-full bg-[#F57C00] flex items-center justify-center 
-//             shadow-lg border-2 border-white transition 
+//             className={`absolute bottom-0 right-0 translate-x-1 translate-y-1
+//             w-9 h-9 rounded-full bg-[#F57C00] flex items-center justify-center
+//             shadow-lg border-2 border-white transition
 //             ${
 //               uploading
 //                 ? "cursor-not-allowed opacity-70"

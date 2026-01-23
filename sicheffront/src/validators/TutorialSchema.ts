@@ -42,20 +42,6 @@ export const TutorialFormSchema = Yup.object({
 
   recipeId: Yup.string().required("Debes seleccionar una receta"),
 
-  ingredients: Yup.array()
-    .of(
-      Yup.object({
-        title: Yup.string().required("El ingrediente es obligatorio"),
-        description: Yup.string().optional(),
-      })
-    )
-    .min(1, "Agregá al menos un ingrediente"),
-
-  steps: Yup.array()
-    .min(1, "Agrega al menos un paso")
-    .of(
-      Yup.object({
-        description: Yup.string().trim().required("El paso es obligatorio"),
-      })
-    ),
+  ingredients: Yup.array().optional(),
+  steps: Yup.array().optional(),
 });
