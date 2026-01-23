@@ -34,7 +34,9 @@ export default function AdminContentPage() {
     }
   };
 
+  // ✅ CAMBIO MÍNIMO: esperamos token para traer TODAS las recetas
   useEffect(() => {
+    if (!session?.backendToken) return;
     fetchRecipes();
   }, [session]);
 
@@ -46,13 +48,14 @@ export default function AdminContentPage() {
           Contenido
         </h1>
         <p className="text-sm text-white/60 mt-1 ml-4">
-          Listado de recetas y tutoriales disponibles
+          Listado de recetas 
         </p>
       </header>
 
       {/* RECIPES */}
       <section>
         <h2 className="text-xl font-semibold text-white mb-4">Recetas</h2>
+
         {loadingRecipes ? (
           <p className="text-white/60">Cargando recetas...</p>
         ) : recipes.length === 0 ? (
@@ -60,25 +63,11 @@ export default function AdminContentPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} mode="admin" />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* TUTORIALS LIST */}
-      <section>
-        <h2 className="text-xl font-semibold text-white mb-4">
-          Tutoriales existentes
-        </h2>
-        {loadingTutorials ? (
-          <p className="text-white/60">Cargando tutoriales...</p>
-        ) : tutorials.length === 0 ? (
-          <p className="text-white/60">No hay tutoriales disponibles</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tutorials.map((tut) => (
-              <TutorialCard key={tut.id} />
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                mode="admin"
+              />
             ))}
           </div>
         )}

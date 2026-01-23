@@ -1,34 +1,46 @@
 "use client";
 
 import { useEffect } from "react";
-import RecipeCard from "@/components/Recipes/CardRecipe";
+import { useRouter } from "next/navigation";
+import RecipeCardCreator from "./CardRecipeCreator";
 import { useRecipe } from "@/context/RecipeContext";
 import { useSession } from "next-auth/react";
+import Swal from "sweetalert2";
 
 export default function MyRecipesList() {
-  const { userRecipes, fetchMyRecipes, loading, error } = useRecipe();
+  const { userRecipes, fetchMyRecipes, deleteRecipe, loading, error } =
+    useRecipe();
+
   const { status } = useSession();
+  const router = useRouter();
+
   useEffect(() => {
     if (status === "authenticated") {
       fetchMyRecipes();
     }
   }, [status]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Cargando recetas...
-      </div>
-    );
-  }
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: "¿Eliminar receta?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-400">
-        {error}
-      </div>
-    );
-  }
+    if (!result.isConfirmed) return;
+
+    await deleteRecipe(id);
+
+    Swal.fire({
+      icon: "success",
+      title: "Receta eliminada",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
@@ -38,7 +50,13 @@ export default function MyRecipesList() {
         </p>
       ) : (
         userRecipes.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
+          <RecipeCardCreator
+            key={recipe.id}
+            recipe={recipe}
+            mode="creator"
+            onEdit={() => router.push(`/creator/recipes/${recipe.id}/edit`)}
+            onRemove={() => handleDelete(recipe.id)}
+          />
         ))
       )}
     </div>

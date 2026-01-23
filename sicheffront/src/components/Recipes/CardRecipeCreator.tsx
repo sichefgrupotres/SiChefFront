@@ -2,40 +2,29 @@
 
 import Link from "next/link";
 import { RecipeInterface } from "@/interfaces/IRecipe";
-import { BarChart3, Crown } from "lucide-react"; // Quité Heart porque ya está en el botón
-import FavoriteButton from "../FavoriteButton";
-import { useAuth } from "@/context/AuthContext";
+import { BarChart3, Crown, Pencil, Trash2 } from "lucide-react";
 
 interface RecipeCardProps {
   recipe: RecipeInterface;
-  mode?: "creator" | "guest" | "admin" | "user";
-  // 👇 NUEVA PROP: Función opcional para ejecutar cuando se quita el like
+  mode?: "creator" | "admin" | "user" | "guest";
   onRemove?: () => void;
+  onEdit?: () => void;
 }
 
-const RecipeCard = ({
+const RecipeCardCreator = ({
   recipe,
   mode = "creator",
   onRemove,
+  onEdit,
 }: RecipeCardProps) => {
   const href =
     mode === "creator"
       ? `/creator/recipes/${recipe.id}`
       : mode === "admin"
-        ? `/admin/content/${recipe.id}`
-        : mode === "user"
-          ? `/user/recipes/${recipe.id}`
-          : `/guest/recipes/${recipe.id}`;
-
-  const { dataUser, isLoadingUser } = useAuth();
-
-  if (isLoadingUser) return null;
-
-  const role = dataUser?.user?.role;
-
-  const isAdmin = role === "ADMIN";
-  const isCreator = role === "CREATOR";
-  const isUser = role === "USER";
+      ? `/admin/content/${recipe.id}`
+      : mode === "user"
+      ? `/user/recipes/${recipe.id}`
+      : `/guest/recipes/${recipe.id}`;
 
   return (
     <div className="relative flex flex-col w-full rounded-xl overflow-hidden shadow hover:shadow-xl transition bg-[#2a221b]">
@@ -48,7 +37,7 @@ const RecipeCard = ({
         />
 
         <div className="absolute top-3 right-3 z-10">
-          <FavoriteButton
+          {/* <FavoriteButton
             recipeId={recipe.id}
             isPremiumRecipe={!!recipe.isPremium}
             initialIsFavorite={recipe.isFavorite}
@@ -59,28 +48,26 @@ const RecipeCard = ({
                 onRemove(); // ...ejecutamos la orden de borrar visualmente
               }
             }}
-          />
+          /> */}
+
+          {mode === "creator" && (
+            <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-lg">
+              <button
+                onClick={onEdit}
+                className="text-white hover:text-orange-400 transition"
+                title="Editar receta">
+                <Pencil size={18} />
+              </button>
+
+              <button
+                onClick={onRemove}
+                className="text-white hover:text-red-400 transition"
+                title="Eliminar receta">
+                <Trash2 size={18} />
+              </button>
+            </div>
+          )}
         </div>
-
-        {isUser && (
-          <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full">
-            {recipe.avatarUrl ? (
-              <img
-                src={recipe.avatarUrl}
-                alt={recipe.creatorName}
-                className="w-6 h-6 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-[10px] font-bold text-white">
-                {recipe.creatorName?.charAt(0).toUpperCase()}
-              </div>
-            )}
-
-            <span className="text-xs text-white truncate max-w-45">
-              {recipe.creatorName}
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Contenido */}
@@ -114,4 +101,4 @@ const RecipeCard = ({
   );
 };
 
-export default RecipeCard;
+export default RecipeCardCreator;
