@@ -60,7 +60,7 @@ const RecipeCard = ({
       // Si TypeScript se queja aquí, usa (recipe as any).creatorId temporalmente
       const creatorId = (recipe as any).creatorId || (recipe as any).userId;
       if (creatorId) {
-        router.push(`/chat/${creatorId}`);
+        router.push(`/chat`);
       } else {
         console.error("No se encontró el ID del creador en la receta");
       }
