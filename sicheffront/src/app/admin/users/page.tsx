@@ -98,28 +98,46 @@ export default function AdminUsersPage() {
     });
 
   // ================= HANDLERS =================
-  const handleRoleChange = async (userId: string, newRole: RoleId) => {
-    if (!session?.backendToken) return;
-    try {
-      await adminService.updateUserRole(session.backendToken, userId, newRole);
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, roleId: newRole } : u))
-      );
-    } catch (err) {
-      console.error("Error cambiando rol:", err);
-    }
-  };
+ const handleRoleChange = async (userId: string, newRole: RoleId) => {
+  if (!session?.backendToken) return;
+
+  const result = await adminService.updateUserRole(
+    userId,
+    newRole,
+    session.backendToken
+  );
+
+  if (!result.ok) {
+    console.warn("Cambio de rol rechazado");
+    return;
+  }
+
+  // ✅ backend OK → actualizamos UI
+  setUsers((prev) =>
+    prev.map((u) =>
+      u.id === userId ? { ...u, roleId: newRole } : u
+    )
+  );
+};
 
  const handleBlockToggle = async (userId: string, blocked: boolean) => {
   if (!session?.backendToken) return;
+
   try {
-    // Usamos tu función de adminService para bloquear/desbloquear
     await adminService.blockUser(userId, blocked, session.backendToken);
-    
-    // Actualizamos el estado local
-    setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, blocked } : u))
-    );
+
+    setUsers((prev) => {
+      const updated = prev.map((u) =>
+        u.id === userId ? { ...u, blocked } : u
+      );
+
+      // 🔹 reordenamos inmediatamente
+      return [...updated].sort((a, b) => {
+        if (a.blocked && !b.blocked) return 1;
+        if (!a.blocked && b.blocked) return -1;
+        return a.name.localeCompare(b.name);
+      });
+    });
   } catch (err) {
     console.error("Error cambiando estado de bloqueo:", err);
   }
