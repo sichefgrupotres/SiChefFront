@@ -23,19 +23,17 @@ export const authOptions: NextAuthOptions = {
               email: credentials.email,
               password: credentials.password,
             }),
-          },
+          }
         );
 
         const data = await res.json();
-        if (res.status === 403 && data?.error === "USER_BLOCKED") {
-          // Esto llegará al frontend como result.error
-          return Promise.reject(new Error("USER_BLOCKED"));
+        if (res.status === 403 && data?.message === "USER_BLOCKED") {
+          throw new Error("USER_BLOCKED");
         }
+
         if (!res.ok) return null;
 
         if (!data?.token || !data?.user?.id) return null;
-
-        // Retornamos el objeto completo incluyendo isPremium
         return {
           id: data.user.id,
           name: data.user.name,
@@ -43,7 +41,7 @@ export const authOptions: NextAuthOptions = {
           email: data.user.email,
           role: data.user.role,
           avatarUrl: data.user.avatarUrl,
-          isPremium: data.user.isPremium, // 👈 CAPTURAMOS DEL BACK
+          isPremium: data.user.isPremium,
           token: data.token,
         };
       },
@@ -89,7 +87,7 @@ export const authOptions: NextAuthOptions = {
               avatarUrl: googleProfile.picture,
               // roleId: "USER",
             }),
-          },
+          }
         );
 
         const data = await res.json();
@@ -116,7 +114,7 @@ export const authOptions: NextAuthOptions = {
               // O la ruta donde obtienes tus datos
               method: "GET",
               headers: { Authorization: `Bearer ${token.backendToken}` },
-            },
+            }
           );
 
           if (res.ok) {
