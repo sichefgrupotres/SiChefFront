@@ -191,14 +191,20 @@ export default function AdminPage() {
                   <th className="p-3 text-left">Periodo</th>
                 </tr>
               </thead>
-              <tbody>
+               <tbody>
                 {subscriptions.map((sub) => (
                   <tr
                     key={sub.userId}
                     className="border-b border-white/10 hover:bg-white/5"
                   >
                     <td className="p-3">{sub.userEmail}</td>
-                    <td className="p-3">{sub.plan}</td>
+                    <td className="p-3">
+                      {sub.plan === "MONTHLY"
+                        ? "Mensual"
+                        : sub.plan === "YEARLY"
+                        ? "Anual"
+                        : sub.plan}
+                    </td>
                     <td
                       className={`p-3 font-semibold ${
                         sub.status === "ACTIVE"
@@ -206,7 +212,15 @@ export default function AdminPage() {
                           : "text-yellow-400"
                       }`}
                     >
-                      {sub.status}
+                      {sub.status === "ACTIVE"
+                        ? "Activo"
+                        : sub.status === "CANCELLED"
+                        ? "Cancelado"
+                        : sub.status === "PAST_DUE"
+                        ? "Vencido"
+                        : sub.status === "TRIALING"
+                        ? "Periodo de prueba"
+                        : sub.status }
                     </td>
                     <td className="p-3">
                       {new Date(sub.period.start).toLocaleDateString()} —{" "}
