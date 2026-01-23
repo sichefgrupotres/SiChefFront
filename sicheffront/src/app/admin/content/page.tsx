@@ -65,24 +65,6 @@ export default function AdminContentPage() {
           </div>
         )}
       </section>
-
-      {/* TUTORIALS LIST */}
-      <section>
-        <h2 className="text-xl font-semibold text-white mb-4">
-          Tutoriales existentes
-        </h2>
-        {loadingTutorials ? (
-          <p className="text-white/60">Cargando tutoriales...</p>
-        ) : tutorials.length === 0 ? (
-          <p className="text-white/60">No hay tutoriales disponibles</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {tutorials.map((tut) => (
-              <TutorialCard key={tut.id} />
-            ))}
-          </div>
-        )}
-      </section>
     </div>
   );
 }

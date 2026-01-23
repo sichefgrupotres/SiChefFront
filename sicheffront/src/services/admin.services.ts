@@ -20,7 +20,8 @@ export class AdminService {
     return res.json();
   }
 
-  async updateUserRole(userId: string, role: string, token: string) {
+ async updateUserRole(userId: string, role: string, token: string) {
+  try {
     const res = await fetch(`${this.baseUrl}/users/${userId}/role`, {
       method: "PATCH",
       headers: {
@@ -29,9 +30,25 @@ export class AdminService {
       },
       body: JSON.stringify({ role }),
     });
-    if (!res.ok) throw new Error("Error al cambiar rol");
-    return res.json();
+
+    if (!res.ok) {
+      return {
+        ok: false,
+        status: res.status,
+      };
+    }
+
+    return {
+      ok: true,
+      data: await res.json(),
+    };
+  } catch {
+    return {
+      ok: false,
+      status: 0,
+    };
   }
+}
 
   async blockUser(userId: string, blocked: boolean, token: string) {
     const res = await fetch(`${this.baseUrl}/users/${userId}/block`, {
