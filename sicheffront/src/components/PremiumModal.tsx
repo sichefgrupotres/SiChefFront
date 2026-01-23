@@ -9,18 +9,28 @@ import { useRouter } from "next/navigation";
 interface PremiumModalProps {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
+  description?: string;
+  buttonText?: string;
+  // 👇 Si esto es true, hace router.back(). Si es false, solo cierra.
+  shouldGoBack?: boolean;
 }
 
-export default function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
+export default function PremiumModal({
+  isOpen,
+  onClose,
+  title = "Contenido Premium",
+  description = "Esta receta es exclusiva para suscriptores. Pásate a Premium para desbloquearla y guardarla en favoritos.",
+  buttonText = "Ver Planes",
+  shouldGoBack = false,
+}: PremiumModalProps) {
   const [mounted, setMounted] = useState(false);
-
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
 
     if (isOpen) {
-      // Bloqueamos el scroll de la página de fondo
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -33,25 +43,35 @@ export default function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
 
   if (!mounted || !isOpen) return null;
 
-  // Renderizamos en el body usando Portal
+  // 👇 Lógica centralizada: Solo hace back si shouldGoBack es true
+  const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault(); // Evita comportamientos raros
+    e.stopPropagation(); // Evita clicks fantasma
+
+    if (shouldGoBack) {
+      router.back();
+    }
+
+    // Siempre cerramos el modal
+    onClose();
+  };
+
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* 1. FONDO: Oscuro con desenfoque (backdrop-blur) */}
+      {/* 1. FONDO */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-md transition-all"
-        onClick={onClose} // Cierra si tocas el fondo
+        onClick={handleClose} // ✅ Usa la función controlada
       />
 
-      {/* 2. CONTENIDO DEL MODAL */}
+      {/* 2. CONTENIDO */}
       <div className="relative w-full max-w-sm bg-[#2a221b] border border-[#F57C00] rounded-2xl p-6 shadow-2xl text-center z-10 animate-fade-in">
-        {/* Botón Cerrar (X) - Ejecuta onClose directamente */}
+
+        {/* Botón Cerrar (X) */}
         <button
-          onClick={(e) => {
-            e.stopPropagation(); // Evita que el click pase al fondo
-            router.back();
-            onClose();
-          }}
-          className="absolute top-3 right-3 text-white/50 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10 cursor-pointer">
+          onClick={handleClose} // ✅ Usa la función controlada (NO hardcodear router.back aquí)
+          className="absolute top-3 right-3 text-white/50 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10 cursor-pointer"
+        >
           <X size={20} />
         </button>
 
@@ -60,28 +80,25 @@ export default function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
           <Crown className="text-[#F57C00]" size={32} />
         </div>
 
-        <h2 className="text-xl font-bold text-white mb-2">Contenido Premium</h2>
+        <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
 
         <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-          Esta receta es exclusiva para suscriptores. Pásate a Premium para
-          desbloquearla y guardarla en favoritos.
+          {description}
         </p>
 
         <div className="flex flex-col gap-3">
           <Link
             href="/subscription"
-            className="w-full py-3.5 bg-[#F57C00] hover:bg-orange-600 text-white font-bold rounded-xl transition-all shadow-lg active:scale-95">
-            Ver Planes
+            className="w-full py-3.5 bg-[#F57C00] hover:bg-orange-600 text-white font-bold rounded-xl transition-all shadow-lg active:scale-95"
+          >
+            {buttonText}
           </Link>
 
-          {/* Botón Quizás más tarde - Ejecuta onClose directamente */}
+          {/* Botón Quizás más tarde */}
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              router.back();
-              onClose();
-            }}
-            className="text-sm text-gray-500 hover:text-white transition-colors py-2 cursor-pointer">
+            onClick={handleClose} // ✅ Usa la función controlada
+            className="text-sm text-gray-500 hover:text-white transition-colors py-2 cursor-pointer"
+          >
             Quizás más tarde
           </button>
         </div>

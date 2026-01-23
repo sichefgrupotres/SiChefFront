@@ -164,7 +164,7 @@ export default function UserPage() {
                                 </div>
                                 {isLimitReached && (
                                     <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
-                                        <Lock size={12} /> Has alcanzado tu límite. Elimina recetas o hazte Premium.
+                                        <Lock size={12} /> Has alcanzado tu límite.
                                     </p>
                                 )}
                             </div>
