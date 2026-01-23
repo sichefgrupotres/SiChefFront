@@ -133,7 +133,7 @@ export default function ChatMain() {
                                             {user.name}
                                         </h4>
                                         <p className={`text-xs truncate ${isActive ? "text-orange-100" : "text-gray-500"}`}>
-                                            {user.lastMessage}
+                                            {user.lastMessage || "Enviale tu primer mensaje"}
                                         </p>
                                     </div>
                                 </div>
