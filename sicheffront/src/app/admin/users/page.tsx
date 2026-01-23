@@ -2,17 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import UserSearch from "@/components/admin/users/UserSearch";
-import UserFilters from "@/components/admin/users/UserFilters";
 import UserCard from "@/components/admin/users/UserCard";
 import { adminService } from "@/services/admin.services";
-import { SubscriptionStatus } from "@/types/next-auth";
+
+import {
+  Users,
+  User,
+  Shield,
+  Crown,
+  UserCheck,
+  UserX,
+} from "lucide-react";
+
 type RoleId = "USER" | "CREATOR" | "ADMIN" | "SUSCRIPTOR";
-interface User {
+
+interface UserType {
   id: string;
   name: string;
   email: string;
-  roleId: RoleId
+  roleId: RoleId;
   blocked: boolean;
   status: string;
   avatarUrl: string;
@@ -20,13 +30,17 @@ interface User {
 
 export default function AdminUsersPage() {
   const { data: session } = useSession();
-  const [users, setUsers] = useState<User[]>([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchEmail, setSearchEmail] = useState("");
-  const [filter, setFilter] = useState<
-    "Todos" | "USER" | "CREATOR" | "SUSCRIPTOR" | "ADMIN"
-  >("Todos");
 
+  const [roleFilter, setRoleFilter] = useState<"Todos" | RoleId>("Todos");
+  const [statusFilter, setStatusFilter] = useState<"TODOS" | "ACTIVOS" | "BLOQUEADOS">("TODOS");
+
+  // ================= FETCH =================
   const fetchUsers = async () => {
     if (!session?.backendToken) return;
     setLoading(true);
@@ -44,76 +58,92 @@ export default function AdminUsersPage() {
     fetchUsers();
   }, [session]);
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
-    if (!session?.backendToken) return;
-    try {
-      await adminService.updateUserRole(userId, newRole, session.backendToken);
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, roleId: newRole as RoleId } : u)),
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // ================= SINCRONIZAR CON URL =================
+  useEffect(() => {
+    const role = searchParams.get("role");
+    const status = searchParams.get("status");
 
-  const handleBlockToggle = async (userId: string, blocked: boolean) => {
-    if (!session?.backendToken) return;
-    try {
-      await adminService.blockUser(userId, blocked, session.backendToken);
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, blocked } : u)),
-      );
-    } catch (err) {
-      console.error(err);
+    if (role && ["USER", "CREATOR", "ADMIN", "SUSCRIPTOR"].includes(role)) {
+      setRoleFilter(role as RoleId);
     }
-  };
 
+    if (status === "blocked") {
+      setStatusFilter("BLOQUEADOS");
+    }
+
+    if (!role && !status) {
+      setRoleFilter("Todos");
+      setStatusFilter("TODOS");
+    }
+  }, [searchParams]);
+
+  // ================= FILTRO Y ORDEN FINAL =================
   const displayedUsers = users
     .filter((u) =>
-      searchEmail
-        ? u.email.toLowerCase().includes(searchEmail.toLowerCase())
-        : true,
+      searchEmail ? u.email.toLowerCase().includes(searchEmail.toLowerCase()) : true
     )
-    .filter((u) => (filter === "Todos" ? true : u.roleId === filter))
+    .filter((u) => (roleFilter === "Todos" ? true : u.roleId === roleFilter))
+    .filter((u) => {
+      if (statusFilter === "ACTIVOS") return !u.blocked;
+      if (statusFilter === "BLOQUEADOS") return u.blocked;
+      return true;
+    })
     .sort((a, b) => {
-      // Desbloqueados primero
-      if (a.blocked !== b.blocked) {
-        return a.blocked ? 1 : -1;
-      }
+      // Activos primero, bloqueados después
+      if (a.blocked && !b.blocked) return 1;
+      if (!a.blocked && b.blocked) return -1;
 
-      // Orden alfabético ASCENDENTE (A → Z)
-      return a.name.toLowerCase().localeCompare(b.name.toLowerCase(), "es", {
-        sensitivity: "base",
-      });
+      // Luego orden alfabético por nombre
+      return a.name.localeCompare(b.name);
     });
 
-  const handleSearch = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!searchEmail) setSearchEmail("");
-  };
-
-    const handleSubscriptionChange = async (
-    userId: string,
-    status: SubscriptionStatus
-  ) => {
+  // ================= HANDLERS =================
+  const handleRoleChange = async (userId: string, newRole: RoleId) => {
     if (!session?.backendToken) return;
-
     try {
-      await adminService.updateUserSubscription(
-        userId,
-        status,
-        session.backendToken
-      );
-
+      await adminService.updateUserRole(session.backendToken, userId, newRole);
       setUsers((prev) =>
-        prev.map((u) =>
-          u.id === userId ? { ...u, subscriptionStatus: status } : u
-        )
+        prev.map((u) => (u.id === userId ? { ...u, roleId: newRole } : u))
       );
     } catch (err) {
-      console.error(err);
+      console.error("Error cambiando rol:", err);
     }
   };
+
+ const handleBlockToggle = async (userId: string, blocked: boolean) => {
+  if (!session?.backendToken) return;
+  try {
+    // Usamos tu función de adminService para bloquear/desbloquear
+    await adminService.blockUser(userId, blocked, session.backendToken);
+    
+    // Actualizamos el estado local
+    setUsers((prev) =>
+      prev.map((u) => (u.id === userId ? { ...u, blocked } : u))
+    );
+  } catch (err) {
+    console.error("Error cambiando estado de bloqueo:", err);
+  }
+};
+  const FilterButton = ({
+    active,
+    onClick,
+    icon: Icon,
+    label,
+  }: {
+    active: boolean;
+    onClick: () => void;
+    icon: any;
+    label: string;
+  }) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition
+        ${active ? "bg-orange-500 text-black" : "bg-white/10 text-white hover:bg-white/20"}`}
+    >
+      <Icon size={16} />
+      {label}
+    </button>
+  );
 
   return (
     <div className="flex flex-col gap-8 p-4 pb-28 bg-[#181411] min-h-screen px-4 sm:px-8 lg:px-16">
@@ -129,10 +159,52 @@ export default function AdminUsersPage() {
       <UserSearch
         value={searchEmail}
         onChange={(e) => setSearchEmail(e.target.value)}
-        onSubmit={handleSearch}
+        onSubmit={() => {}}
       />
 
-      <UserFilters filter={filter} setFilter={setFilter} />
+      {/* FILTROS */}
+      <div className="flex flex-wrap gap-2">
+        <FilterButton
+          label="Todos"
+          icon={Users}
+          active={roleFilter === "Todos"}
+          onClick={() => {
+            setRoleFilter("Todos");
+            setStatusFilter("TODOS");
+            router.push("/admin/users");
+          }}
+        />
+        <FilterButton
+          label="Usuarios"
+          icon={User}
+          active={roleFilter === "USER"}
+          onClick={() => setRoleFilter("USER")}
+        />
+        <FilterButton
+          label="Creadores"
+          icon={Crown}
+          active={roleFilter === "CREATOR"}
+          onClick={() => setRoleFilter("CREATOR")}
+        />
+        <FilterButton
+          label="Suscriptores"
+          icon={UserCheck}
+          active={roleFilter === "SUSCRIPTOR"}
+          onClick={() => setRoleFilter("SUSCRIPTOR")}
+        />
+        <FilterButton
+          label="Activos"
+          icon={UserCheck}
+          active={statusFilter === "ACTIVOS"}
+          onClick={() => setStatusFilter("ACTIVOS")}
+        />
+        <FilterButton
+          label="Bloqueados"
+          icon={UserX}
+          active={statusFilter === "BLOQUEADOS"}
+          onClick={() => setStatusFilter("BLOQUEADOS")}
+        />
+      </div>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? (
@@ -150,7 +222,7 @@ export default function AdminUsersPage() {
               avatarUrl={user.avatarUrl}
               status={user.blocked ? "BLOQUEADO" : "ACTIVO"}
               blocked={user.blocked}
-              onRoleChange={(newRole) => handleRoleChange(user.id, newRole)}
+              onRoleChange={(newRole) => handleRoleChange(user.id, newRole as RoleId)}
               onBlockToggle={(blocked) => handleBlockToggle(user.id, blocked)}
             />
           ))

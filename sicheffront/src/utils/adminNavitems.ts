@@ -9,14 +9,4 @@ export const adminNavItems = [
     href: "/admin/users",
     icon: "group",
   },
-  {
-    label: "Moderacion",
-    href: "/admin/modelations",
-    icon: "menu_book",
-  },
-  {
-    label: "Pagos",
-    href: "/admin/payments",
-    icon: "payments",
-  },
 ];
