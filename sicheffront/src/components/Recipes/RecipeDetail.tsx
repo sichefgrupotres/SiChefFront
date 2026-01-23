@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { ArrowLeft, BarChart3, Crown, PlayCircle, X } from "lucide-react";
@@ -38,13 +36,24 @@ export default function RecipeDetail({
   const [tutorialError, setTutorialError] = useState(false);
   const { dataUser, isLoadingUser } = useAuth();
 
-  useEffect(() => {
-  console.log("DATA USER SESSION 👉", dataUser);
-}, [dataUser]);
+  // ===== PERMISOS (CORREGIDO) =====
+  const isPremiumUser = !!dataUser?.user?.isPremium;
+  const canSeeTutorial = recipe.isPremium ? isPremiumUser : true;
 
-  // ===== FETCH TUTORIAL =====
+  
+
   useEffect(() => {
-    if (activeTab !== "tutorial") return;
+    console.log("DATA USER SESSION 👉", dataUser);
+    console.log("PERMISOS 👉", {
+      isPremiumUser,
+      recipeIsPremium: recipe.isPremium,
+      canSeeTutorial,
+    });
+  }, [dataUser, isPremiumUser, recipe.isPremium, canSeeTutorial]);
+
+  // ===== FETCH TUTORIAL (PROTEGIDO) =====
+  useEffect(() => {
+    if (activeTab !== "tutorial" || !canSeeTutorial) return;
 
     setLoadingTutorial(true);
     setTutorialError(false);
@@ -62,10 +71,9 @@ export default function RecipeDetail({
         setTutorialError(true);
         setLoadingTutorial(false);
       });
-  }, [activeTab, recipe.id]);
+  }, [activeTab, recipe.id, canSeeTutorial]);
 
   // ===== INGREDIENTES =====
-
   const ingredientsList = recipe.ingredients
     .split(",")
     .map((item) => item.trim())
@@ -127,18 +135,20 @@ export default function RecipeDetail({
             Detalle receta
           </button>
 
-          <button
-            onClick={() => setActiveTab("tutorial")}
-            className={`flex items-center gap-2 pb-2 font-semibold transition cursor-pointer
-        ${
-          activeTab === "tutorial"
-            ? "text-orange-500 border-b-2 border-orange-500"
-            : "text-gray-400 hover:text-white"
-        }`}
-          >
-            <PlayCircle size={16} />
-            Ver tutorial
-          </button>
+          {canSeeTutorial && (
+            <button
+              onClick={() => setActiveTab("tutorial")}
+              className={`flex items-center gap-2 pb-2 font-semibold transition cursor-pointer
+                ${
+                  activeTab === "tutorial"
+                    ? "text-orange-500 border-b-2 border-orange-500"
+                    : "text-gray-400 hover:text-white"
+                }`}
+            >
+              <PlayCircle size={16} />
+              Ver tutorial
+            </button>
+          )}
         </div>
       </div>
 
@@ -210,15 +220,31 @@ export default function RecipeDetail({
         </div>
       )}
 
+      {/* ===== BLOQUE PREMIUM ===== */}
+      {activeTab === "tutorial" && !canSeeTutorial && (
+        <div className="text-center text-white/80 mt-20">
+          <Crown className="mx-auto mb-3 text-orange-500" />
+          <p>Este tutorial es solo para usuarios premium</p>
+          <button
+            onClick={() => router.push("/suscripcion")}
+            className="mt-4 px-4 py-2 bg-orange-500 rounded-lg hover:bg-orange-600 transition"
+          >
+            Suscribirme
+          </button>
+        </div>
+      )}
+
       {/* ===== TUTORIAL ===== */}
-      {activeTab === "tutorial" && (
+      {activeTab === "tutorial" && canSeeTutorial && (
         <div className="w-full flex justify-center">
           {loadingTutorial && (
             <p className="text-white/70">Cargando tutorial...</p>
           )}
 
           {tutorialError && (
-            <p className="text-white/70">No hay tutorial para esta receta</p>
+            <p className="text-white/70">
+              No hay tutorial para esta receta
+            </p>
           )}
 
           {tutorial && (
@@ -228,21 +254,21 @@ export default function RecipeDetail({
                   onClick={() => setActiveTab("detail")}
                   aria-label="Cerrar"
                   className="
-                  flex items-center justify-center
-                  h-10 w-10
-                  rounded-full
-                  bg-black/60 backdrop-blur-sm
-                  text-white
-                  shadow-lg
-                  transition
-                  duration-150
-                  ease-out
-                  hover:bg-black/80
-                  hover:scale-105
-                  hover:shadow-xl
-                  cursor-pointer
-                  absolute top-4 right-4 z-50
-"
+                    flex items-center justify-center
+                    h-10 w-10
+                    rounded-full
+                    bg-black/60 backdrop-blur-sm
+                    text-white
+                    shadow-lg
+                    transition
+                    duration-150
+                    ease-out
+                    hover:bg-black/80
+                    hover:scale-105
+                    hover:shadow-xl
+                    cursor-pointer
+                    absolute top-4 right-4 z-50
+                  "
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -263,3 +289,4 @@ export default function RecipeDetail({
     </div>
   );
 }
+
