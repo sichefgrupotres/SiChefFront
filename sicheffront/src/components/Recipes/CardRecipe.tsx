@@ -4,6 +4,7 @@ import Link from "next/link";
 import { RecipeInterface } from "@/interfaces/IRecipe";
 import { BarChart3, Crown } from "lucide-react"; // Quité Heart porque ya está en el botón
 import FavoriteButton from "../FavoriteButton";
+import { useAuth } from "@/context/AuthContext";
 
 interface RecipeCardProps {
   recipe: RecipeInterface;
@@ -12,8 +13,11 @@ interface RecipeCardProps {
   onRemove?: () => void;
 }
 
-const RecipeCard = ({ recipe, mode = "creator", onRemove }: RecipeCardProps) => {
-
+const RecipeCard = ({
+  recipe,
+  mode = "creator",
+  onRemove,
+}: RecipeCardProps) => {
   const href =
     mode === "creator"
       ? `/creator/recipes/${recipe.id}`
@@ -22,6 +26,16 @@ const RecipeCard = ({ recipe, mode = "creator", onRemove }: RecipeCardProps) => 
         : mode === "user"
           ? `/user/recipes/${recipe.id}`
           : `/guest/recipes/${recipe.id}`;
+
+  const { dataUser, isLoadingUser } = useAuth();
+
+  if (isLoadingUser) return null;
+
+  const role = dataUser?.user?.role;
+
+  const isAdmin = role === "ADMIN";
+  const isCreator = role === "CREATOR";
+  const isUser = role === "USER";
 
   return (
     <div className="relative flex flex-col w-full rounded-xl overflow-hidden shadow hover:shadow-xl transition bg-[#2a221b]">
@@ -48,6 +62,25 @@ const RecipeCard = ({ recipe, mode = "creator", onRemove }: RecipeCardProps) => 
           />
         </div>
 
+        {isUser && (
+          <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full">
+            {recipe.avatarUrl ? (
+              <img
+                src={recipe.avatarUrl}
+                alt={recipe.creatorName}
+                className="w-6 h-6 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-[10px] font-bold text-white">
+                {recipe.creatorName?.charAt(0).toUpperCase()}
+              </div>
+            )}
+
+            <span className="text-xs text-white truncate max-w-45">
+              {recipe.creatorName}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Contenido */}
