@@ -15,7 +15,7 @@ interface RecipeContextProps {
   updateRecipe: (
     id: string,
     data: Partial<RecipeInterface>
-  ) => Promise<boolean>;
+  ) => Promise<UpdatePostResponse>;
   deleteRecipe: (id: string) => Promise<void>;
   getRecipeById: (id: string) => RecipeInterface | undefined;
 }
@@ -26,6 +26,12 @@ const RecipeContext = createContext<RecipeContextProps>(
 
 interface RecipeProviderProps {
   children: React.ReactNode;
+}
+
+export interface UpdatePostResponse {
+  statusPost: "SAFE" | "BLOCKED" | "NEEDS_REVIEW";
+  message: string;
+  post: RecipeInterface;
 }
 
 export const RecipeProvider = ({ children }: RecipeProviderProps) => {
@@ -120,7 +126,6 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       formData.append("title", data.title);
       formData.append("description", data.description);
 
-      // 🔥 CLAVE
       formData.append("ingredients", JSON.stringify(data.ingredients));
 
       formData.append("difficulty", data.difficulty);
@@ -161,11 +166,14 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
       );
 
       if (!res.ok) throw new Error();
+
+      const result = await res.json();
       await fetchRecipes();
-      return true;
+
+      return result;
     } catch {
       setError("Error al actualizar receta");
-      return false;
+      return null;
     }
   };
 
@@ -177,7 +185,8 @@ export const RecipeProvider = ({ children }: RecipeProviderProps) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      await fetchRecipes();
+
+      setUserRecipes((prev) => prev.filter((r) => r.id !== id));
     } catch {
       setError("Error al eliminar receta");
     }
