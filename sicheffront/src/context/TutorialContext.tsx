@@ -15,7 +15,7 @@ interface TutorialContextProps {
     id: string,
     data: Partial<TutorialInterface>
   ) => Promise<boolean>;
-  deleteTutorial?: (id: string) => Promise<void>;
+  deleteTutorial?: (id: string) => Promise<boolean>;
   getTutorialById: (id: string) => TutorialInterface | undefined;
 }
 
@@ -108,6 +108,29 @@ export const TutorialProvider = ({ children }: TutorialProviderProps) => {
     }
   };
 
+  const deleteTutorial = async (id: string): Promise<boolean> => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tutorials/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error();
+
+      setTutorials((prev) => prev.filter((t) => t.id !== id));
+      setUserTutorials((prev) => prev.filter((t) => t.id !== id));
+      return true;
+    } catch (error) {
+      console.error("Error al eliminar tutorial", error);
+      return false;
+    }
+  };
+
   const getTutorialById = useCallback(
     (id: string) => tutorials.find((t) => t.id === id),
     [tutorials]
@@ -123,6 +146,7 @@ export const TutorialProvider = ({ children }: TutorialProviderProps) => {
         fetchMyTutorials,
         addTutorial,
         getTutorialById,
+        deleteTutorial,
       }}>
       {children}
     </TutorialContext.Provider>

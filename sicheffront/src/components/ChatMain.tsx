@@ -54,7 +54,7 @@ export default function ChatMain() {
 
     const isCreator = userRole === "creator" || userRole === "chef";
 
-    // 👇 CORRECCIÓN: Estandarizamos la lógica Premium aquí
+    // Estandarizamos la lógica Premium aquí
     const isPremium = user?.isPremium === true || user?.role === "PREMIUM";
 
     // 3. RETORNO CONDICIONAL (Seguridad)
@@ -62,7 +62,11 @@ export default function ChatMain() {
         return (
             <PremiumModal
                 isOpen={true}
-                onClose={() => { }}
+                onClose={() => { }} // No hace nada extra porque el shouldGoBack maneja la navegación
+                shouldGoBack={true} // 👈 ¡ESTO ES LO IMPORTANTE! Al cerrar, vuelve atrás.
+                title="Chat Exclusivo"
+                description="El acceso directo a los chefs está reservado para miembros Premium. Suscríbete para desbloquear el chat."
+                buttonText="Hacerme Premium"
             />
         );
     }
@@ -129,7 +133,7 @@ export default function ChatMain() {
                                             {user.name}
                                         </h4>
                                         <p className={`text-xs truncate ${isActive ? "text-orange-100" : "text-gray-500"}`}>
-                                            {user.lastMessage || 'Disponible'}
+                                            {user.lastMessage || "Enviale tu primer mensaje"}
                                         </p>
                                     </div>
                                 </div>

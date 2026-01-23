@@ -3,10 +3,28 @@
 import { useEffect } from "react";
 import { useTutorial } from "@/context/TutorialContext";
 import TutorialCard from "./CardTutorial";
-
+import router from "next/router";
+import Swal from "sweetalert2";
 
 export default function MyTutorialsList() {
-  const { userTutorials, fetchMyTutorials, loading, error } = useTutorial();
+  const {
+    userTutorials,
+    fetchMyTutorials,
+    loading,
+    error,
+    tutorials,
+    deleteTutorial,
+  } = useTutorial();
+
+  interface Tutorial {
+    id: string;
+    video: string;
+    title: string;
+    description: string;
+    category: string[];
+    difficulty: string;
+    createdAt: string;
+  }
 
   useEffect(() => {
     fetchMyTutorials();
@@ -39,10 +57,41 @@ export default function MyTutorialsList() {
     );
   }
 
+  const handleDeleteTutorial = async (id: string) => {
+    const confirmed = await Swal.fire({
+      title: "¿Eliminar tutorial?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!confirmed.isConfirmed) return;
+
+    const ok = await deleteTutorial?.(id);
+
+    if (ok) {
+      await Swal.fire(
+        "Eliminado",
+        "El tutorial fue eliminado correctamente",
+        "success"
+      );
+    } else {
+      await Swal.fire("Error", "No se pudo eliminar el tutorial", "error");
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10 w-full">
       {userTutorials.map((tutorial) => (
-        <TutorialCard key={tutorial.id} tutorial={tutorial} mode="creator" />
+        <TutorialCard
+          key={tutorial.id}
+          tutorial={tutorial}
+          mode="creator"
+          onEdit={(id) => router.push(`/creator/tutorials/${id}/edit`)}
+          onDelete={(id) => handleDeleteTutorial(id)}
+        />
       ))}
     </div>
   );

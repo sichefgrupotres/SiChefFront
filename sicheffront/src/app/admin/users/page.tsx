@@ -38,9 +38,7 @@ export default function AdminUsersPage() {
   const [searchEmail, setSearchEmail] = useState("");
 
   const [roleFilter, setRoleFilter] = useState<"Todos" | RoleId>("Todos");
-  const [statusFilter, setStatusFilter] = useState<
-    "TODOS" | "ACTIVOS" | "BLOQUEADOS"
-  >("TODOS");
+  const [statusFilter, setStatusFilter] = useState<"TODOS" | "ACTIVOS" | "BLOQUEADOS">("TODOS");
 
   // ================= FETCH =================
   const fetchUsers = async () => {
@@ -79,20 +77,71 @@ export default function AdminUsersPage() {
     }
   }, [searchParams]);
 
-  // ================= FILTRO FINAL =================
+  // ================= FILTRO Y ORDEN FINAL =================
   const displayedUsers = users
     .filter((u) =>
-      searchEmail
-        ? u.email.toLowerCase().includes(searchEmail.toLowerCase())
-        : true
+      searchEmail ? u.email.toLowerCase().includes(searchEmail.toLowerCase()) : true
     )
     .filter((u) => (roleFilter === "Todos" ? true : u.roleId === roleFilter))
     .filter((u) => {
       if (statusFilter === "ACTIVOS") return !u.blocked;
       if (statusFilter === "BLOQUEADOS") return u.blocked;
       return true;
+    })
+    .sort((a, b) => {
+      // Activos primero, bloqueados después
+      if (a.blocked && !b.blocked) return 1;
+      if (!a.blocked && b.blocked) return -1;
+
+      // Luego orden alfabético por nombre
+      return a.name.localeCompare(b.name);
     });
 
+  // ================= HANDLERS =================
+ const handleRoleChange = async (userId: string, newRole: RoleId) => {
+  if (!session?.backendToken) return;
+
+  const result = await adminService.updateUserRole(
+    userId,
+    newRole,
+    session.backendToken
+  );
+
+  if (!result.ok) {
+    console.warn("Cambio de rol rechazado");
+    return;
+  }
+
+  // ✅ backend OK → actualizamos UI
+  setUsers((prev) =>
+    prev.map((u) =>
+      u.id === userId ? { ...u, roleId: newRole } : u
+    )
+  );
+};
+
+ const handleBlockToggle = async (userId: string, blocked: boolean) => {
+  if (!session?.backendToken) return;
+
+  try {
+    await adminService.blockUser(userId, blocked, session.backendToken);
+
+    setUsers((prev) => {
+      const updated = prev.map((u) =>
+        u.id === userId ? { ...u, blocked } : u
+      );
+
+      // 🔹 reordenamos inmediatamente
+      return [...updated].sort((a, b) => {
+        if (a.blocked && !b.blocked) return 1;
+        if (!a.blocked && b.blocked) return -1;
+        return a.name.localeCompare(b.name);
+      });
+    });
+  } catch (err) {
+    console.error("Error cambiando estado de bloqueo:", err);
+  }
+};
   const FilterButton = ({
     active,
     onClick,
@@ -107,11 +156,7 @@ export default function AdminUsersPage() {
     <button
       onClick={onClick}
       className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition
-        ${
-          active
-            ? "bg-orange-500 text-black"
-            : "bg-white/10 text-white hover:bg-white/20"
-        }`}
+        ${active ? "bg-orange-500 text-black" : "bg-white/10 text-white hover:bg-white/20"}`}
     >
       <Icon size={16} />
       {label}
@@ -147,35 +192,30 @@ export default function AdminUsersPage() {
             router.push("/admin/users");
           }}
         />
-
         <FilterButton
           label="Usuarios"
           icon={User}
           active={roleFilter === "USER"}
           onClick={() => setRoleFilter("USER")}
         />
-
         <FilterButton
           label="Creadores"
           icon={Crown}
           active={roleFilter === "CREATOR"}
           onClick={() => setRoleFilter("CREATOR")}
         />
-
         <FilterButton
           label="Suscriptores"
           icon={UserCheck}
           active={roleFilter === "SUSCRIPTOR"}
           onClick={() => setRoleFilter("SUSCRIPTOR")}
         />
-
         <FilterButton
           label="Activos"
           icon={UserCheck}
           active={statusFilter === "ACTIVOS"}
           onClick={() => setStatusFilter("ACTIVOS")}
         />
-
         <FilterButton
           label="Bloqueados"
           icon={UserX}
@@ -200,8 +240,8 @@ export default function AdminUsersPage() {
               avatarUrl={user.avatarUrl}
               status={user.blocked ? "BLOQUEADO" : "ACTIVO"}
               blocked={user.blocked}
-              onRoleChange={() => {}}
-              onBlockToggle={() => {}}
+              onRoleChange={(newRole) => handleRoleChange(user.id, newRole as RoleId)}
+              onBlockToggle={(blocked) => handleBlockToggle(user.id, blocked)}
             />
           ))
         )}
@@ -209,5 +249,3 @@ export default function AdminUsersPage() {
     </div>
   );
 }
-
-

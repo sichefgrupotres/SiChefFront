@@ -14,22 +14,26 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: credentials.email,
-            password: credentials.password,
-          }),
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/signin`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          }
+        );
+
+        const data = await res.json();
+        if (res.status === 403 && data?.message === "USER_BLOCKED") {
+          throw new Error("USER_BLOCKED");
+        }
 
         if (!res.ok) return null;
 
-        const data = await res.json();
-
         if (!data?.token || !data?.user?.id) return null;
-
-        // Retornamos el objeto completo incluyendo isPremium
         return {
           id: data.user.id,
           name: data.user.name,
@@ -37,7 +41,7 @@ export const authOptions: NextAuthOptions = {
           email: data.user.email,
           role: data.user.role,
           avatarUrl: data.user.avatarUrl,
-          isPremium: data.user.isPremium, // 👈 CAPTURAMOS DEL BACK
+          isPremium: data.user.isPremium,
           token: data.token,
         };
       },
@@ -70,18 +74,21 @@ export const authOptions: NextAuthOptions = {
       // 2. Login con Google
       if (account?.provider === "google" && profile) {
         const googleProfile = profile as GoogleProfile;
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register-google`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            googleId: googleProfile.sub,
-            email: googleProfile.email,
-            name: googleProfile.given_name,
-            lastname: googleProfile.family_name,
-            avatarUrl: googleProfile.picture,
-            // roleId: "USER",
-          }),
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/register-google`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              googleId: googleProfile.sub,
+              email: googleProfile.email,
+              name: googleProfile.given_name,
+              lastname: googleProfile.family_name,
+              avatarUrl: googleProfile.picture,
+              // roleId: "USER",
+            }),
+          }
+        );
 
         const data = await res.json();
 
@@ -101,10 +108,14 @@ export const authOptions: NextAuthOptions = {
         try {
           // Asumimos que tienes un endpoint para obtener tu propio perfil
           // Si no lo tienes, puedes comentar este bloque, pero el usuario tendrá que reloguear.
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, { // O la ruta donde obtienes tus datos
-            method: 'GET',
-            headers: { Authorization: `Bearer ${token.backendToken}` }
-          });
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+            {
+              // O la ruta donde obtienes tus datos
+              method: "GET",
+              headers: { Authorization: `Bearer ${token.backendToken}` },
+            }
+          );
 
           if (res.ok) {
             const userData = await res.json();

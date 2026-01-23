@@ -35,5 +35,17 @@ export const subscriptionService = {
       headers: { "Authorization": `Bearer ${token}` }
     });
     return response.json();
-  }
+  },
+
+  async getAll(token: string) {
+    const res = await fetch(`${BASE_URL}/subscriptions/admin/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Error obteniendo suscripciones");
+
+    return res.json();
+  },
 };

@@ -35,20 +35,26 @@ const LoginForm = () => {
     }
   }, [status, session?.user?.role]);
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const formik = useFormik<LoginFormValuesInterface>({
     initialValues: initialValuesLogin,
     validationSchema: LoginSchema,
     onSubmit: async (values, { resetForm }) => {
+      setLoginError(null); // limpiar errores previos
+
       const result = await signIn("credentials", {
         email: values.email,
         password: values.password,
-        redirect: false, // No redirigir automáticamente
+        redirect: false,
       });
 
-      if (result?.ok) {
-        resetForm();
-      } else {
-        console.error("Login inválido");
+      if (!result?.ok) {
+        if (result?.error === "USER_BLOCKED") {
+          setLoginError("Tu cuenta está bloqueada. Contacta soporte.");
+        } else {
+          setLoginError("Email o contraseña incorrectos");
+        }
       }
     },
   });
@@ -89,6 +95,12 @@ const LoginForm = () => {
             ¡Qué alegría nos da volver a verte aquí! 🧡
           </p>
         </div>
+
+        {loginError && (
+          <div className="mb-4 rounded-lg border border-red-500 bg-red-500/10 px-4 py-2 text-sm text-red-400">
+            {loginError}
+          </div>
+        )}
 
         {/* FORM */}
         <form onSubmit={formik.handleSubmit} className="space-y-6">
@@ -135,8 +147,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
-              >
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white">
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
@@ -163,8 +174,7 @@ const LoginForm = () => {
                 !(formik.isValid && formik.dirty && !formik.isSubmitting)
                   ? "bg-[#F57C00]/50 cursor-not-allowed"
                   : "bg-[#F57C00] hover:scale-[1.02] active:scale-95 shadow-lg shadow-[#F57C00]/20 cursor-pointer"
-              }`}
-          >
+              }`}>
             {formik.isSubmitting ? "Iniciando Sesión..." : "Entrar"}
           </button>
         </form>
@@ -182,8 +192,7 @@ const LoginForm = () => {
         <button
           type="button"
           className="w-full h-14 rounded-lg bg-[#FFF3E0] text-[#F57C00] text-lg font-bold border border-[#F57C00]/50 transition-transform duration-200 hover:scale-105 cursor-pointer"
-          onClick={() => router.push("/register")}
-        >
+          onClick={() => router.push("/register")}>
           Regístrate
         </button>
 
@@ -201,14 +210,12 @@ const LoginForm = () => {
           <button
             type="button"
             className="group flex items-center justify-center w-14 h-14 bg-orange-500/10 rounded-full border border-orange-500/30 transition-all hover:scale-110 hover:bg-orange-500/20"
-            onClick={handleGoogleLogin}
-          >
+            onClick={handleGoogleLogin}>
             <svg
               className="w-6 h-6 transition-transform group-hover:rotate-12"
               viewBox="0 0 24 24"
               fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+              xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M21.805 10.038C21.925 10.686 22 11.35 22 12C22 17.523 17.523 22 12 22C6.477 22 2 17.523 2 12C2 6.477 6.477 2 12 2C14.706 2 17.11 3.09 18.84 4.88L15.342 8.378C14.398 7.493 13.28 7 12 7C9.239 7 7 9.239 7 12C7 14.761 9.239 17 12 17C14.398 17 16.327 15.34 16.839 13.195H12V10H21.805V10.038Z"
                 fill="#F57C00"

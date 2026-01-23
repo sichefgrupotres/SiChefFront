@@ -218,17 +218,18 @@ export default function GuestRecipePage() {
               <p className="text-white/80 max-w-xl">
                 Accede a ingredientes completos, preparación detallada y a todas
                 nuestras recetas exclusivas.
+                Registrate Ahora! y Hazte premium!
               </p>
 
               <button
                 onClick={() => router.push("/register")}
                 className="px-8 py-3 rounded-full bg-[#F57C00] text-white font-semibold hover:bg-orange-600 transition shadow-lg"
               >
-                Registrate ahora!
+                Registrate
               </button>
 
               <span className="text-xs text-white/60">
-                Cancela cuando quieras
+                Necesitas estar registrado, para poder suscribirte!
               </span>
             </div>
           </section>
