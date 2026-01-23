@@ -7,7 +7,7 @@ import { RecipeInterface } from "@/interfaces/IRecipe";
 import { BarChart3, Crown } from "lucide-react";
 import FavoriteButton from "../FavoriteButton";
 import { useAuth } from "@/context/AuthContext";
-import PremiumModal from "../../components/PremiumModal"
+import PremiumModal from "../../components/PremiumModal";
 
 interface RecipeCardProps {
   recipe: RecipeInterface;
@@ -27,10 +27,10 @@ const RecipeCard = ({
     mode === "creator"
       ? `/creator/recipes/${recipe.id}`
       : mode === "admin"
-        ? `/admin/content/${recipe.id}`
-        : mode === "user"
-          ? `/user/recipes/${recipe.id}`
-          : `/guest/recipes/${recipe.id}`;
+      ? `/admin/content/${recipe.id}`
+      : mode === "user"
+      ? `/user/recipes/${recipe.id}`
+      : `/guest/recipes/${recipe.id}`;
 
   const { dataUser, isLoadingUser } = useAuth();
 
@@ -60,7 +60,7 @@ const RecipeCard = ({
       // Si TypeScript se queja aquí, usa (recipe as any).creatorId temporalmente
       const creatorId = (recipe as any).creatorId || (recipe as any).userId;
       if (creatorId) {
-        router.push(`/chat`);
+        router.push(`/user/chat`);
       } else {
         console.error("No se encontró el ID del creador en la receta");
       }
@@ -98,8 +98,7 @@ const RecipeCard = ({
           {isUserRole && (
             <button
               onClick={handleAvatarClick}
-              className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full hover:bg-black/80 transition cursor-pointer group border border-transparent hover:border-orange-500/50"
-            >
+              className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full hover:bg-black/80 transition cursor-pointer group border border-transparent hover:border-orange-500/50">
               {recipe.avatarUrl ? (
                 <img
                   src={recipe.avatarUrl}
