@@ -21,10 +21,10 @@ const RecipeCardCreator = ({
     mode === "creator"
       ? `/creator/recipes/${recipe.id}`
       : mode === "admin"
-      ? `/admin/content/${recipe.id}`
-      : mode === "user"
-      ? `/user/recipes/${recipe.id}`
-      : `/guest/recipes/${recipe.id}`;
+        ? `/admin/content/${recipe.id}`
+        : mode === "user"
+          ? `/user/recipes/${recipe.id}`
+          : `/guest/recipes/${recipe.id}`;
 
   return (
     <div className="relative flex flex-col w-full rounded-xl overflow-hidden shadow hover:shadow-xl transition bg-[#2a221b]">
@@ -56,14 +56,14 @@ const RecipeCardCreator = ({
                 onClick={onEdit}
                 className="text-white hover:text-orange-400 transition"
                 title="Editar receta">
-                <Pencil size={18} />
+                <Pencil size={18} className="cursor-pointer" />
               </button>
 
               <button
                 onClick={onRemove}
                 className="text-white hover:text-red-400 transition"
                 title="Eliminar receta">
-                <Trash2 size={18} />
+                <Trash2 size={18} className="cursor-pointer" />
               </button>
             </div>
           )}
