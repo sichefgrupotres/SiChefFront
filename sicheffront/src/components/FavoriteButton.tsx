@@ -34,14 +34,16 @@ export default function FavoriteButton({
     e.preventDefault();
     e.stopPropagation();
 
+    // 1. Verificar Login
     if (!session || !session.user) {
       Swal.fire({
         title: "Inicia sesión",
         text: "Debes iniciar sesión para guardar favoritos",
         icon: "warning",
         confirmButtonColor: "#F57C00",
-      }).then(() => {
-        router.push("/login");
+        confirmButtonText: "Ir a Login"
+      }).then((result) => {
+        if (result.isConfirmed) router.push("/login");
       });
       return;
     }
@@ -51,32 +53,22 @@ export default function FavoriteButton({
     const token = userData.backendToken || sessionData.backendToken;
     const userRole = userData.role || userData.roleId;
 
-    // 👇 CORRECCIÓN: Aplicamos la misma lógica universal que en el resto de la app
     const userIsPremium = userData?.isPremium === true || userRole === "PREMIUM";
+    const isSpecialUser = userRole === "ADMIN" || userRole === "creator" || userRole === "CREATOR";
 
-    const isSpecialUser =
-      userRole === "admin" || userRole === "creator" || userRole === "CREATOR";
-
-    // Lógica de bloqueo
+    // 2. Bloqueo si la receta es Premium y el usuario no
     if (isPremiumRecipe && !userIsPremium && !isSpecialUser) {
       setShowPremiumModal(true);
       return;
     }
 
     if (!token) {
-      console.error("❌ No se encontró el token.");
-      Swal.fire({
-        title: "Error",
-        text: "Error de sesión: No se encontró tu token.",
-        icon: "warning",
-        confirmButtonColor: "#F57C00",
-      }).then(() => {
-        router.push("/login");
-      });
+      // Manejo de error de token perdido
+      Swal.fire({ title: "Error", text: "Sesión inválida.", icon: "error" });
       return;
     }
 
-    // Optimistic UI
+    // 3. UI Optimista (Cambiamos el corazón visualmente antes de esperar al server)
     const previousState = isFavorite;
     const newState = !isFavorite;
     setIsFavorite(newState);
@@ -93,37 +85,52 @@ export default function FavoriteButton({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = await res.json();
 
       if (!res.ok) {
+        // 🛑 AQUÍ CAPTURAMOS EL LÍMITE
         if (data.message && data.message.includes("Límite")) {
-          // Mensaje nativo si el backend rechaza por límite (usuario free)
-          alert(
-            "🛑 ¡LÍMITE DE 5 FAVORITOS ALCANZADO!\n\nElimina una receta de tus favoritos o pásate a Premium para guardar sin límites. ⭐",
-          );
-        } else if (res.status === 401) {
-          throw new Error("No autorizado");
+          // Revertimos el corazón porque falló
+          setIsFavorite(previousState);
+          if (onToggle) onToggle(previousState);
+
+          // Mostramos alerta bonita
+          Swal.fire({
+            title: "¡Límite alcanzado!",
+            text: "Has llegado al límite de 5 recetas favoritas del plan gratuito.",
+            icon: "error",
+            showCancelButton: true,
+            confirmButtonColor: "#F57C00",
+            cancelButtonColor: "#333",
+            confirmButtonText: "Ser Premium ",
+            cancelButtonText: "Entendido",
+            background: "#1f1a16", // Estilo oscuro acorde a tu app
+            color: "#fff"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              router.push("/subscription"); // Redirige a comprar
+            }
+          });
         } else {
-          throw new Error(data.message || "Error al actualizar");
+          throw new Error(data.message || "Error desconocido");
         }
 
+        // Lanzamos error para detener el flujo
         throw new Error("Action blocked");
       }
 
-      console.log("✅ Favorito actualizado");
+      console.log("✅ Favorito actualizado correctamente");
+
     } catch (error: any) {
       if (error.message !== "Action blocked") {
         console.error("Error al dar like:", error);
-        if (error.message.includes("No autorizado")) {
-          alert("Tu sesión ha expirado.");
-        }
+        // Si falló por otra cosa (internet, server caído), revertimos
+        setIsFavorite(previousState);
+        if (onToggle) onToggle(previousState);
       }
-
-      setIsFavorite(previousState);
-      if (onToggle) onToggle(previousState);
     } finally {
       setLoading(false);
     }
@@ -152,6 +159,8 @@ export default function FavoriteButton({
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={() => setShowPremiumModal(false)}
+        title="Receta Premium"
+        description="Esta receta es exclusiva. Suscríbete para poder guardarla en favoritos."
       />
     </>
   );

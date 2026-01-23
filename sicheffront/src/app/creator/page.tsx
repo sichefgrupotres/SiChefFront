@@ -238,7 +238,7 @@ export default function CreatorHomePage() {
         </section>
 
         {/* ================= TABS ================= */}
-        <section className="px-4 md:px-8 pb-8 flex gap-6 border-b border-white/10">
+        {/* <section className="px-4 md:px-8 pb-8 flex gap-6 border-b border-white/10">
           <button
             onClick={() => setActiveTab("recipes")}
             className={`pb-3 font-semibold transition cursor-pointer
@@ -260,11 +260,11 @@ export default function CreatorHomePage() {
               }`}>
             Tutoriales
           </button>
-        </section>
+        </section> */}
 
         {/* ================= GRID DE RECETAS ================= */}
         <section className="px-4 md:px-8 pb-15">
-          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3">
+          <h2 className="text-2xl font-bold mb-6 text-white border-l-4 border-orange-500 pl-3 py-1">
             Explorar Recetas
           </h2>
           {filteredRecipes.length === 0 ? (
