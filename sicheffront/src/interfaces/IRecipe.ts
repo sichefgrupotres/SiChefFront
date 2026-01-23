@@ -10,6 +10,8 @@ export interface RecipeInterface {
   isPremium: boolean;
   category: string[];
   isFavorite?: boolean;
+  creatorName?: string;
+  avatarUrl?: string;
 }
 export interface CreateRecipePayload {
   title: string;
