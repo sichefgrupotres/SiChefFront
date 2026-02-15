@@ -55,14 +55,3 @@ Autenticación de usuarios mediante OAuth
 
 - **Manejo de sesiones con NextAuth**
 
-## 👩‍💻 Rol en el proyecto
-
-Aunque mi formación está enfocada principalmente en Backend, en este proyecto asumí el rol de Frontend Developer, diseñando y construyendo la interfaz con el objetivo de ofrecer una experiencia clara, moderna y accesible.
-A su vez, uno de mis roles, fue crear el dashboard de administrador
-
-## 🧑‍💻 Autora
-
-**Carolina Ariza**
-Backend / Full Stack Developer
-
-GitHub: https://github.com/CarolinaAriza-mind
